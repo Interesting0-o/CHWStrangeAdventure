@@ -11,11 +11,12 @@ class MenuButton:
     def __init__(self,
                  img:pygame.Surface,       #正常显示时的图片
                  img_hover:pygame.Surface, #鼠标悬停时的图片
+                 img_rect,            #图片的位置
                  ):
         #初始化
         self.img_list = [img,img_hover,img]
         self.img = img
-        self.rect = self.img.get_rect()
+        self.rect = img_rect
 
 
     def is_hovered(self):
