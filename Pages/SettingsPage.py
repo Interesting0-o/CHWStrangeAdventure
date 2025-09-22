@@ -81,11 +81,7 @@ class SettingsPage(Page):
 
 
 
-
-
-
-
-    def draw(self):
+    def draw(self,mouse_down):
 
         #黑场进入
         if not self.close_button_value:
@@ -120,30 +116,11 @@ class SettingsPage(Page):
 
 
         #按钮渲染
-        self.frame_button.setting_button_animation()
+        self.frame_button.setting_button_animation(mouse_down)
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
             self.close_button_value = True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -167,12 +144,16 @@ if __name__ == '__main__':
 
 
     while True:
+        mouse_down = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
-        screen.fill("white")
-        settings_page.draw()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_down = True
 
-        clock.tick(settings.FPS)
+        screen.fill("white")
+        settings_page.draw(mouse_down)
+
+        clock.tick(60)
         pygame.display.update()
 

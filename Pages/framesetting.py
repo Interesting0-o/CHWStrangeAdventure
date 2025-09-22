@@ -1,5 +1,6 @@
 import pygame
 from Elements.Button import Button
+from Elements.DropdownMenu import DropdownMenu
 from Pages.Page import Page
 import settings
 
@@ -13,6 +14,18 @@ class FrameSetting(Page):
         self.text_resolution_rect = self.text_resolution.get_rect()
         self.text_fullscreen = self.font.render("全屏", True, (0, 0, 0))
         print(self.path[:-6])
+        #分辨率设置列表
+        self.resolution_list = [
+            "3840x2160",
+            "1920x1080",
+            "1600x900",
+            "1280x720",
+            "800x600",
+        ]
+        #分辨率设置下拉菜单
+        self.resolution_menu = DropdownMenu(
+
+        )
 
 
 

@@ -21,7 +21,7 @@ class Page:
         pass
 
 
-    def draw(self):
+    def draw(self,*agrs):
         """
         子类实现绘制方法
         :return:
