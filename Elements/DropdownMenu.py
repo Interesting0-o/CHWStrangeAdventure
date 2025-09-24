@@ -43,12 +43,12 @@ class DropdownMenu:
             #未选中时图片
             img = pygame.Surface(option_size)
             img.fill(bg_color)
-            img_rect = img.get_rect(center = (option_size[0]/2, option_size[1]/2))
+            img_rect = img.get_rect()
             img.blit(menu_font.render(menu_options[i], True, font_color),img_rect)
             #选中时图片
             img_hover = pygame.Surface(option_size)
             img_hover.fill(bg_hover_color)
-            img_hover_rect = img_hover.get_rect(center = (option_size[0]/2, option_size[1]/2))
+            img_hover_rect = img_hover.get_rect()
             img_hover.blit(menu_font.render(menu_options[i], True, font_hover_color),img_hover_rect)
             self.options.append(MenuButton(
                 img,
@@ -62,8 +62,8 @@ class DropdownMenu:
         self.current_option_bg = pygame.Surface(option_size) #收缩时背景
         self.current_option_bg_rect = self.current_option_bg.get_rect()
         self.current_option_bg.fill(self.bg_color)
-        self.current_option_bg.blit(menu_font.render(menu_options[auto_index],
-                                                     True, font_color), (5, 5))
+        self.current_show = self.options[auto_index]
+        self.current_option_bg.blit(self.current_show.img,(0,0))
 
         #下拉时背景rect
         self.select_option_bg = pygame.Surface((option_size[0]+10, option_size[1]*self.num+self.num*2))#下拉时背景
@@ -73,6 +73,7 @@ class DropdownMenu:
         for button in self.options:
             self.select_option_bg.blit(button.img, self.options_rect[self.select_index])
             self.select_index += 1
+        self.select_index = auto_index
 
 
 
@@ -150,12 +151,19 @@ class DropdownMenu:
             self.select_option_bg.set_alpha(0)
 
 
-    def draw(self,bg_surface,location:tuple[int,int]):
+    def draw(self,bg_surface,
+             location:tuple[int,int]#bg_surface的左上角坐标
+             ):
         #对下拉列表进行重新定位
         self.current_option_bg_rect.lefttop = location
-        self.select_option_bg_rect.lefttop = location
-        if self.is_hovered():
-            pass
+        self.select_option_bg_rect.lefttop = (location[0],location[1] + self.option_size[1])
+
+
+
+        self.current_show.hover_animation_blit(location)
+        if self.is_pressed():
+            self.select_visible(True)
+            self.current_visible(False)
 
 
 
@@ -189,4 +197,5 @@ if __name__ == '__main__':
 
 
         screen.fill((255, 255, 255))
+        dropdown_menu.draw(screen, (0,0))
         pygame.display.update()
