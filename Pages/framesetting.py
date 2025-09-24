@@ -2,9 +2,7 @@ import pygame
 from Elements.DropdownMenu import DropdownMenu
 from Pages.Page import Page
 
-
 class FrameSetting(Page):
-
 
     def __init__(self):
         super().__init__()
@@ -52,14 +50,6 @@ class FrameSetting(Page):
             auto_index = 3,
         )
 
-
-
-
-
-
-
-
-
     def init(self,
              location:tuple[int,int] = (0,0),
              ):
@@ -75,12 +65,6 @@ class FrameSetting(Page):
         #下拉菜单初始化
         self.resolution_menu.init(self.tar_location)
         self.fullscreen_menu.init((self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
-
-
-
-
-
-
 
     def draw(self,
              mouse_down:bool,
@@ -107,12 +91,6 @@ class FrameSetting(Page):
             mouse_down,
             self.tar_location
         )
-
-
-
-
-
-
 
 if __name__ == '__main__':
     pygame.init()

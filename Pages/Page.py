@@ -35,6 +35,7 @@ class Page:
         color.set_colorkey("black")
         pygame.draw.rect(color,"red", (rect.x+2,rect.y+2,rect.width-4,rect.height-4),2)
         self.display_surface.blit(color, rect)
+
     def set_window_size(self, width:int, height:int):
         """
         设置窗口大小
