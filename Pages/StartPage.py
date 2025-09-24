@@ -5,6 +5,7 @@ from Elements.Button import Button
 
 class StartPage(Page):
     def __init__(self):
+        super().__init__()
         #创建背景图片和标题
 
         self.bg_image = pygame.image.load(self.path[:-6]+ r"/resource/img/bg/bg.png").convert()

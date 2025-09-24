@@ -9,6 +9,7 @@ class SettingsPage(Page):
     """
 
     def __init__(self):
+        super().__init__()
 
         #黑场专场内容
         self.black_surface = None

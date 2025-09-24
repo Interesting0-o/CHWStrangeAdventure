@@ -3,11 +3,7 @@ from Elements.MenuButton import MenuButton
 
 
 class DropdownMenu:
-    is_open =False
-    hover = False
-    pressed = False
-    select_index = 0
-    options = []
+
     def __init__(self,
                  menu_options:list[str],          # 选项列表
                  option_size:tuple[int,int],      # 每个选项的大小
@@ -37,6 +33,11 @@ class DropdownMenu:
         self.bg_color = bg_color
         self.font_color = font_color
         self.current_index = auto_index  #当前选中项索引！！！
+        self.is_open = False
+        self.hover = False
+        self.pressed = False
+        self.select_index = 0
+        self.options = []
         #选项列表初始化
         for i in range(num):
             #未选中时图片

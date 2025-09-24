@@ -1,17 +1,14 @@
 import pygame
 
 class Page:
-    """
-
-
-    """
-    window_width = 1280
-    window_height = 720
-    window_fps = 60
-    display_surface = None
-    is_end = False
     path  = __file__[:-8]
 
+    def __init__(self):
+        self.window_width = 1280
+        self.window_height = 720
+        self.window_fps = 60
+        self.display_surface = None
+        self.is_end = False
 
     def init(self):
         """
@@ -38,7 +35,15 @@ class Page:
         color.set_colorkey("black")
         pygame.draw.rect(color,"red", (rect.x+2,rect.y+2,rect.width-4,rect.height-4),2)
         self.display_surface.blit(color, rect)
-
+    def set_window_size(self, width:int, height:int):
+        """
+        设置窗口大小
+        :param width:
+        :param height:
+        :return:
+        """
+        self.window_width = width
+        self.window_height = height
 
 
 

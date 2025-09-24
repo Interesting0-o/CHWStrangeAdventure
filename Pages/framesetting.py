@@ -8,6 +8,7 @@ class FrameSetting(Page):
 
 
     def __init__(self):
+        super().__init__()
         #字体导入
         self.font = pygame.font.Font(self.path[:-6] + r"/resource/font/MiSans/MiSans-Demibold.ttf", 24)
         self.text_resolution = self.font.render("分辨率", True, (0, 0, 0))

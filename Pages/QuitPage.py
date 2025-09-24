@@ -8,7 +8,7 @@ class QuitPage(Page):
 
 
     def __init__(self):
-        self.display_surface =None
+        super().__init__()
 
         #黑场资源
         self.black_bg = pygame.Surface((self.window_width, self.window_height))
