@@ -33,6 +33,7 @@ class DropdownMenu:
         self.bg_color = bg_color
         self.font_color = font_color
         self.current_index = auto_index  #当前选中项索引！！！
+        self.menu_options = menu_options
         self.is_open = False
         self.hover = False
         self.pressed = False
@@ -44,25 +45,28 @@ class DropdownMenu:
             img = pygame.Surface(option_size)
             img.fill(bg_color)
             img_rect = img.get_rect()
-            img.blit(menu_font.render(menu_options[i], True, font_color),img_rect)
+            img.blit(menu_font.render(self.menu_options[i], True, font_color),img_rect)
             #选中时图片
             img_hover = pygame.Surface(option_size)
             img_hover.fill(bg_hover_color)
             img_hover_rect = img_hover.get_rect()
-            img_hover.blit(menu_font.render(menu_options[i], True, font_hover_color),img_hover_rect)
+            img_hover.blit(menu_font.render(self.menu_options[i], True, font_hover_color),img_hover_rect)
             img_rect.topleft = (0, i*option_size[1])
             self.options.append(MenuButton(
                 img,
                 img_hover,
                 img_rect
             ))
-            self.select_index += 1
 
         #收缩时背景rect
         self.current_option_bg = pygame.Surface(option_size) #收缩时背景
         self.current_option_bg_rect = self.current_option_bg.get_rect()
         self.current_option_bg.fill(self.bg_color)
-        self.current_show = self.options[auto_index]
+        self.current_show = MenuButton(
+            self.options[auto_index].img_list[0],
+            self.options[auto_index].img_list[1],
+            self.options[0].rect
+        )
         self.current_option_bg.blit(self.current_show.img,(0,0))
 
         #下拉时背景rect
@@ -74,8 +78,6 @@ class DropdownMenu:
             self.select_option_bg.blit(button.img, button.rect)
             self.select_index += 1
         self.select_index = auto_index
-
-
 
     def is_hovered(self):
         """
@@ -155,6 +157,7 @@ class DropdownMenu:
         for i in range(self.num):
             self.options[i].hover_animation_blit(left_top)
             self.select_option_bg.blit(self.options[i].img, self.options[i].rect)
+            print(i,self.options[i].rect.topleft)
             if self.options[i].is_pressed_blit(left_top) :
                 self.current_show = MenuButton(
                     self.options[i].img_list[0],
@@ -164,18 +167,18 @@ class DropdownMenu:
                 self.current_index = i
                 self.is_open = False
 
-
-
-
-    def draw(self,bg_surface,
+    def draw(self,
+             bg_surface,
              location:tuple[int,int],#bg_surface的左上角坐标
-             mouse_down:bool =False  #事件监听：鼠标是否按下
+             mouse_down:bool =False,  #事件监听：鼠标是否按下
+             tar_location:tuple[int,int] =(0,0) #图层的左上角坐标
              ):
-        #对下拉列表进行重新定位
-        self.current_option_bg_rect.topleft = (0,0)
-        self.select_option_bg_rect.topleft = (0,0 + self.option_size[1])
+
+
         #收缩时表单的选项动画
-        self.current_show.hover_animation_blit(location)
+        self.current_show.hover_animation_blit((
+            tar_location[0] + location[0], tar_location[1] + location[1]
+        ))
         self.current_option_bg.blit(self.current_show.img, (0, 0))
         #通过事件监听判断是否打开下拉列表
         if self.is_hovered_blite(location) and mouse_down:
@@ -186,12 +189,18 @@ class DropdownMenu:
         #下拉列表的选项动画
         if self.is_open:
             bg_surface.blit(self.select_option_bg, self.select_option_bg_rect)
-            self.select_option_animation_blit((location[0],location[1]+self.option_size[1]))
+            self.select_option_animation_blit((tar_location[0]+location[0],
+                                               tar_location[1]+location[1]+self.option_size[1]))
         #绘制收缩时背景
         bg_surface.blit(self.current_option_bg, self.current_option_bg_rect)
 
-
-
+    def init(self,
+             tar_location: tuple[int, int] =(0,0)  # 图层的左上角坐标
+             ):
+        self.current_option_bg_rect.topleft = tar_location
+        self.select_option_bg_rect.topleft = (tar_location[0], tar_location[1] + self.option_size[1])
+        # 收缩时表单的选项动画
+        self.current_option_bg.blit(self.current_show.img, (0, 0))
 
 
 
@@ -200,12 +209,18 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1280, 720))
     font = pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf",20 )
     options = ["选项1", "选项2", "选项3", "选项4"]
+    options2 = ["选项1", "选项2", "选项3", "选项4", "选项5"]
 
     dropdown_menu = DropdownMenu(options, (100, 30), 4, font)
+    dropdown_menu2 = DropdownMenu(options2, (100, 30), 5, font)
     color = pygame.surface.Surface((500, 500))
     color.fill("blue")
-
-
+    dropdown_menu.init(
+        (100, 100),
+    )
+    dropdown_menu2.init(
+        (100, 200),
+    )
 
     while True:
         mouse_down = False
@@ -216,11 +231,9 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_down = True
 
-
-
-
         screen.fill((255, 255, 255))
         screen.blit(color, (100, 100))
         color.fill("blue")
-        dropdown_menu.draw(color, (100,100),mouse_down)
+        dropdown_menu.draw(color, (100,100),mouse_down,(100,100))
+        dropdown_menu2.draw(color, (100,100),mouse_down,(100,200))
         pygame.display.update()
