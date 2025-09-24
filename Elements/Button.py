@@ -118,7 +118,6 @@ class Button(pygame.sprite.Sprite):
     def hover_animation_blit(self,left_top:tuple,length:int =28,fps:int = 60):
         """
         当button需要blit到其他surface上时
-        :param fps:
         :param left_top:
         :param length:
         :return:
@@ -161,32 +160,13 @@ class Button(pygame.sprite.Sprite):
                 self.image = self.animation_list[
                     self.index
                 ]
-    def setting_button_animation(self,
-                                 mouse_down: bool,
-                                 length:int =28,
-                                 fps:int = 60,
-                                 ):
+    def setting_button_animation(self,length:int =28,fps:int = 60):
         """
         设置按钮动画,在设置界面使用，当被点击时变为最后一帧效果其余和hover_animation一样
-        :param mouse_down:
         :param length:
         :param fps:
         :return:
 
         """
-        if self.is_pressed() and mouse_down:
-            self.setting_mode = 1 - self.setting_mode
-        if self.is_hovered() or self.setting_mode == 1:
-            if self.index < length:
-                self.index += int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
-        else:
-            if self.index >0:
-                self.index -= int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
-
+        pass
 
