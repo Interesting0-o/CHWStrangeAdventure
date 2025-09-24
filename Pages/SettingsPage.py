@@ -1,7 +1,7 @@
 from Pages.Page import Page
 from Elements.Button import Button
+from Pages.framesetting import FrameSetting
 
-import settings
 import pygame
 class SettingsPage(Page):
     """
@@ -44,6 +44,8 @@ class SettingsPage(Page):
             ))
         self.isFrameSetting = False
 
+        #画面设置页面
+        self.frame_setting = FrameSetting()
 
 
 
@@ -81,12 +83,19 @@ class SettingsPage(Page):
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
 
 
+        #画面设置页面初始化
+        self.frame_setting.init((int(0.3125*self.window_width),int(0.1*self.window_height)))
 
 
 
 
 
-    def draw(self):
+
+
+
+    def draw(self,
+             mouse_down:bool #鼠标按下状态
+             ):
 
         #黑场进入
         if not self.close_button_value:
@@ -120,8 +129,9 @@ class SettingsPage(Page):
 
 
 
+
         #按钮渲染
-        self.frame_button.setting_button_animation()
+        self.frame_button.setting_button_animation(mouse_down)
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
@@ -157,7 +167,7 @@ if __name__ == '__main__':
 
     pygame.init()
     settings_page = SettingsPage()
-    screen = pygame.display.set_mode((SettingsPage.window_width, SettingsPage.window_height))
+    screen = pygame.display.set_mode((settings_page.window_width, settings_page.window_height))
     screen.fill("white")
     clock = pygame.time.Clock()
 
@@ -168,12 +178,15 @@ if __name__ == '__main__':
 
 
     while True:
+        mouse_down = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_down = True
         screen.fill("white")
-        settings_page.draw()
+        settings_page.draw( mouse_down )
 
-        clock.tick(settings.FPS)
+        clock.tick(60)
         pygame.display.update()
 

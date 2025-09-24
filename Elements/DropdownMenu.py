@@ -202,6 +202,9 @@ class DropdownMenu:
         # 收缩时表单的选项动画
         self.current_option_bg.blit(self.current_show.img, (0, 0))
 
+    def get_index(self):
+        return self.current_index
+
 
 
 if __name__ == '__main__':

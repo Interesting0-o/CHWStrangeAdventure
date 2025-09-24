@@ -1,6 +1,9 @@
 import pygame
 from Elements.DropdownMenu import DropdownMenu
+from Elements.MenuButton import MenuButton
 from Pages.Page import Page
+from settings import Settings
+
 
 class FrameSetting(Page):
 
@@ -13,6 +16,7 @@ class FrameSetting(Page):
         self.bg_surface = None
         #字体导入
         self.font = pygame.font.Font(self.path[:-6] + r"/resource/font/MiSans/MiSans-Demibold.ttf", 24)
+        self.font2 = pygame.font.Font(self.path[:-6] + r"/resource/font/MiSans/MiSans-Demibold.ttf", 34)
         self.text_resolution = self.font.render("分辨率:", True, (0, 0, 0))
         self.text_resolution_rect = self.text_resolution.get_rect(topleft =(30,self.window_height * 0.07))
         self.text_fullscreen = self.font.render("全屏选项:", True, (0, 0, 0))
@@ -49,9 +53,25 @@ class FrameSetting(Page):
             self.font,
             auto_index = 3,
         )
+        #设置保存按钮
+        self.save_button_bg = pygame.Surface((210,35)) #未选中状态
+        self.save_button_bg.fill("white")
+        self.save_text = self.font2.render("保存当前设置", True, "#FFA500")
+        self.save_button_bg.blit(self.save_text,
+                                 self.save_text.get_rect(center = self.save_button_bg.get_rect().center))
+        self.save_button_hover_bg = pygame.Surface((210,35)) #鼠标悬停状态
+        self.save_button_hover_bg.fill("#FFA500")
+        self.save_text_hover = self.font2.render("保存当前设置", True, "white")
+        self.save_button_hover_bg.blit(self.save_text_hover,
+                                        self.save_text_hover.get_rect(center = self.save_button_hover_bg.get_rect().center))
+        self.save_button = MenuButton(#实例化按钮
+            self.save_button_bg,
+            self.save_button_hover_bg,
+            self.save_button_bg.get_rect(center = (self.window_width*0.5*0.6,self.window_height*0.8*0.7))
+        )
 
     def init(self,
-             location:tuple[int,int] = (0,0),
+             location:tuple[int,int] = (0,0),       #bg_surface位置
              ):
 
         #背景设置
@@ -65,11 +85,13 @@ class FrameSetting(Page):
         #下拉菜单初始化
         self.resolution_menu.init(self.tar_location)
         self.fullscreen_menu.init((self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
+        #保存设置按钮初始化
+        self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.8*0.7)
 
     def draw(self,
              mouse_down:bool,
-             location:tuple[int,int] = (0,0),
-             # screen: pygame.Surface, #当前屏幕
+             screen:pygame.Surface, #当前屏幕
+             location:tuple[int,int] = (0,0),#bg_surface位置
              ):
         self.bg_surface.fill((255, 255, 255))
 
@@ -92,6 +114,19 @@ class FrameSetting(Page):
             self.tar_location
         )
 
+        #保存设置按钮
+        self.save_button.hover_animation_blit(self.bg_surface_rect.topleft)
+        self.bg_surface.blit(self.save_button.img, self.save_button.rect)
+
+        #保存修改
+        if self.save_button.is_pressed_blit(self.bg_surface_rect.topleft):
+            screen = pygame.display.set_mode(Settings.screen_size[self.resolution_menu.get_index()],
+                                             flags =Settings.screen_set[self.fullscreen_menu.get_index()])
+            self.set_window_size(Settings.screen_size[self.resolution_menu.get_index()][0],
+                                  Settings.screen_size[self.resolution_menu.get_index()][1])
+            self.init(location)
+
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
@@ -110,7 +145,7 @@ if __name__ == '__main__':
                 mouse_down = True
         screen.fill("black")
         screen.blit(frame_setting.bg_surface, frame_setting.bg_surface_rect)
-        frame_setting.draw(mouse_down, (100,100))
+        frame_setting.draw(mouse_down, screen,(100,100))
 
 
 

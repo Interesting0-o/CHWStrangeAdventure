@@ -1,32 +1,21 @@
 import pygame
 from settings import Settings
 import threading
+from Save_Load import SaveLoad
+
 class OpenAnimation:
-    window_width =Settings.M_WIDTH
-    window_height =Settings.M_HEIGHT
     display_surface = None
     animation_list = [None for i in range(300)]
     animation_list_index = 0
     is_end = False
 
-    def thread_read_func(self,tuple_data:tuple[int,int]):
-        for i in range(tuple_data[0],tuple_data[1]):
-            self.animation_list[i] = pygame.image.load(
-                rf"resource/video/openVideo/Open_Animation_{i:03d}.png"
-            )
 
     def __init__(self):
+        self.window_width = 1280
+        self.window_height = 720
         #导入动画图片
         self.current_surface = None
-        threading_list = []
-        for i in range(1,11):
-            threading_list.append(threading.Thread(target=self.thread_read_func,args=(((i-1)*30,i*30),)))
-            threading_list[i-1].start()
-        for i in range(1,11):
-            threading_list[i-1].join()
-
-
-
+        SaveLoad().LoadImage_fileDir(rf"resource/video/openVideo", self.animation_list)
 
 
     def init(self):
@@ -58,7 +47,7 @@ class OpenAnimation:
 if __name__ == '__main__':
 
     pygame.init()
-    screen = pygame.display.set_mode((Settings.M_WIDTH, Settings.M_HEIGHT))
+    screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
     open_animation = OpenAnimation()
     open_animation.init()

@@ -36,15 +36,21 @@ class Page:
         pygame.draw.rect(color,"red", (rect.x+2,rect.y+2,rect.width-4,rect.height-4),2)
         self.display_surface.blit(color, rect)
 
-    def set_window_size(self, width:int, height:int):
+    def set_window_size(self, width:int = -1, height:int = -1 ,
+                        size:tuple[int,int] = (-1,-1)
+                        ):
         """
-        设置窗口大小
+        传入两个参数，或者一个元组参数，设置窗口大小
+        :param size:
         :param width:
         :param height:
         :return:
         """
-        self.window_width = width
-        self.window_height = height
+        if width != -1 and height != -1 :
+            self.window_width = width
+            self.window_height = height
+        else:
+            self.window_width, self.window_height = size
 
 
 
