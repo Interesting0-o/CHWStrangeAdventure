@@ -42,6 +42,9 @@ class OpenAnimation:
                     self.is_end = True
 
             self.display_surface.blit(self.current_surface, (0, 0))
+    def set_window_size(self, width, height):
+        self.window_width = width
+        self.window_height = height
 
 
 if __name__ == '__main__':

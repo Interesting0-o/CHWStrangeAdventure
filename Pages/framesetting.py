@@ -7,10 +7,10 @@ from settings import Settings
 
 class FrameSetting(Page):
 
-    def __init__(self):
+    def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
+        self.isSettingsChange = False #是否修改设置
         super().__init__()
         #背景声明
-        self.fullscreen_menu = None
         self.tar_location = None
         self.bg_surface_rect = None
         self.bg_surface = None
@@ -32,26 +32,27 @@ class FrameSetting(Page):
             "1920x1080",
             "1600x900",
             "1280x720",
-            "800x600",
         ]
 
         #全屏设置下拉菜单初始化
+        self.fullscreen_menu_current_option = fullscreen_auto_index
         self.fullscreen_menu = DropdownMenu(
             self.fullscreen_list,
             (150, 30),
             2,
             self.font,
-            auto_index = 0,
+            auto_index = self.fullscreen_menu_current_option,
         )
 
 
         #分辨率设置下拉菜单初始化
+        self.resolution_menu_current_option = resolution_auto_index
         self.resolution_menu = DropdownMenu(
             self.resolution_list,
             (150, 30),
-            5,
+            4,
             self.font,
-            auto_index = 3,
+            auto_index = self.resolution_menu_current_option,
         )
         #设置保存按钮
         self.save_button_bg = pygame.Surface((210,35)) #未选中状态
@@ -77,7 +78,7 @@ class FrameSetting(Page):
         #背景设置
         self.bg_surface = pygame.surface.Surface((
           self.window_width * 0.6,
-            self.window_height * 0.7
+            self.window_height * 0.6
         ))
         self.bg_surface_rect = self.bg_surface.get_rect(topleft = location)
         self.tar_location = (int(self.bg_surface_rect.width *0.8),int(self.bg_surface_rect.height *0.1))
@@ -86,11 +87,11 @@ class FrameSetting(Page):
         self.resolution_menu.init(self.tar_location)
         self.fullscreen_menu.init((self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
         #保存设置按钮初始化
-        self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.8*0.7)
+        self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.8*0.6)
 
     def draw(self,
              mouse_down:bool,
-             screen:pygame.Surface, #当前屏幕
+             # current_screen:pygame.Surface, #当前屏幕
              location:tuple[int,int] = (0,0),#bg_surface位置
              ):
         self.bg_surface.fill((255, 255, 255))
@@ -120,11 +121,14 @@ class FrameSetting(Page):
 
         #保存修改
         if self.save_button.is_pressed_blit(self.bg_surface_rect.topleft):
-            screen = pygame.display.set_mode(Settings.screen_size[self.resolution_menu.get_index()],
-                                             flags =Settings.screen_set[self.fullscreen_menu.get_index()])
-            self.set_window_size(Settings.screen_size[self.resolution_menu.get_index()][0],
-                                  Settings.screen_size[self.resolution_menu.get_index()][1])
-            self.init(location)
+            self.isSettingsChange = True
+            # current_screen = pygame.display.set_mode(Settings.screen_size[self.resolution_menu.get_index()],
+            #                                  flags =Settings.screen_set[self.fullscreen_menu.get_index()])
+            # self.set_window_size(Settings.screen_size[self.resolution_menu.get_index()][0],
+            #                       Settings.screen_size[self.resolution_menu.get_index()][1])
+            # self.init(location)
+        else:
+            self.isSettingsChange = False
 
 
 if __name__ == '__main__':
@@ -145,7 +149,7 @@ if __name__ == '__main__':
                 mouse_down = True
         screen.fill("black")
         screen.blit(frame_setting.bg_surface, frame_setting.bg_surface_rect)
-        frame_setting.draw(mouse_down, screen,(100,100))
+        frame_setting.draw(mouse_down,(100,100))
 
 
 

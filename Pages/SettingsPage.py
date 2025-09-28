@@ -8,7 +8,7 @@ class SettingsPage(Page):
     游戏设置页面
     """
 
-    def __init__(self):
+    def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
         super().__init__()
 
         #黑场专场内容
@@ -45,29 +45,27 @@ class SettingsPage(Page):
         self.isFrameSetting = False
 
         #画面设置页面
-        self.frame_setting = FrameSetting()
+        self.frame_setting = FrameSetting(fullscreen_auto_index,resolution_auto_index)
 
-
-
-
+        #黑场进行设置
+        self.black_surface = pygame.Surface((self.window_width, self.window_height))
+        self.black_surface.fill((0, 0, 0))
+        self.black_surface_alpha = 0
 
     def init(self):
         """
         重载内容
         :return:
         """
+        #黑场初始化
+        self.black_surface = pygame.Surface((self.window_width, self.window_height))
+        self.black_surface.set_alpha(self.black_surface_alpha)
         #背景初始化
         self.display_surface = pygame.display.get_surface()
 
         #使用bg_copy作为背景
         self.bg_copy = pygame.transform.scale(self.bg, (self.window_width, self.window_height))
         self.bg_copy.set_alpha(self.bg_alpha)
-
-
-        #黑场进行设置
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
-        self.black_surface.fill((0, 0, 0))
-        self.black_surface_alpha = 0
 
         #关闭按钮重置
 
@@ -84,17 +82,11 @@ class SettingsPage(Page):
 
 
         #画面设置页面初始化
-        self.frame_setting.init((int(0.3125*self.window_width),int(0.1*self.window_height)))
-
-
-
-
-
-
-
+        self.frame_setting.init((int(0.3125*self.window_width),int(0.2*self.window_height)))
+        self.frame_setting.bg_surface_rect.topleft = (int(0.3125*self.window_width),int(0.2*self.window_height))
 
     def draw(self,
-             mouse_down:bool #鼠标按下状态
+             mouse_down:bool, #鼠标按下状态
              ):
 
         #黑场进入
@@ -126,9 +118,13 @@ class SettingsPage(Page):
         #画面元素渲染
         self.display_surface.blit(self.black_surface, (0, 0))
         self.display_surface.blit(self.bg_copy, (0, self.bg_h))
-
-
-
+        #画面设置页面渲染
+        if self.frame_button.setting_mode == 1:
+            self.bg_copy.blit(self.frame_setting.bg_surface,
+                              (400/1280*self.window_width,150/720*self.window_height))
+            self.frame_setting.draw(mouse_down,
+                                    (int(0.3125*self.window_width),int(0.2*self.window_height))
+                                    )
 
         #按钮渲染
         self.frame_button.setting_button_animation(mouse_down)
@@ -136,27 +132,6 @@ class SettingsPage(Page):
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
             self.close_button_value = True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -171,11 +146,7 @@ if __name__ == '__main__':
     screen.fill("white")
     clock = pygame.time.Clock()
 
-
-
     settings_page.init()
-
-
 
     while True:
         mouse_down = False

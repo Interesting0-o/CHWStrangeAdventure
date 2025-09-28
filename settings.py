@@ -1,3 +1,5 @@
+import json
+
 import pygame
 class Settings:
 
@@ -6,7 +8,6 @@ class Settings:
         (1920,1080),
         (1600,900),
         (1280,720),
-        (800,600),
     ]
     screen_set = [
         0,                                      #窗口模式
@@ -21,3 +22,7 @@ class Settings:
     def __init__(self):
         pass
 
+if __name__ == '__main__':
+    file = open("settings.json", "r",encoding="utf-8")
+    settings = json.load(file)
+    print(settings["frame_settings"]["screen_size_index"])

@@ -27,7 +27,6 @@ class StartPage(Page):
         self.font_1 = pygame.font.Font(self.path[:-6]+r"/resource/font/萝莉体 第二版.ttf", 25)
         self.version =self.font_1.render("游戏版本："+Settings.GAME_VERSION,True,(0,0,0))
         self.version_rect = self.version.get_rect()
-        self.version_rect.bottomleft=(10,self.window_height-20)
         
         #按钮背景初始化
         self.buttons_bg = pygame.Surface((240,350))
@@ -78,6 +77,8 @@ class StartPage(Page):
 
     def init(self):
         self.display_surface = pygame.display.get_surface()
+        #版本资源
+        self.version_rect.bottomleft=(10,self.window_height-20)
         #实例化按钮
         self.start_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6)
         self.load_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+70)
@@ -94,7 +95,7 @@ class StartPage(Page):
         pygame.draw.rect(self.buttons_bg,"white",(0,0,240,350),border_radius=20)
         self.buttons_bg.set_colorkey("#000000")
         self.buttons_bg.set_alpha(128)
-        self.title_rect.center = (int(self.window_width /2), 100)
+        self.title_rect.center = (int(self.window_width /2), int(self.window_height * 0.13))
         #判断背景图片是否需要缩放
         if self.bg_rect.size != self.display_surface.get_size():
             self.bg_image = pygame.transform.scale(self.bg_image_copy, self.display_surface.get_size())
@@ -128,7 +129,7 @@ class StartPage(Page):
 
 if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode((Settings.M_WIDTH,Settings.M_HEIGHT))
+    screen = pygame.display.set_mode((1280,720))
     pygame.display.set_caption('StartPage', "StartPage")
     clock = pygame.time.Clock()
     start_page = StartPage()
