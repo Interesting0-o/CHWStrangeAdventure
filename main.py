@@ -30,6 +30,8 @@ class Game:
         self.clock = pygame.time.Clock()
         #初始化开头动画
         self.open_animation = OpenAnimation()
+        self.open_animation.window_width = self.window_width
+        self.open_animation.window_height = self.window_height
 
         #初始化页面
         self.start_page = StartPage()

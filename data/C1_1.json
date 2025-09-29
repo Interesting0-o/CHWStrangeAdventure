@@ -1,0 +1,13 @@
+[
+  {
+    "background": "school",
+    "dialogue": [
+      {"speaker": "主角", "text": "今天是我转学的第一天，有点紧张。"},
+      {"speaker": "女主角1", "text": "你好，你是新来的转校生吗？我叫小美。"},
+      {"speaker": "主角", "text": "是的，我叫小明。很高兴认识你。"}
+    ],
+    "characters": [
+      {"name": "heroine1", "emotion": "happy", "position": [300, 100], "visible": true}
+    ]
+  }
+]
