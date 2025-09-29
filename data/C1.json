@@ -1,0 +1,95 @@
+{
+  "C1_1":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "choice",
+    "choice_num": 2,
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "这是一个普通的图书馆，"
+      },
+      {
+        "type": "dialogue",
+        "speaker" : "player",
+        "text": "你好，请问有什么可以帮助您？"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "character_1",
+        "text": "我想借阅《CHW Strange Adventures》这本书。",
+        "character": {
+          "emotion": "shy",
+          "position": "center",
+          "voice": "v_001"
+        }
+      },
+      {
+        "type": "choice",
+        "choices": [
+          {
+            "choiceId": "choice_1",
+            "text": "好的，我帮你去拿",
+            "nextScene":"sceneC1_1:if_1"
+          },
+          {
+            "choiceId": "choice_2",
+            "text": "抱歉，这本书暂时借不到",
+            "nextScene":"sceneC1_1:if_2"
+          }
+        ]
+      }
+    ]
+  },
+  "C1_1:if_1":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "你将借阅的书籍放在了女孩的面前"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "好的，请问还有什么需要帮助吗？"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "character_1",
+        "text": "谢谢你，我想要请你去吃饭。",
+        "character": {
+          "emotion":"shy",
+          "position":"center",
+          "voice":"v_002"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "唉？"
+      }
+    ]
+  },
+  "C1_1:if_2":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "character_1",
+        "text": "是这样啊",
+        "character": {
+          "emotion": "shy",
+          "position": "center",
+          "voice": "v_003"
+        }
+      }
+
+    ]
+  }
+}

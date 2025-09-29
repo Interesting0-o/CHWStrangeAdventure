@@ -71,7 +71,7 @@ class MenuButton:
 
     def is_pressed(self):
         """
-        判断鼠标是否按下
+        判断鼠标是否点击
         :return:
         """
         if self.is_hovered() and pygame.mouse.get_pressed()[0]:
@@ -83,7 +83,7 @@ class MenuButton:
 
     def is_pressed_blit(self,left_top:tuple[int,int]):
         """
-        当图层贴至其他图层时，判断鼠标是否按下
+        当图层贴至其他图层时，判断鼠标是否点击
         :param left_top: 上级图层的左上角坐标
         :return:
         """
@@ -92,6 +92,27 @@ class MenuButton:
             return True
         else:
             self.pressed = False
+            return False
+    def is_pressed_down(self,mouse_down:bool):
+        """
+        判断鼠标是否按下
+        :param mouse_down:
+        :return:
+        """
+        if self.is_hovered() and mouse_down:
+            return True
+        else:
+            return False
+    def is_pressed_down_blit(self,left_top:tuple[int,int],mouse_down:bool):
+        """
+        当图层贴至其他图层时，判断鼠标是否按下
+        :param left_top: 上级图层的左上角坐标
+        :param mouse_down:
+        :return:
+        """
+        if self.is_hovered_blit(left_top) and mouse_down:
+            return True
+        else:
             return False
 
 

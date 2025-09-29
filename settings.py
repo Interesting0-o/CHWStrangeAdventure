@@ -3,6 +3,12 @@ import json
 import pygame
 class Settings:
 
+    position = {
+        "l":0.3,
+        "m":0.5,
+        "r":0.7
+    }
+
     screen_size = [
         (3840,2160),
         (1920,1080),
