@@ -3,4 +3,3 @@ class Player:
         self.name = None
         self.honer_value = 0
 
-player = Player()

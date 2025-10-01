@@ -9,6 +9,7 @@ class ResourceLoader:
     font_loliti24 = pygame.font.Font(path+r"\resource\font\萝莉体 第二版.ttf", 24)
     font_loliti36 = pygame.font.Font(path + r"\resource\font\萝莉体 第二版.ttf", 36)
     font_MiSans_Demibold24 = pygame.font.Font(path+r"\resource\font\MiSans\MiSans-Demibold.ttf", 24)
+    font_MiSans_Demibold36 = pygame.font.Font(path + r"\resource\font\MiSans\MiSans-Demibold.ttf", 36)
 
     #对话框
     dialog_box = pygame.image.load(__file__[:-18] +r"\resource\img\bg\DialogBox.png")
@@ -24,6 +25,12 @@ class ResourceLoader:
 
     #游戏场景的背景
     library = pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
+
+    #对话款背景
+    dialog_bg = pygame.image.load(__file__[:-18] + r"\resource\img\BG\DialogBG.png")
+
+    #DemoCharacter资源
+    demo_character_neutral = pygame.image.load(__file__[:-18] + r"/resource/characters/demoCharacter/img/neutral.png")
 
 
 

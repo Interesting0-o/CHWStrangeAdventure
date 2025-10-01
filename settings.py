@@ -4,9 +4,9 @@ import pygame
 class Settings:
 
     position = {
-        "l":0.3,
-        "m":0.5,
-        "r":0.7
+        "left":0.3,
+        "center":0.5,
+        "right":0.7
     }
 
     screen_size = [

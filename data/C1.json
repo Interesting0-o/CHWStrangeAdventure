@@ -1,9 +1,10 @@
 {
+  "end_scene": "C1_2",
   "C1_1":{
     "bg": "library",
     "bgm": "normal",
     "end_with": "choice",
-    "choice_num": 2,
+    "choice_num": 3,
     "dialogues": [
       {
         "type": "dialogue",
@@ -17,10 +18,10 @@
       },
       {
         "type": "dialogue",
-        "speaker": "character_1",
+        "speaker": "DemoCharacter",
         "text": "我想借阅《CHW Strange Adventures》这本书。",
         "character": {
-          "emotion": "shy",
+          "emotion": "neutral",
           "position": "center",
           "voice": "v_001"
         }
@@ -31,12 +32,17 @@
           {
             "choiceId": "choice_1",
             "text": "好的，我帮你去拿",
-            "nextScene":"sceneC1_1:if_1"
+            "nextScene":"C1_1:if_1"
           },
           {
             "choiceId": "choice_2",
             "text": "抱歉，这本书暂时借不到",
-            "nextScene":"sceneC1_1:if_2"
+            "nextScene":"C1_1:if_2"
+          },
+          {
+            "choiceId": "choice_3",
+            "text": "(表演一段空中劈叉)",
+            "nextScene":"C1_1:if_3"
           }
         ]
       }
@@ -46,6 +52,7 @@
     "bg": "library",
     "bgm": "normal",
     "end_with": "dialogue",
+    "next_scene": "C1_2",
     "dialogues": [
       {
         "type": "dialogue",
@@ -59,10 +66,10 @@
       },
       {
         "type": "dialogue",
-        "speaker": "character_1",
+        "speaker": "DemoCharacter",
         "text": "谢谢你，我想要请你去吃饭。",
         "character": {
-          "emotion":"shy",
+          "emotion":"neutral",
           "position":"center",
           "voice":"v_002"
         }
@@ -78,18 +85,49 @@
     "bg": "library",
     "bgm": "normal",
     "end_with": "dialogue",
+    "next_scene": "C1_2",
     "dialogues": [
       {
         "type": "dialogue",
-        "speaker": "character_1",
+        "speaker": "DemoCharacter",
         "text": "是这样啊",
         "character": {
-          "emotion": "shy",
+          "emotion": "neutral",
           "position": "center",
           "voice": "v_003"
         }
       }
-
+    ]
+  },
+  "C1_1:if_3":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_2",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "请问，你有什么大病",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_004"
+        }
+      }
+    ]
+  },
+  "C1_2":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_3",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "好的，请问还有什么需要帮助吗？"
+      }
     ]
   }
 }

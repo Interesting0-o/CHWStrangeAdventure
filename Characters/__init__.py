@@ -1,9 +1,11 @@
 from .Character import Character
 from .Player import Player
-from .Narration import Narration
+from .DemoCharacter import DemoCharacter
+from .CharacterGroup import CharacterGroup
 
 __all__ = [
     "Character",
     "Player",
-    "Narration"
+    "DemoCharacter",
+    "CharacterGroup",
 ]

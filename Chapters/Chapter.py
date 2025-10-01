@@ -21,8 +21,6 @@ class Chapter:
         self.window_width = width
         self.window_height = height
 
-    def init(self):
-        pass
 
     def handle_event(self, event):
         pass
