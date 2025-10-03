@@ -134,7 +134,7 @@ class FrameSetting(Page):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
-    frame_setting = FrameSetting()
+    frame_setting = FrameSetting(0,0)
     frame_setting.init((100,100))
     clock = pygame.time.Clock()
 

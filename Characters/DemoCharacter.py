@@ -12,6 +12,7 @@ class DemoCharacter(Character):
         self.emotions = {
             "neutral":ResourceLoader.demo_character_neutral,
         }
+        self.Id = "DC"
 
     def __str__(self):
         return self.name

@@ -1,7 +1,7 @@
 from Pages.Page import Page
 from Elements.Button import Button
 from Pages.framesetting import FrameSetting
-
+from ResourceLoader import ResourceLoader
 import pygame
 class SettingsPage(Page):
     """
@@ -22,26 +22,14 @@ class SettingsPage(Page):
         self.bg_alpha = 0
 
         #关闭按钮初始化
-        self.close_button = Button(
-            pygame.image.load(
-                self.path[:-6]+r"/resource/img/button/close_button/Close_button.png"))
-        for i in range(30):
-            self.close_button.animation_list.append(pygame.image.load(
-                self.path[:-6] + rf"/resource/img/button/close_button/Close_button_{i:02d}.png"
-            ))
+        self.close_button = Button(ResourceLoader.close_button_animation[0])
+        self.close_button.animation_list = ResourceLoader.close_button_animation
         self.close_button_value = False
 
 
         #画面设置按钮初始化
-        self.frame_button = Button(
-            pygame.image.load(
-                self.path[:-6] + r"/resource/img/button/frame_setting_button/Frame_setting_button_01.png"
-            ))
-
-        for i in range(30):
-            self.frame_button.animation_list.append(pygame.image.load(
-                self.path[:-6] + rf"/resource/img/button/frame_setting_button/Frame_setting_button_{i:02d}.png"
-            ))
+        self.frame_button = Button(ResourceLoader.frame_setting_button_animation[0])
+        self.frame_button.animation_list = ResourceLoader.frame_setting_button_animation
         self.isFrameSetting = False
 
         #画面设置页面
@@ -141,7 +129,7 @@ if __name__ == '__main__':
 
 
     pygame.init()
-    settings_page = SettingsPage()
+    settings_page = SettingsPage(0,0)
     screen = pygame.display.set_mode((settings_page.window_width, settings_page.window_height))
     screen.fill("white")
     clock = pygame.time.Clock()

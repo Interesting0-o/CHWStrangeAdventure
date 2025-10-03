@@ -1,3 +1,4 @@
+from Save_Load import SaveLoad
 import pygame
 pygame.font.init()
 
@@ -22,6 +23,26 @@ class ResourceLoader:
     no_button_animation = [
         pygame.image.load(__file__[:-18] + rf"/resource/img/button/no_button/no_button_{i:02d}.png") for i in range(30)
     ]
+    close_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/close_button/close_button_{i:02d}.png") for i in range(30)
+    ]
+    frame_setting_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/frame_setting_button/frame_setting_button_{i:02d}.png") for i in range(30)
+    ]
+    #图标icon
+    voice = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice.png")
+    voice_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice_hover.png")
+
+    back = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back.png")
+    back_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back_hover.png")
+
+    next = pygame.image.load(__file__[:-18] + r"\resource\img\icon\next.png")
+    next_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\next_hover.png")
+
+    last = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last.png")
+    last_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last_hover.png")
+
+
 
     #游戏场景的背景
     library = pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
@@ -31,6 +52,10 @@ class ResourceLoader:
 
     #DemoCharacter资源
     demo_character_neutral = pygame.image.load(__file__[:-18] + r"/resource/characters/demoCharacter/img/neutral.png")
+    demo_character_voice ={
 
+    }
+    #游戏ui
+    big_ui = pygame.image.load(path + r"/resource/img/bg/SettingsPageBG.png")
 
 

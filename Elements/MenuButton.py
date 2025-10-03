@@ -127,6 +127,7 @@ if __name__ == '__main__':
     button = MenuButton(
         img,
         img_hover,
+        img.get_rect()
     )
     button.rect.center = (640, 360)
 

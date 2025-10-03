@@ -4,3 +4,4 @@ class Character:
         self.emotions = {}
         self.current_emotion = None
         self.gongluezhi = 0
+        self.Id = None

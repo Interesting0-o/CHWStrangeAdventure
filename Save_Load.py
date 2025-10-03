@@ -24,15 +24,15 @@ class SaveLoad:
                 number = number * 10 + int(file_name[i])
         return number
     
-    def __LoadImage_ofList(self, file_path:str, list:list, index:int):
-        list[index] = pygame.image.load(file_path)
+    def __LoadImage_ofList(self, file_path:str, tar_list, index:int):
+        tar_list[index] = pygame.image.load(file_path)
 
-    def LoadImage_fileDir(self, fileDir_path:str, list:list):
+    def LoadImage_fileDir(self, fileDir_path:str, tar_list):
         files_list = os.listdir(fileDir_path)
         for file in files_list:
             file_path = os.path.join(fileDir_path, file)
             if os.path.isfile(file_path):
-                self.pool.submit(self.__LoadImage_ofList, file_path, list, self.get_filename_index(file))
+                self.pool.submit(self.__LoadImage_ofList, file_path, tar_list, self.get_filename_index(file))
         self.pool.shutdown(wait=True)
         #EventBus.emit("load_image_finish")
         

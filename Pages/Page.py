@@ -18,6 +18,13 @@ class Page:
         pass
 
 
+    def handle_event(self, event):
+        """
+        子类实现事件处理方法
+        :param event:
+        :return:
+        """
+
     def draw(self):
         """
         子类实现绘制方法
