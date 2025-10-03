@@ -22,6 +22,12 @@ class ResourceLoader:
     no_button_animation = [
         pygame.image.load(__file__[:-18] + rf"/resource/img/button/no_button/no_button_{i:02d}.png") for i in range(30)
     ]
+    #图标icon
+    voice = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice.png")
+    voice_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice_hover.png")
+    back = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back.png")
+    back_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back_hover.png")
+
 
     #游戏场景的背景
     library = pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
@@ -31,6 +37,8 @@ class ResourceLoader:
 
     #DemoCharacter资源
     demo_character_neutral = pygame.image.load(__file__[:-18] + r"/resource/characters/demoCharacter/img/neutral.png")
+    demo_character_voice ={
 
+    }
 
 
