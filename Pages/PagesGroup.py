@@ -63,6 +63,15 @@ class PagesGroup:
                 print(f"页面{page.path}初始化失败：{e}")
                 exit()
 
+    def handle_event(self, event)->None:
+        """
+        处理事件
+        :param event:
+        :return:
+        """
+        for page in self.pages:
+            page.handle_event(event)
+
 
 
     def set_window_size(self, width:int, height:int)->None:

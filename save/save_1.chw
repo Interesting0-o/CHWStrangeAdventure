@@ -4,10 +4,9 @@
         "honor_value":0
     },
     "chapter_data":{
-        "chapter_1":"C1",
+        "chapter":"C1",
         "scene":"C1_1",
         "dialog_index":0
     },
     "bg":"library"
-
 }

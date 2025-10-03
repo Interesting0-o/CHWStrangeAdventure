@@ -189,3 +189,31 @@ class Button(pygame.sprite.Sprite):
                     self.index
                 ]
 
+
+    def is_pressed_down(self,event):
+        """
+        当button直接渲染在screen时
+        :param event:
+        :return:
+        """
+        if event.type ==pygame.MOUSEBUTTONDOWN and event.button ==1 and self.is_hovered():
+            self.pressed = True
+            return True
+        else:
+            self.pressed = False
+            return False
+
+    def is_pressed_down_blit(self,event,left_top:tuple):
+        """
+        当button需要blit到其他surface上时
+        :param event:
+        :param left_top:
+        :return:
+        """
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hovered_blit(left_top):
+            self.pressed = True
+            return True
+        else:
+            self.pressed = False
+            return False
+

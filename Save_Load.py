@@ -24,7 +24,7 @@ class SaveLoad:
                 number = number * 10 + int(file_name[i])
         return number
     
-    def __LoadImage_ofList(self, file_path:str, tar_list, index:int):
+    def __LoadImage_ofList(self, file_path:str, tar_list:tuple, index:int):
         tar_list[index] = pygame.image.load(file_path)
 
     def LoadImage_fileDir(self, fileDir_path:str, tar_list):

@@ -12,6 +12,8 @@ class ContentChapter(Chapter):
     def __init__(self):
         super().__init__()
         #场景记录
+        self.current_player_honor = None
+        self.current_chapter = None
         self.scene_record = []
         #玩家类
         self.current_player = None
@@ -89,37 +91,45 @@ class ContentChapter(Chapter):
         )
 
     def to_dict(self):
-        return{
-            "chapter": self.save_data["chapter"],
-            "scene": self.current_scene,
-            "dialog_index": self.dialog_index
+        return {
+            "player":{
+                "name" :self.current_player,
+                "honor_value":self.current_player_honor,
+            },
+            "chapter_data":{
+                "chapter":self.current_chapter,
+                "scene":self.current_scene,
+                "dialog_index":self.dialog_index,
+            },
+            "bg":self.config[self.current_scene]['bg']
         }
 
 
     def read_config(self,
         save_data,  # 存档数据
         character_group: CharacterGroup,  # 角色组
-        current_player: Player# 玩家
                     ):
         #玩家引用
-        self.current_player = current_player
+        self.current_player = save_data["player"]["name"]
+        self.current_player_honor = save_data["player"]["honor_value"]
         #存档数据
         self.save_data = save_data
-        self.current_scene = save_data["scene"]
+        self.current_scene = save_data["chapter_data"]["scene"]
         self.scene_record.append(self.current_scene)
-        self.dialog_index = save_data["dialog_index"]
+        self.dialog_index = save_data["chapter_data"]["dialog_index"]
         #角色组
         self.character_group = character_group
+        self.current_chapter = save_data["chapter_data"]["chapter"]
 
-        self.display_surface = pygame.display.get_surface()
-        with open(self.path[:-9] + f"/data/{self.save_data["chapter"]}.json", "r",encoding="utf-8") as f:
+
+        with open(self.path[:-9] + f"/data/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
             self.config = json.load(f)
 
 
 
     def init(self):
 
-
+        self.display_surface = pygame.display.get_surface()
         # 选项框初始化
         self.choice_bg = pygame.surface.Surface((self.window_width*0.6, self.window_height*0.10))
         self.choice_bg.fill("green")
@@ -289,7 +299,7 @@ class ContentChapter(Chapter):
                 #人物名字渲染
                 if speaker != "旁白":
                     if speaker =="player":
-                        speaker_name = ResourceLoader.font_MiSans_Demibold36.render(self.current_player.name+":", True, "white")
+                        speaker_name = ResourceLoader.font_MiSans_Demibold36.render(self.current_player+":", True, "white")
                     else:
                         speaker_name = ResourceLoader.font_MiSans_Demibold36.render(speaker+":", True, "white")
                     self.dialog_bg_copy.blit(speaker_name,(
@@ -358,15 +368,24 @@ class ContentChapter(Chapter):
 
 
 
-
-
-
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock =pygame.time.Clock()
 
-    save_datas = {"chapter": "C1", "scene": "C1_1", "dialog_index": 0}
+    save_datas = {"player":
+                      {
+                          "name": "陈海文",
+                          "honor_value": 0
+
+                      },
+                  "chapter_data":
+                      {
+                      "chapter": "C1",
+                      "scene": "C1_1",
+                      "dialog_index": 0
+                        }
+                  }
 
     demo = DemoCharacter()
 
@@ -377,7 +396,7 @@ if __name__ == '__main__':
     char_group.add_character(demo)
 
     content_chapter = ContentChapter()
-    content_chapter.read_config(save_datas, char_group, player)
+    content_chapter.read_config(save_datas, char_group)
     content_chapter.init()
 
 
@@ -389,5 +408,5 @@ if __name__ == '__main__':
                 exit()
             content_chapter.handle_event(event)
         content_chapter.show()
-        print(content_chapter.dialog_index)
+
         pygame.display.update()

@@ -2,6 +2,7 @@ import pygame
 from settings import Settings
 from Pages.Page import Page
 from Elements.Button import Button
+from ResourceLoader import ResourceLoader
 
 class StartPage(Page):
     def __init__(self):
@@ -34,46 +35,23 @@ class StartPage(Page):
 
         #按钮初始化
         if True:
-            self.start_button =Button(pygame.image.load(
-                self.path[:-6] + r"/resource/img/button/start_button/Start_button_100.png"))
-            self.load_button = Button(pygame.image.load(
-                self.path[:-6]+r"/resource/img/button/load_button/load_button.png"
-            ))
-            self.quit_button = Button(pygame.image.load(
-                self.path[:-6]+r"/resource/img/button/quit_button/quit_button.png"
-            ))
-            self.settings_button = Button(pygame.image.load(
-                self.path[:-6]+r"/resource/img/button/settings_button/settings_button.png"
-            ))
+            self.start_button =Button(ResourceLoader.start_button_animation[0])
+            self.load_button = Button(ResourceLoader.load_button_animation[0])
+            self.quit_button = Button(ResourceLoader.quit_button_animation[0])
+            self.settings_button = Button(ResourceLoader.settings_button_animation[0])
+
             # 载入Button动画
-            for i in range(30):
-                self.start_button.animation_list.append(
-                    pygame.image.load(
-                        self.path[:-6]+rf"/resource/img/button/start_button/Start_button_1{i:02d}.png"
-                    ))
-                self.load_button.animation_list.append(
-                    pygame.image.load(
-                        self.path[:-6]+rf"/resource/img/button/load_button/load_button_{i:02d}.png"
-                    ))
-                self.quit_button.animation_list.append(
-                    pygame.image.load(
-                        self.path[:-6]+rf"/resource/img/button/quit_button/quit_button_{i:02d}.png"
-                    ))
-                self.settings_button.animation_list.append(
-                    pygame.image.load(
-                        self.path[:-6]+rf"/resource/img/button/settings_button/settings_button_{i:02d}.png"
-                    ))
+            self.start_button.animation_list = ResourceLoader.start_button_animation
+            self.load_button.animation_list = ResourceLoader.load_button_animation
+            self.quit_button.animation_list = ResourceLoader.quit_button_animation
+            self.settings_button.animation_list = ResourceLoader.settings_button_animation
+
             self.button_group.add(
                 self.start_button,
                 self.load_button,
                 self.settings_button,
                 self.quit_button,
             )
-
-
-
-
-
 
     def init(self):
         self.display_surface = pygame.display.get_surface()
@@ -84,8 +62,6 @@ class StartPage(Page):
         self.load_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+70)
         self.quit_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+210)
         self.settings_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+140)
-
-
 
         #按钮选项框绘制
         self.buttons_bg_rect = self.buttons_bg.get_rect(center = (

@@ -1,4 +1,6 @@
 import pygame
+
+from Pages.TextPage import TextPage
 from ResourceLoader import ResourceLoader
 from Elements.Button import Button
 from Elements.MenuButton import MenuButton
@@ -9,10 +11,15 @@ from SaveManager import SaveManager
 class LoadGamePage(Page):
     def __init__(self):
         super().__init__()
+        self.load_save_done = False
+        self.current_save_data = None
+        self.load_text_start = False
+
         #存档资源
 
         self.current_page_text_rect = None
         self.current_page_text = None
+        self.text_bg = None
         self.save_data = None
         #黑场资源
         self.black_surface_alpha =0
@@ -53,10 +60,15 @@ class LoadGamePage(Page):
         self.page_num = 1
         self.save_surfaces = []
 
+        #弹出页面
+        self.load_text_page = TextPage("是否载入存档")
+
     def save_load(self,save_data:dict):
         self.save_data = save_data
 
     def init(self):
+
+        self.load_text_page.init()
         self.display_surface =pygame.display.get_surface()
 
         #黑场初始化
@@ -137,9 +149,32 @@ class LoadGamePage(Page):
         #当前页数
         self.current_page_text = ResourceLoader.font_loliti36.render("Page "+str(self.page_num), True, "black")
         self.current_page_text_rect = self.current_page_text.get_rect(midtop=(self.window_width*0.5,self.window_height*0.1))
+        self.text_bg = pygame.surface.Surface(self.current_page_text_rect.size)
+        self.text_bg.fill("white")
 
     def handle_event(self, event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.next_button.rect.collidepoint(event.pos):
+                    if len(self.save_data)//6 +1 >self.page_num :
+                        self.page_num += 1
+                        self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
+                                                                                     "black")
+                elif self.last_button.rect.collidepoint(event.pos):
+                    if self.page_num > 1:
+                        self.page_num -= 1
+                        self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
+                                                                                     "black")
+                for i in range((self.page_num - 1) * 6, self.page_num * 6):
+                    if self.save_surfaces[i].rect.collidepoint(event.pos):
+                        if i < len(self.save_data):
+                            if self.save_data[list(self.save_data.keys())[i]] != "Error":
+                                print("click")
+                                if self.load_text_page.yes_button_value:
+                                    self.current_save_data = self.save_data[list(self.save_data.keys())[i]]
+                                    self.load_save_done = True
+                                self.load_text_start = True
+
 
     def draw(self):
         # 黑场进入
@@ -173,6 +208,7 @@ class LoadGamePage(Page):
         # 画面元素渲染
         self.display_surface.blit(self.black_surface, (0, 0))
         self.display_surface.blit(self.bg_copy, (0, self.bg_h))
+        self.bg_copy.blit(self.text_bg, self.current_page_text_rect)
         self.bg_copy.blit(self.current_page_text, self.current_page_text_rect)
 
         # 存档视图渲染
@@ -180,12 +216,21 @@ class LoadGamePage(Page):
             self.bg_copy.blit(self.save_surfaces[i].img, self.save_surfaces[i].rect)
             self.save_surfaces[i].hover_animation_blit((0, self.bg_h))
 
+
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
             self.close_button_value = True
 
         self.next_button.hover_animation_blit((0, self.bg_h))
         self.last_button.hover_animation_blit((0, self.bg_h))
+
+        if self.load_text_start:
+            self.load_text_page.draw()
+
+        if self.load_text_page.is_end:
+            self.load_text_page.is_end = False
+            self.load_text_start = False
+            self.load_text_page.no_button_value = False
 
 
 
@@ -208,6 +253,7 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            page.handle_event(event)
         screen.fill("white")
         page.draw()
         pygame.display.update()

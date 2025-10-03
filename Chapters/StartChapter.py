@@ -92,6 +92,7 @@ class StartChapter(Chapter):
     def show(self,player:Player):
         if not self.is_end:
             #背景显示
+            self.display_surface.fill("black")
             self.display_surface.blit(self.bg, self.bg_rect)
             self.input_box.draw(self.display_surface)
             #按钮显示
@@ -115,6 +116,7 @@ if __name__ == '__main__':
     start_chapter = StartChapter()
     start_chapter.init()
 
+    player = Player()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

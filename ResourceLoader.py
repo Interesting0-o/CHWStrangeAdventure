@@ -29,6 +29,19 @@ class ResourceLoader:
     frame_setting_button_animation = [
         pygame.image.load(__file__[:-18] + rf"/resource/img/button/frame_setting_button/frame_setting_button_{i:02d}.png") for i in range(30)
     ]
+    start_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/start_button/start_button_1{i:02d}.png") for i in range(30)
+    ]
+    settings_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/settings_button/settings_button_{i:02d}.png") for i in range(30)
+    ]
+    load_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/load_button/load_button_{i:02d}.png") for i in range(30)
+    ]
+    quit_button_animation = [
+        pygame.image.load(__file__[:-18] + rf"/resource/img/button/quit_button/quit_button_{i:02d}.png") for i in range(30)
+    ]
+
     #图标icon
     voice = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice.png")
     voice_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice_hover.png")
