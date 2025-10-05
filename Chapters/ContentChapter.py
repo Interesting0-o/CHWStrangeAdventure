@@ -166,7 +166,7 @@ class ContentChapter(Chapter):
         )
         self.choice_hover_bg.set_colorkey("green")
 
-        self.current_bg = eval(f"ResourceLoader.{self.config[self.current_scene]['bg']}")
+        self.current_bg = ResourceLoader.background[self.config[self.current_scene]['bg']]
         self.current_bg_copy = self.current_bg.copy()
         self.current_bg = pygame.transform.scale(self.current_bg_copy, (self.window_width, self.window_height))
 

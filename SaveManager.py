@@ -12,11 +12,11 @@ class SaveManager:
             "honor_value": 0
         },
         "chapter_data": {
-            "chapter_1": "C1",
+            "chapter": "C1",
             "scene": "C1_1",
             "dialog_index": 0,
         },
-        "bg": None
+        "bg": "library"
     }
     path = __file__[:-14]
 
@@ -42,7 +42,7 @@ class SaveManager:
 
 
     def save_save_data(self,data:dict):
-        current_time = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+        current_time = str(datetime.datetime.now().strftime("%Y-%m-%d"))
         save_name = data["player"]["name"] + current_time
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)

@@ -11,6 +11,7 @@ from SaveManager import SaveManager
 class LoadGamePage(Page):
     def __init__(self):
         super().__init__()
+        self.current_save_data_index = None
         self.load_save_done = False
         self.current_save_data = None
         self.load_text_start = False
@@ -20,7 +21,7 @@ class LoadGamePage(Page):
         self.current_page_text_rect = None
         self.current_page_text = None
         self.text_bg = None
-        self.save_data = None
+        self.save_data = {}
         #黑场资源
         self.black_surface_alpha =0
         self.black_surface = None
@@ -64,6 +65,7 @@ class LoadGamePage(Page):
         self.load_text_page = TextPage("是否载入存档")
 
     def save_load(self,save_data:dict):
+        self.save_data.clear()
         self.save_data = save_data
 
     def init(self):
@@ -111,7 +113,9 @@ class LoadGamePage(Page):
                     text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4],True,"white")
                     text_rect = text.get_rect(midbottom=(self.window_width*0.1,self.window_height*0.15))
                     temp = save_surface_bg.copy()
-                    bg_copy_ = pygame.transform.scale(eval("ResourceLoader."+self.save_data[keys[i]]["bg"]).copy(),((self.window_width*0.2,self.window_height*0.3)))
+                    print(self.save_data[keys[i]] ["bg"])
+                    bg_copy_ = pygame.transform.scale(ResourceLoader.background[self.save_data[keys[i]] ["bg"]].copy(),
+                                                      (self.window_width * 0.2, self.window_height * 0.3))
                     temp.blit(bg_copy_,(0,0))
                     temp.blit(text,text_rect)
                     temp.set_colorkey("green")
@@ -170,10 +174,19 @@ class LoadGamePage(Page):
                         if i < len(self.save_data):
                             if self.save_data[list(self.save_data.keys())[i]] != "Error":
                                 print("click")
-                                if self.load_text_page.yes_button_value:
-                                    self.current_save_data = self.save_data[list(self.save_data.keys())[i]]
-                                    self.load_save_done = True
+                                # if self.load_text_page.yes_button_value:
+                                #     print(self.current_save_data)
+                                #     self.current_save_data = self.save_data[list(self.save_data.keys())[i]]
+                                #     self.load_save_done = True
+                                self.current_save_data_index = i
                                 self.load_text_start = True
+        #当再次询问界面启动
+        if self.load_text_start:
+
+            #弹出界面点击确定时
+            if self.load_text_page.yes_button_value:
+                self.current_save_data = self.save_data[list(self.save_data.keys())[self.current_save_data_index]]
+                print(self.current_save_data)
 
 
     def draw(self):

@@ -58,7 +58,10 @@ class ResourceLoader:
 
 
     #游戏场景的背景
-    library = pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
+    background = {
+        "library": pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
+    }
+
 
     #对话款背景
     dialog_bg = pygame.image.load(__file__[:-18] + r"\resource\img\BG\DialogBG.png")
