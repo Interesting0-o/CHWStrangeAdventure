@@ -37,7 +37,7 @@ class QuitPage(Page):
 
         self.display_surface =pygame.display.get_surface()
         #黑场资源
-        self.black_bg = pygame.Surface((self.window_width, self.window_height))
+        self.black_bg = pygame.Surface((3840,2160))
         self.black_bg.fill((0,0,0))
         self.black_bg_alpha = 0
         #背景资源

@@ -32,6 +32,13 @@ class Page:
         """
         pass
 
+    def renew(self):
+        """
+        子类实现刷新方法
+        :return:
+        """
+        pass
+
     def rect_show(self,rect:pygame.Rect):
         """
         显示碰撞矩形

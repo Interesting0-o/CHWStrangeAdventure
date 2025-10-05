@@ -6,7 +6,8 @@ class Settings:
     position = {
         "left":0.3,
         "center":0.5,
-        "right":0.7
+        "right":0.7,
+        "out": 2
     }
 
     screen_size = [

@@ -46,7 +46,7 @@ class SettingsPage(Page):
         :return:
         """
         #黑场初始化
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
+        self.black_surface = pygame.Surface((3840, 2160))
         self.black_surface.set_alpha(self.black_surface_alpha)
         #背景初始化
         self.display_surface = pygame.display.get_surface()

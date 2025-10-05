@@ -66,7 +66,7 @@ class LoadGamePage(Page):
 
     def save_load(self,save_data:dict):
         self.save_data.clear()
-        self.save_data = save_data
+        self.save_data = save_data.copy()
 
     def init(self):
 
@@ -74,7 +74,7 @@ class LoadGamePage(Page):
         self.display_surface =pygame.display.get_surface()
 
         #黑场初始化
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
+        self.black_surface = pygame.Surface((3840,2160))
         self.black_surface.set_alpha(self.black_surface_alpha)
 
         #背景初始化
@@ -113,7 +113,6 @@ class LoadGamePage(Page):
                     text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4],True,"white")
                     text_rect = text.get_rect(midbottom=(self.window_width*0.1,self.window_height*0.15))
                     temp = save_surface_bg.copy()
-                    print(self.save_data[keys[i]] ["bg"])
                     bg_copy_ = pygame.transform.scale(ResourceLoader.background[self.save_data[keys[i]] ["bg"]].copy(),
                                                       (self.window_width * 0.2, self.window_height * 0.3))
                     temp.blit(bg_copy_,(0,0))
@@ -173,11 +172,6 @@ class LoadGamePage(Page):
                     if self.save_surfaces[i].rect.collidepoint(event.pos):
                         if i < len(self.save_data):
                             if self.save_data[list(self.save_data.keys())[i]] != "Error":
-                                print("click")
-                                # if self.load_text_page.yes_button_value:
-                                #     print(self.current_save_data)
-                                #     self.current_save_data = self.save_data[list(self.save_data.keys())[i]]
-                                #     self.load_save_done = True
                                 self.current_save_data_index = i
                                 self.load_text_start = True
         #当再次询问界面启动
@@ -186,7 +180,6 @@ class LoadGamePage(Page):
             #弹出界面点击确定时
             if self.load_text_page.yes_button_value:
                 self.current_save_data = self.save_data[list(self.save_data.keys())[self.current_save_data_index]]
-                print(self.current_save_data)
 
 
     def draw(self):
@@ -198,7 +191,6 @@ class LoadGamePage(Page):
                 self.bg_h += 5
                 self.bg_alpha += 21
                 self.bg_copy.set_alpha(self.bg_alpha)
-                print(self.bg_alpha)
         else:
             # 设置页面消失动画
             if self.black_surface_alpha > 0:
@@ -206,7 +198,6 @@ class LoadGamePage(Page):
                 self.black_surface.set_alpha(self.black_surface_alpha)
                 self.bg_h -= 5
                 self.bg_alpha -= 21
-                print(self.bg_alpha)
                 self.bg_copy.set_alpha(self.bg_alpha)
                 if self.bg_alpha <= 0:
                     self.is_end = True
@@ -259,7 +250,6 @@ if __name__ == '__main__':
     page.save_load(save_manager.save_datas)
     page.init()
 
-    print(save_manager.save_datas)
     while True:
         clock.tick(60)
         for event in pygame.event.get():

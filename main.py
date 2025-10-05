@@ -2,7 +2,6 @@ import pygame
 import sys
 from SaveManager import SaveManager
 from settings import Settings
-
 from OpenAnimation import OpenAnimation
 from Pages import *
 from Characters import *
@@ -15,7 +14,9 @@ class Game:
     def __init__(self):
 
 
+        self.current_save_name = None
         self.current_save = None
+
         self.is_create_save = False
         self.is_load_save = False
 
@@ -69,6 +70,7 @@ class Game:
         )
         self.quit_page = QuitPage()
         self.load_page = LoadGamePage()
+        self.pause_page = PausePage()
         
 
         #初始化页面组
@@ -78,11 +80,11 @@ class Game:
                                  self.quit_page,
                                  self.load_page,
                                  self.start_text_page,
+                                 self.pause_page
                                  )
 
         #载入存档数据
         self.load_page.save_load(self.save_manager.save_datas)
-
 
         #初始化角色
         self.player = Player()
@@ -93,7 +95,8 @@ class Game:
         #初始化章节
         self.content_chapter = ContentChapter()
         self.start_chapter = StartChapter()
-        self.start_chapter.init()
+
+
 
 
     def init(self):
@@ -118,26 +121,21 @@ class Game:
         if not self.start_page.is_end:
             #开始页面事件
             if self.start_page.start_button.is_pressed_down(event):
-                # print(self.start_text_page_start,self.start_page.is_end)
-                print("开始游戏")
                 self.start_text_page_start = True
                 self.start_page.is_end = True
 
             #退出页面事件
             elif self.start_page.quit_button.is_pressed_down(event):
-                print("退出游戏")
                 self.quit_page_start = True
                 self.start_page.is_end = True
 
             #设置页面事件
             elif self.start_page.settings_button.is_pressed_down(event):
-                print("设置页面")
                 self.settings_page_start = True
                 self.start_page.is_end = True
 
             #载入页面事件
             elif self.start_page.load_button.is_pressed_down(event):
-                print("载入页面")
                 self.load_page_start = True
                 self.start_page.is_end = True
 
@@ -159,35 +157,38 @@ class Game:
                         #创建存档
                         self.current_save = self.save_manager.init_save.copy()
                         self.current_save["player"]["name"] = self.player.name
-                        #存档数据保存到硬盘
-                        self.save_manager.save_save_data(self.current_save)
+                        #存档数据保存到硬盘并重置save_manager
+                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
                         #初始化载入页面
-                        self.save_manager.init_save_data()
                         self.load_page.save_load(self.save_manager.save_datas)
-                        print(self.save_manager.save_datas)
                         self.load_page.init()
                         self.is_create_save = True
-
-                #处理事件
+                #处理内容章节事件
                 if self.is_content_init and self.is_content_load:
                     self.content_chapter.handle_event(event)
+                    #处理存档事件
+                    if self.content_chapter.save_saves:
+                        self.save_manager.delete_save_data(self.current_save_name)
+                        self.current_save = self.content_chapter.to_dict()
+                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
+
 
             #通过载入按钮来开始游戏
             if self.game_start_load:
                 #载入存档
                 if not self.is_load_save:
                     self.current_save = self.load_page.current_save_data
-                    print(self.current_save)
                     self.is_load_save = True
 
-                #处理事件
+                #处理内容章节事件
                 if self.is_content_init and self.is_content_load:
                     self.content_chapter.handle_event(event)
-
-
-
-
+                    #处理存档事件
+                    if self.content_chapter.save_saves:
+                        self.save_manager.delete_save_data(self.current_save_name)
+                        self.current_save = self.content_chapter.to_dict()
+                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
 
     def renew_page(self,text_page):
@@ -205,12 +206,17 @@ class Game:
     def run(self):
         #初始化开头动画
         self.open_animation.init()
-        black_scr = pygame.Surface((self.window_width ,self.window_height))
+        black_scr = pygame.Surface((3840 ,2160))
         black_scr_alpha = 255
 
         #初始化页面
         self.page_group.set_window_size(self.window_width, self.window_height)#设置页面大小
         self.page_group.pages_init()#初始化页面
+
+        self.start_page.set_window_size(self.window_width, self.window_height)
+        self.start_page.init()
+        self.content_chapter.set_window_size(self.window_width, self.window_height)
+        self.start_chapter.init()
 
 
 
@@ -246,10 +252,22 @@ class Game:
                     json.dump(self.setting_date, f, ensure_ascii=False, indent=4)
                 self.settings_page.frame_setting.isSettingsChange = False
 
-                #重置页面大小
+                #重置页面大小并初始化
                 self.page_group.set_window_size(Settings.screen_size[temp_screen_size_index][0],
                                                 Settings.screen_size[temp_screen_size_index][1])
+
                 self.page_group.pages_init()#初始化页面
+
+                #重置章节大小并初始化
+                self.start_chapter.set_window_size(Settings.screen_size[temp_screen_size_index][0],
+                                                    Settings.screen_size[temp_screen_size_index][1])
+                self.start_chapter.init()
+                #重置内容大小并初始化
+                self.content_chapter.set_window_size(Settings.screen_size[temp_screen_size_index][0],
+                                                    Settings.screen_size[temp_screen_size_index][1])
+                if self.is_content_load and self.is_content_init:
+                    self.content_chapter.init()
+
 
             #开平动画绘制
             self.open_animation.draw()
@@ -308,33 +326,25 @@ class Game:
                 self.start_page.is_end = True
                 self.start_chapter.show(self.player)
                 if self.is_create_save:
-                    print("23")
                     if not self.is_content_load:
-                        print("载入内容")
                         self.content_chapter.read_config(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
-                        print("初始化内容")
                         self.content_chapter.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
-                        print("游戏开始")
                         self.content_chapter.show()
 
             #通过载入存档来开始游戏
             if self.game_start_load:
                 if self.is_load_save:
-                    print("23")
                     if not self.is_content_load:
-                        print("载入内容")
                         self.content_chapter.read_config(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
-                        print("初始化内容")
                         self.content_chapter.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
-                        print("游戏开始")
                         self.content_chapter.show()
 
 

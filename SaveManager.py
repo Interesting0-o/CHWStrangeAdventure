@@ -30,32 +30,33 @@ class SaveManager:
                 self.save_datas[file] = data
         except Exception as e:
             self.save_datas[file] = "Error"
-
+    #读取保存游戏数据
     def init_save_data(self):
         for file in os.listdir(self.path+'save'):
             t = threading.Thread(target=self.thread_read, args=(file,))
             t.start()
-
+    #删除保存游戏数据
     def delete_save_data(self, save_name):
-        os.remove(self.path+f"save/{self.save_datas[save_name]}.chw")
-        self.save_datas.pop(save_name)
+        os.remove(self.path+f"save/{save_name}.chw")
+        self.save_datas.pop(save_name+".chw")
 
-
+    #保存游戏数据
     def save_save_data(self,data:dict):
         current_time = str(datetime.datetime.now().strftime("%Y-%m-%d"))
         save_name = data["player"]["name"] + current_time
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
-        self.save_datas[save_name] = save_name
+        self.save_datas[save_name+".chw"] = data
         return save_name
 
-    def auto_save(self,data:dict):
-        current_time = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-        save_name = data["player"]["name"] + current_time + "(自动保存)"
+    #覆盖保存游戏数据
+    def cover_save_data(self,data:dict):
+        save_name = data["player"]["name"] + str(datetime.datetime.now().strftime("%Y-%m-%d"))
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         self.save_datas[save_name] = save_name
         return save_name
+
 
 if __name__ == '__main__':
     save_manager = SaveManager()

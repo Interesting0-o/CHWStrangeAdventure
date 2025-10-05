@@ -1,6 +1,5 @@
 import pygame
 import json
-import threading
 from Chapters.Chapter import Chapter
 from ResourceLoader import ResourceLoader
 from settings import Settings
@@ -11,7 +10,18 @@ from Characters import *
 class ContentChapter(Chapter):
     def __init__(self):
         super().__init__()
+
+        #保存
+        self.save_saves = False
+        #按钮类
+
+        self.voice_button = None
+        self.back_button = None
+        self.save_button = None
+
         #场景记录
+
+        self.is_button_on = False
         self.current_player_honor = None
         self.current_chapter = None
         self.scene_record = []
@@ -56,39 +66,13 @@ class ContentChapter(Chapter):
         #选项条件重载
         self.is_choice_reloads = True
 
-        #预加载音频资源
-        self.voice_dic = {}
+        #音频资源
         self.is_voice_on = True
         self.current_voice = None
         self.is_voice = False
 
-        #音频处理线程
-        self.t = None
 
-        #音频重播按钮
-        voice = ResourceLoader.voice
-        voice = pygame.transform.scale(voice, (50, 50))
-        voice_bg_hover = ResourceLoader.voice_hover
-        voice_bg_hover = pygame.transform.scale(voice_bg_hover, (50, 50))
-        #按钮处理
-        self.is_button_on = False
-        # 音频按钮
-        self.voice_button = MenuButton(
-            voice,
-            voice_bg_hover,
-            voice.get_rect(center=(self.window_width*0.9,self.window_height*0.92))
-        )
 
-        #回退按钮
-        back = ResourceLoader.back
-        back = pygame.transform.scale(back, (50, 50))
-        back_bg_hover = ResourceLoader.back_hover
-        back_bg_hover = pygame.transform.scale(back_bg_hover, (50, 50))
-        self.back_button = MenuButton(
-            back,
-            back_bg_hover,
-            back.get_rect(center=(self.window_width*0.9 -50,self.window_height*0.92))
-        )
 
     def to_dict(self):
         return {
@@ -174,8 +158,43 @@ class ContentChapter(Chapter):
         #对话框处理
         self.dialog_scale = pygame.transform.scale(self.dialog_bg, (self.window_width, self.window_height))
 
-        #音频预加载
-        self.thread_read()
+        #按钮处理
+        self.is_button_on = False
+
+
+        #音频重播按钮
+        voice = ResourceLoader.voice
+        voice = pygame.transform.scale(voice, (50, 50))
+        voice_bg_hover = ResourceLoader.voice_hover
+        voice_bg_hover = pygame.transform.scale(voice_bg_hover, (50, 50))
+
+        self.voice_button = MenuButton(
+            voice,
+            voice_bg_hover,
+            voice.get_rect(center=(self.window_width*0.9,self.window_height*0.92))
+        )
+
+        #回退按钮
+        back = ResourceLoader.back
+        back = pygame.transform.scale(back, (50, 50))
+        back_bg_hover = ResourceLoader.back_hover
+        back_bg_hover = pygame.transform.scale(back_bg_hover, (50, 50))
+        self.back_button = MenuButton(
+            back,
+            back_bg_hover,
+            back.get_rect(center=(self.window_width*0.9 -50,self.window_height*0.92))
+        )
+        #保存按钮
+        save = ResourceLoader.save
+        save = pygame.transform.scale(save, (50, 50))
+        save_bg_hover = ResourceLoader.save_hover
+        save_bg_hover = pygame.transform.scale(save_bg_hover, (50, 50))
+        self.save_button = MenuButton(
+            save,
+            save_bg_hover,
+            save.get_rect(center=(self.window_width*0.9 +50,self.window_height*0.92))
+        )
+
 
 
 
@@ -187,16 +206,19 @@ class ContentChapter(Chapter):
         if self.back_button.is_hovered():
             self.is_button_on = True
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                print("back")
-                print( self.dialog_index)
                 if self.dialog_index >0:
                     self.dialog_index -=1
-                    print("setup")
         #音频播放
         elif self.voice_button.is_hovered():
             self.is_button_on = True
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.is_voice_on = True
+        elif self.save_button.is_hovered():
+            self.is_button_on = True
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.save_saves = True
+            else:
+                self.save_saves = False
         else :
             self.is_button_on = False
 
@@ -209,24 +231,12 @@ class ContentChapter(Chapter):
         if not (self.is_choosing or self.is_button_on):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    print("mouse down")
                     self.next_text_event = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                     self.next_text_event = True
             else:
                 self.next_text_event = False
-
-    def thread_read(self):
-        for i in range(len(self.config[self.current_scene]["dialogues"])):
-            if self.config[self.current_scene]["dialogues"][i]["type"]=="dialogue":
-                speaker = self.config[self.current_scene]["dialogues"][i]["speaker"]
-
-                if speaker != "旁白" and speaker !="player":
-                    voice = self.config[self.current_scene]["dialogues"][i]["character"]["voice"]
-                    self.voice_dic[voice] = pygame.mixer.Sound(
-                        self.path[:-9] + rf"/resource/characters/{speaker}/voice/{voice}.wav"
-                    )
 
 
 
@@ -264,16 +274,12 @@ class ContentChapter(Chapter):
                     ))
 
 
-            #判断当前索引是否大于对话框长度
+            #判断当前对话片段是否结束
             if self.dialog_index > len(self.config[self.current_scene]["dialogues"]) - 1:
                 self.current_scene = self.config[self.current_scene]["next_scene"]
                 self.scene_record.append(self.current_scene)
                 self.dialog_index = 0
-                if self.current_scene in self.config:
-                    # 音频资源清理，并开启音频处理线程
-                    self.t = threading.Thread(target=self.thread_read)
-                    self.t.start()
-                else:
+                if self.current_scene not in self.config:
                     self.is_chapter_end = True
 
             #判断当前对话框类型是否为dialogue
@@ -310,7 +316,7 @@ class ContentChapter(Chapter):
                 if  self.is_voice_on:
                     if speaker != "旁白" and speaker !="player":
                         voice_id = self.config[self.current_scene]["dialogues"][self.dialog_index]["character"]["voice"]
-                        self.current_voice = self.voice_dic[voice_id]
+                        self.current_voice = pygame.mixer.Sound((self.path[:-9]+rf"\resource\sound\voice\{voice_id}.wav"))
                         self.current_voice.play()
                         self.is_voice_on = False
                         self.is_voice = True
@@ -352,19 +358,20 @@ class ContentChapter(Chapter):
                         self.dialog_index = 0
 
                         #结束判断
-                        if self.current_scene  in self.config:
-                            # 音频资源清理，并开启音频处理线程
-                            self.t = threading.Thread(target=self.thread_read)
-                            self.t.start()
-                        else:
+                        if self.current_scene not in self.config:
                             self.is_chapter_end = True
+
         # 对话框渲染
         self.display_surface.blit(self.dialog_bg_copy, (0, 0))
 
+
+        #按钮渲染
         self.voice_button.hover_animation()
         self.display_surface.blit(self.back_button.img, self.back_button.rect)
         self.back_button.hover_animation()
         self.display_surface.blit(self.voice_button.img, self.voice_button.rect)
+        self.save_button.hover_animation()
+        self.display_surface.blit(self.save_button.img, self.save_button.rect)
 
 
 
@@ -408,5 +415,7 @@ if __name__ == '__main__':
                 exit()
             content_chapter.handle_event(event)
         content_chapter.show()
+        if content_chapter.is_chapter_end:
+            print("都结束了，")
 
         pygame.display.update()

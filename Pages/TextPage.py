@@ -25,12 +25,8 @@ class TextPage(Page):
         self.text_window_rect = None
 
         #按钮资源
-        self.yes_button = Button(pygame.image.load(
-            self.path[:-6]+r"/resource/img/button/yes_button/yes_button_00.png"
-        ))
-        self.no_button = Button(pygame.image.load(
-            self.path[:-6]+r"/resource/img/button/no_button/no_button_00.png"
-        ))
+        self.yes_button = Button(ResourceLoader.yes_button_animation[0])
+        self.no_button = Button(ResourceLoader.no_button_animation[0])
         #按钮动画添加
         self.yes_button.animation_list = ResourceLoader.yes_button_animation
         self.no_button.animation_list = ResourceLoader.no_button_animation
@@ -39,11 +35,23 @@ class TextPage(Page):
         self.buttons_group.add(self.yes_button, self.no_button)
 
 
+    def renew(self):
+        #按钮动画重置
+        self.yes_button_value = False
+        self.no_button_value = False
+        #
+        self.is_end = False
+        #文本窗口重置
+        self.text_window_alpha = 0
+
+
+
+
     def init(self):
 
         self.display_surface =pygame.display.get_surface()
         #黑场资源
-        self.black_bg = pygame.Surface((self.window_width, self.window_height))
+        self.black_bg = pygame.Surface((3840, 2160))
         self.black_bg.fill((0,0,0))
         self.black_bg_alpha = 0
         #背景资源
@@ -119,5 +127,7 @@ if __name__ == '__main__':
                 exit()
         screen.fill((255, 255, 255))
         game.draw()
+        if game.is_end:
+            game.renew()
         pygame.display.update()
         clock.tick(60)

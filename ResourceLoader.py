@@ -15,11 +15,12 @@ class ResourceLoader:
     #对话框
     dialog_box = pygame.image.load(__file__[:-18] +r"\resource\img\bg\DialogBox.png")
 
+
+
     #按钮
     yes_button_animation = [
         pygame.image.load(__file__[:-18] +rf"/resource/img/button/yes_button/yes_button_{i:02d}.png") for i in range(30)
     ]
-
     no_button_animation = [
         pygame.image.load(__file__[:-18] + rf"/resource/img/button/no_button/no_button_{i:02d}.png") for i in range(30)
     ]
@@ -54,6 +55,12 @@ class ResourceLoader:
 
     last = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last.png")
     last_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last_hover.png")
+
+    pause = pygame.image.load(__file__[:-18] + r"\resource\img\icon\pause.png")
+    pause_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\pause_hover.png")
+
+    save = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save.png")
+    save_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save_hover.png")
 
 
 

@@ -20,7 +20,7 @@ class PausePage(Page):
         self.is_black_end = False
 
         #黑场进行设置
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
+        self.black_surface = pygame.Surface((3840,2160))
         self.black_surface.fill((0, 0, 0))
         self.black_surface_alpha = 0
 
@@ -103,7 +103,6 @@ class PausePage(Page):
         self.display_surface = pygame.display.get_surface()
 
         #黑场初始化
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
         self.black_surface.set_alpha(self.black_surface_alpha)
 
         #使用bg_copy作为背景
@@ -119,22 +118,29 @@ class PausePage(Page):
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
+                #按钮按下事件
+                #判断继续按钮是否被按下
                 if self.continue_game_button.is_pressed_down_blit((self.window_width//2-180, self.window_height//2-260+self.bg_h), True):
                     self.continue_button_value = True
-                else :
-                    self.continue_button_value = False
+
+
+                #判断设置按钮是否被按下
                 if self.setting_button.is_pressed_down_blit((self.window_width//2-180, self.window_height//2-260+self.bg_h), True):
                     self.setting_button_value = True
-                else :
-                    self.setting_button_value = False
+
+
+                #判断返回按钮是否被按下
                 if self.back_button.is_pressed_down_blit((self.window_width//2-180, self.window_height//2-260+self.bg_h), True):
                     self.back_button_value = True
-                else :
-                    self.back_button_value = False
+
+                #判断载入存档按钮是否被按下
                 if self.load_button.is_pressed_down_blit((self.window_width//2-180, self.window_height//2-260+self.bg_h), True):
                     self.load_button_value = True
-                else :
-                    self.load_button_value = False
+
+        if event.type == pygame.KEYDOWN:
+            #按下ESC键返回游戏
+            if event.key == pygame.K_ESCAPE:
+                self.continue_button_value = True
 
 
     def draw(self):
