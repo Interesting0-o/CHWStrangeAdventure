@@ -11,6 +11,7 @@ from SaveManager import SaveManager
 class LoadGamePage(Page):
     def __init__(self):
         super().__init__()
+        self.current_save_name = None
         self.current_save_data_index = None
         self.load_save_done = False
         self.current_save_data = None
@@ -180,6 +181,7 @@ class LoadGamePage(Page):
             #弹出界面点击确定时
             if self.load_text_page.yes_button_value:
                 self.current_save_data = self.save_data[list(self.save_data.keys())[self.current_save_data_index]]
+                self.current_save_name = list(self.save_data.keys())[self.current_save_data_index]
 
 
     def draw(self):

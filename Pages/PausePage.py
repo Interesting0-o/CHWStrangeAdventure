@@ -7,8 +7,9 @@ class PausePage(Page):
     def __init__(self):
         super().__init__()
 
+
         #按钮初始化
-        self.continue_button_value = False
+        self.continue_button_value = True
         self.setting_button_value = False
         self.back_button_value = False
         self.load_button_value = False
@@ -140,7 +141,11 @@ class PausePage(Page):
         if event.type == pygame.KEYDOWN:
             #按下ESC键返回游戏
             if event.key == pygame.K_ESCAPE:
-                self.continue_button_value = True
+                if self.continue_button_value:
+                    self.continue_button_value = False
+                else:
+                    self.continue_button_value = True
+
 
 
     def draw(self):

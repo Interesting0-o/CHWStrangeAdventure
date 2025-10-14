@@ -167,9 +167,8 @@ class Game:
                 #处理内容章节事件
                 if self.is_content_init and self.is_content_load:
                     self.content_chapter.handle_event(event)
-                    #处理存档事件
+                    #处理存档保存事件
                     if self.content_chapter.save_saves:
-                        self.save_manager.delete_save_data(self.current_save_name)
                         self.current_save = self.content_chapter.to_dict()
                         self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
@@ -179,14 +178,14 @@ class Game:
                 #载入存档
                 if not self.is_load_save:
                     self.current_save = self.load_page.current_save_data
+                    self.current_save_name = self.load_page.current_save_name
                     self.is_load_save = True
 
                 #处理内容章节事件
                 if self.is_content_init and self.is_content_load:
                     self.content_chapter.handle_event(event)
-                    #处理存档事件
+                    #处理存档保存事件
                     if self.content_chapter.save_saves:
-                        self.save_manager.delete_save_data(self.current_save_name)
                         self.current_save = self.content_chapter.to_dict()
                         self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
