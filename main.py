@@ -1,5 +1,7 @@
 import pygame
 import sys
+
+from ResourceLoader import ResourceLoader
 from SaveManager import SaveManager
 from settings import Settings
 from OpenAnimation import OpenAnimation
@@ -17,6 +19,10 @@ class Game:
         self.current_save_name = None
         self.current_save = None
 
+        #d当前游戏是否暂停
+        self.is_pause = False
+
+        #存档相关
         self.is_create_save = False
         self.is_load_save = False
 
@@ -24,13 +30,13 @@ class Game:
         self.is_content_load = False
         self.is_content_init = False
 
-
+        #开始页面相关
         self.start_text_page_start = False
         self.quit_page_start = False
         self.settings_page_start = False
         self.load_page_start = False
 
-
+        #游戏开始类型
         self.game_start_load = False
         self.game_start_new = False
 
@@ -100,24 +106,35 @@ class Game:
 
 
     def init(self):
+
+        self.current_save_name = None
         self.current_save = None
+
+        #d当前游戏是否暂停
+        self.is_pause = False
+
+        #存档相关
         self.is_create_save = False
         self.is_load_save = False
 
-        # 初始化内容
+        #初始化内容
         self.is_content_load = False
         self.is_content_init = False
 
+        #开始页面相关
         self.start_text_page_start = False
         self.quit_page_start = False
         self.settings_page_start = False
         self.load_page_start = False
 
+        #游戏开始类型
         self.game_start_load = False
         self.game_start_new = False
 
+        self.start_page.is_end = False
+
     def handle_event(self, event):
-        #当前
+        #在起始页面时的事件处理
         if not self.start_page.is_end:
             #开始页面事件
             if self.start_page.start_button.is_pressed_down(event):
@@ -139,55 +156,77 @@ class Game:
                 self.load_page_start = True
                 self.start_page.is_end = True
 
-
             else:
                 self.start_page.is_end = False
+
         else:
 
             #载入存档界面事件
             if self.load_page_start:
                 self.load_page.handle_event(event)
 
-            #通过开始按钮来开始游戏
-            if self.game_start_new:
-                if not self.start_chapter.is_end:
-                    self.start_chapter.handle_event(event)
-                else:
-                    if not self.is_create_save:
-                        #创建存档
-                        self.current_save = self.save_manager.init_save.copy()
-                        self.current_save["player"]["name"] = self.player.name
-                        #存档数据保存到硬盘并重置save_manager
-                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
+            #开始游戏后事件处理
+            if not self.is_pause:
+                #通过开始按钮来开始游戏
+                if self.game_start_new:
+                    if not self.start_chapter.is_end:
+                        self.start_chapter.handle_event(event)
+                    else:
+                        if not self.is_create_save:
+                            #创建存档
+                            self.current_save = self.save_manager.init_save.copy()
+                            self.current_save["player"]["name"] = self.player.name
+                            #存档数据保存到硬盘并重置save_manager
+                            self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
-                        #初始化载入页面
-                        self.load_page.save_load(self.save_manager.save_datas)
-                        self.load_page.init()
-                        self.is_create_save = True
-                #处理内容章节事件
-                if self.is_content_init and self.is_content_load:
-                    self.content_chapter.handle_event(event)
-                    #处理存档保存事件
-                    if self.content_chapter.save_saves:
-                        self.current_save = self.content_chapter.to_dict()
-                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
+                            #初始化载入页面
+                            self.load_page.save_load(self.save_manager.save_datas)
+                            self.load_page.init()
+                            self.is_create_save = True
+                    #处理内容章节事件
+                    if self.is_content_init and self.is_content_load:
+                        self.content_chapter.handle_event(event)
+                        #处理存档保存事件
+                        if self.content_chapter.save_saves:
+                            self.current_save = self.content_chapter.to_dict()
+                            self.current_save_name = self.save_manager.save_save_data(self.current_save)
+
+                #通过载入按钮来开始游戏
+                if self.game_start_load:
+                    #载入存档
+                    if not self.is_load_save:
+                        self.current_save = self.load_page.current_save_data
+                        self.current_save_name = self.load_page.current_save_name
+                        self.is_load_save = True
+
+                    #处理内容章节事件
+                    if self.is_content_init and self.is_content_load:
+                        self.content_chapter.handle_event(event)
+                        #处理存档保存事件
+                        if self.content_chapter.save_saves:
+                            self.current_save = self.content_chapter.to_dict()
+                            self.current_save_name = self.save_manager.save_save_data(self.current_save)
+            #暂停之后的事件处理
+            else:
+                #返回按钮事件
+                if self.pause_page.back_button_value:
+                    print(self.pause_page.back_button_value)
+                    self.back_to_start()
+                    self.pause_page.back_button_value = False
+                    print(self.pause_page.back_button_value)
 
 
-            #通过载入按钮来开始游戏
-            if self.game_start_load:
-                #载入存档
-                if not self.is_load_save:
-                    self.current_save = self.load_page.current_save_data
-                    self.current_save_name = self.load_page.current_save_name
-                    self.is_load_save = True
 
-                #处理内容章节事件
-                if self.is_content_init and self.is_content_load:
-                    self.content_chapter.handle_event(event)
-                    #处理存档保存事件
-                    if self.content_chapter.save_saves:
-                        self.current_save = self.content_chapter.to_dict()
-                        self.current_save_name = self.save_manager.save_save_data(self.current_save)
+            #处理暂停事件
+            self.pause_page.handle_event(event)
+
+
+            #处理暂停按钮
+            if self.pause_page.continue_button_value:
+                self.is_pause = False
+            else:
+                self.is_pause = True
+
 
 
     def renew_page(self,text_page):
@@ -200,6 +239,44 @@ class Game:
         self.start_page.is_end = False
         page.close_button_value = False
         page.is_end = False
+
+    def start_page_button_reset(self):
+        #开始页面button状态重置
+        self.start_page.start_button.img= ResourceLoader.start_button_animation[0]
+        self.start_page.start_button.index =0
+        self.start_page.quit_button.img= ResourceLoader.quit_button_animation[0]
+        self.start_page.quit_button.index =0
+        self.start_page.settings_button.img= ResourceLoader.settings_button_animation[0]
+        self.start_page.settings_button.index =0
+        self.start_page.load_button.img= ResourceLoader.load_button_animation[0]
+        self.start_page.load_button.index =0
+
+        #按钮内容重置
+        self.start_text_page_start = False
+        self.quit_page_start = False
+        self.settings_page_start = False
+        self.load_page_start = False
+
+
+
+    def back_to_start(self):
+        #设置开始界面为未结束
+        self.start_page.is_end = False
+
+        #游戏开始类型设置为未开始
+        self.game_start_load = False
+        self.game_start_new = False
+
+        #清除当前存档信息
+        self.current_save_name = None
+        self.current_save = None
+
+        #开始页面的button状态重置
+        self.start_page_button_reset()
+
+
+
+
 
 
     def run(self):
@@ -322,6 +399,7 @@ class Game:
 
             #通过创建存档来开始游戏
             if self.game_start_new:
+                print(1)
                 self.start_page.is_end = True
                 self.start_chapter.show(self.player)
                 if self.is_create_save:
@@ -336,6 +414,7 @@ class Game:
 
             #通过载入存档来开始游戏
             if self.game_start_load:
+                print(2)
                 if self.is_load_save:
                     if not self.is_content_load:
                         self.content_chapter.read_config(self.current_save, self.character_group)
@@ -345,11 +424,12 @@ class Game:
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
                         self.content_chapter.show()
+            #在游戏中可以显示暂停页面
 
+            if self.game_start_load or self.game_start_new:
+                self.pause_page.draw()
 
-
-
-
+            print(self.start_page.is_end ,"and",self.game_start_new,self.game_start_load)
 
             pygame.display.update()
 
