@@ -69,6 +69,26 @@ class LoadGamePage(Page):
         self.save_data.clear()
         self.save_data = save_data.copy()
 
+
+    def reset(self):
+        self.is_end = False
+        #黑场重置
+        self.black_surface_alpha = 0
+
+        #背景重置
+        self.bg_alpha = 0
+        self.bg.set_alpha(self.bg_alpha)
+        self.bg_h = -60
+
+        #关闭按钮重置
+        self.close_button_value = False
+
+        #重置询问页面
+        self.load_text_page.reset()
+        self.load_text_start = False
+
+
+
     def init(self):
 
         self.load_text_page.init()
@@ -159,16 +179,19 @@ class LoadGamePage(Page):
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
+
                 if self.next_button.rect.collidepoint(event.pos):
                     if len(self.save_data)//6 +1 >self.page_num :
                         self.page_num += 1
                         self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
                                                                                      "black")
+
                 elif self.last_button.rect.collidepoint(event.pos):
                     if self.page_num > 1:
                         self.page_num -= 1
                         self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
                                                                                      "black")
+                #存档按钮事件
                 for i in range((self.page_num - 1) * 6, self.page_num * 6):
                     if self.save_surfaces[i].rect.collidepoint(event.pos):
                         if i < len(self.save_data):
@@ -259,6 +282,9 @@ if __name__ == '__main__':
                 pygame.quit()
                 exit()
             page.handle_event(event)
+        keys =   pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            page.reset()
         screen.fill("white")
         page.draw()
         pygame.display.update()

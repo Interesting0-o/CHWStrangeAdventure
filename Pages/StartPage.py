@@ -9,12 +9,12 @@ class StartPage(Page):
         super().__init__()
         #创建背景图片和标题
 
-        self.bg_image = pygame.image.load(self.path[:-6]+ r"/resource/img/bg/bg.png").convert()
+        self.bg_image = ResourceLoader.start_bg.convert()
         self.bg_rect = self.bg_image.get_rect()
-        self.title =pygame.image.load(self.path[:-6] + r"/resource/img/title/title.png").convert_alpha()
+        self.title =ResourceLoader.title_bg.convert_alpha()
         self.title_rect = self.title.get_rect()
-        self.bg_image_copy = pygame.image.load(self.path[:-6]+r"/resource/img/bg/bg.png").convert()
-        self.title_copy = pygame.image.load(self.path[:-6]+r"/resource/img/title/title.png").convert_alpha()
+        self.bg_image_copy = self.bg_image.copy()
+        self.title_copy = self.title.copy()
 
 
         self.dt = pygame.time.Clock().tick(Settings.FPS)
@@ -25,7 +25,7 @@ class StartPage(Page):
         self.settings_button = None
         self.button_group = pygame.sprite.Group()
         #版本信息显示
-        self.font_1 = pygame.font.Font(self.path[:-6]+r"/resource/font/萝莉体 第二版.ttf", 25)
+        self.font_1 = ResourceLoader.font_loliti24
         self.version =self.font_1.render("游戏版本："+Settings.GAME_VERSION,True,(0,0,0))
         self.version_rect = self.version.get_rect()
         
@@ -86,6 +86,19 @@ class StartPage(Page):
                 self.display_surface.get_size()[0]//2,
                 self.display_surface.get_size()[1]*0.3
             ))
+
+
+    def reset(self):
+        self.is_end = False
+        #按钮初始化
+        self.start_button.image = ResourceLoader.start_button_animation[0]
+        self.start_button.index = 0
+        self.load_button.image= ResourceLoader.load_button_animation[0]
+        self.load_button.index = 0
+        self.quit_button.image = ResourceLoader.quit_button_animation[0]
+        self.quit_button.index = 0
+        self.settings_button.image = ResourceLoader.settings_button_animation[0]
+        self.settings_button.index = 0
 
 
     def draw(self):

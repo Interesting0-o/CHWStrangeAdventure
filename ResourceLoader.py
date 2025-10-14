@@ -12,10 +12,6 @@ class ResourceLoader:
     font_MiSans_Demibold24 = pygame.font.Font(path+r"\resource\font\MiSans\MiSans-Demibold.ttf", 24)
     font_MiSans_Demibold36 = pygame.font.Font(path + r"\resource\font\MiSans\MiSans-Demibold.ttf", 36)
 
-    #对话框
-    dialog_box = pygame.image.load(__file__[:-18] +r"\resource\img\bg\DialogBox.png")
-
-
 
     #按钮
     yes_button_animation = [
@@ -69,6 +65,12 @@ class ResourceLoader:
         "library": pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
     }
 
+    #游戏开始界面背景
+    start_bg = pygame.image.load(__file__[:-18] + r"/resource/img/bg/bg.png")
+    title_bg = pygame.image.load(__file__[:-18] + r"/resource/img/title/title.png")
+
+    # 对话框
+    dialog_box = pygame.image.load(__file__[:-18] + r"\resource\img\bg\DialogBox.png")
 
     #对话款背景
     dialog_bg = pygame.image.load(__file__[:-18] + r"\resource\img\BG\DialogBG.png")
@@ -80,5 +82,6 @@ class ResourceLoader:
     }
     #游戏ui
     big_ui = pygame.image.load(path + r"/resource/img/bg/SettingsPageBG.png")
+    quit_window = pygame.image.load(path + r"/resource/img/title/quit.png")
 
 

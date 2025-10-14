@@ -1,8 +1,9 @@
 import pygame
-
-class Page:
+from abc import ABC, abstractmethod
+class Page(ABC):
     path  = __file__[:-8]
 
+    @abstractmethod
     def __init__(self):
         self.window_width = 1280
         self.window_height = 720
@@ -10,6 +11,7 @@ class Page:
         self.display_surface = None
         self.is_end = False
 
+    @abstractmethod
     def init(self):
         """
         子类实现初始化方法
@@ -20,11 +22,13 @@ class Page:
 
     def handle_event(self, event):
         """
-        子类实现事件处理方法
+        子类有选择的实现事件处理方法
         :param event:
         :return:
         """
+        pass
 
+    @abstractmethod
     def draw(self):
         """
         子类实现绘制方法
@@ -32,9 +36,10 @@ class Page:
         """
         pass
 
-    def renew(self):
+    @abstractmethod
+    def reset(self):
         """
-        子类实现刷新方法
+        子类实现重置方法
         :return:
         """
         pass
@@ -69,5 +74,17 @@ class Page:
 
 
 if __name__ == '__main__':
-    page = Page()
-    print(page.path)
+
+    class MyPage(Page):
+        def __init__(self):
+            super().__init__()
+        def init(self):
+            print("init")
+        def handle_event(self, event):
+            print("handle_event")
+        def draw(self):
+            print("draw")
+        def reset(self):
+            print("reset")
+    a = MyPage()
+    print(a.path)

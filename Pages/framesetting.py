@@ -130,6 +130,8 @@ class FrameSetting(Page):
         else:
             self.isSettingsChange = False
 
+    def reset(self):
+        pass
 
 if __name__ == '__main__':
     pygame.init()
