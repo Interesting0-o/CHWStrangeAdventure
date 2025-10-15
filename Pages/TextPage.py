@@ -34,7 +34,6 @@ class TextPage(Page):
         self.buttons_group = pygame.sprite.Group()
         self.buttons_group.add(self.yes_button, self.no_button)
 
-
     def renew(self):
         #按钮动画重置
         self.yes_button_value = False
@@ -43,9 +42,6 @@ class TextPage(Page):
         self.is_end = False
         #文本窗口重置
         self.text_window_alpha = 0
-
-
-
 
     def init(self):
 
@@ -63,7 +59,25 @@ class TextPage(Page):
         self.yes_button.rect = self.yes_button.image.get_rect(center =(200,200))
         self.no_button.rect = self.no_button.image.get_rect(center =(400,200))
 
-
+    def reset(self):
+        self.is_end = False
+        # 黑场重置
+        self.black_bg_alpha = 0
+        self.black_bg.set_alpha(self.black_bg_alpha)
+        #背景重置
+        self.text_window_alpha = 0
+        self.text_window.set_alpha(self.text_window_alpha)
+        self.text_window_rect = self.text_window.get_rect(center = (
+            int(self.window_width/2),int(self.window_height/2)-55)
+        )
+        #按钮值重置
+        self.yes_button_value = False
+        self.no_button_value = False
+        #按钮动画重置
+        self.yes_button.img = ResourceLoader.yes_button_animation[0]
+        self.yes_button.animation_index = 0
+        self.no_button.img = ResourceLoader.no_button_animation[0]
+        self.no_button.animation_index = 0
 
     def draw(self):
         #黑场动画

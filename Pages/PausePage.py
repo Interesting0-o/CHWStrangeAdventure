@@ -16,11 +16,7 @@ class PausePage(Page):
         self.button_bg = None
         #黑场专场内容
 
-        self.black_surface = None
-        self.black_surface_alpha = 0
         self.is_black_end = False
-
-        #黑场进行设置
         self.black_surface = pygame.Surface((3840,2160))
         self.black_surface.fill((0, 0, 0))
         self.black_surface_alpha = 0
@@ -98,6 +94,26 @@ class PausePage(Page):
         self.load_button = MenuButton(img, img_hover, img.get_rect())
 
         #按钮框
+    def reset(self):
+        self.is_end = False
+        #黑场重置
+        self.black_surface_alpha = 0
+        self.is_black_end = False
+        self.black_surface.set_alpha(self.black_surface_alpha)
+
+        #背景重置
+        self.bg_h = -60
+        self.bg_alpha = 0
+        self.bg_copy = self.bg.copy()
+        self.bg_copy.set_alpha(self.bg_alpha)
+
+        #按钮值重置
+        self.continue_button_value = True
+        self.setting_button_value = False
+        self.back_button_value = False
+        self.load_button_value = False
+
+
 
     def init(self):
         #背景初始化

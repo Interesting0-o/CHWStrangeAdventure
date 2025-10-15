@@ -14,7 +14,7 @@ class QuitPage(Page):
         self.black_bg = None
         #背景资源
         self.quit_window_alpha = 0
-        self.quit_window =pygame.image.load(self.path[:-6]+r"/resource/img/title/qiut.png")
+        self.quit_window =ResourceLoader.quit_window.copy()
         self.quit_window.set_alpha(0)
         self.quit_window_rect = None
 
@@ -49,7 +49,25 @@ class QuitPage(Page):
         self.yes_button.rect = self.yes_button.image.get_rect(center =(200,200))
         self.no_button.rect = self.no_button.image.get_rect(center =(400,200))
 
-
+    def reset(self):
+        self.is_end = False
+        # 黑场重置
+        self.black_bg_alpha = 0
+        self.black_bg.set_alpha(self.black_bg_alpha)
+        #背景重置
+        self.quit_window_alpha = 0
+        self.quit_window.set_alpha(self.quit_window_alpha)
+        self.quit_window_rect = self.quit_window.get_rect(center = (
+            int(self.window_width/2),int(self.window_height/2)-55)
+        )
+        #按钮值重置
+        self.yes_button_value = False
+        self.no_button_value = False
+        #按钮动画重置
+        self.yes_button.img = ResourceLoader.yes_button_animation[0]
+        self.yes_button.animation_index = 0
+        self.no_button.img = ResourceLoader.no_button_animation[0]
+        self.no_button.animation_index = 0
 
     def draw(self):
         #黑场动画
@@ -97,13 +115,6 @@ class QuitPage(Page):
 
         if self.no_button.is_pressed_blit(self.quit_window_rect.topleft):
             self.no_button_value = True
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
