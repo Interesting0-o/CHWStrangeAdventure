@@ -12,12 +12,13 @@ class SettingsPage(Page):
         super().__init__()
 
         #黑场专场内容
-        self.black_surface = None
+        self.black_surface = pygame.Surface((3840, 2160))
+        self.black_surface.fill((0, 0, 0))
         self.black_surface_alpha = 0
-        self.is_black_end = False
+
         # 背景读取
         self.bg_copy = None  # 实际上使用的背景
-        self.bg = pygame.image.load(self.path[:-6]+r"/resource/img/bg/SettingsPageBG.png") #作为资源
+        self.bg = ResourceLoader.big_ui.copy() #作为资源
         self.bg_h = -60
         self.bg_alpha = 0
 
@@ -35,10 +36,6 @@ class SettingsPage(Page):
         #画面设置页面
         self.frame_setting = FrameSetting(fullscreen_auto_index,resolution_auto_index)
 
-        #黑场进行设置
-        self.black_surface = pygame.Surface((self.window_width, self.window_height))
-        self.black_surface.fill((0, 0, 0))
-        self.black_surface_alpha = 0
 
     def init(self):
         """
@@ -72,6 +69,25 @@ class SettingsPage(Page):
         #画面设置页面初始化
         self.frame_setting.init((int(0.3125*self.window_width),int(0.2*self.window_height)))
         self.frame_setting.bg_surface_rect.topleft = (int(0.3125*self.window_width),int(0.2*self.window_height))
+
+    def reset(self):
+        #黑场重置
+        self.black_surface_alpha = 0
+
+
+        #背景重置
+        self.bg_h = -60
+        self.bg_alpha = 0
+        self.bg_copy = pygame.transform.scale(self.bg, (self.window_width, self.window_height))
+
+        #按钮值重置
+        self.close_button_value = False
+
+
+        self.frame_button.image = self.frame_button.animation_list[0]
+        self.frame_button.setting_mode = 0
+        self.frame_button.index = 0
+
 
     def draw(self,
              mouse_down:bool, #鼠标按下状态
@@ -143,6 +159,12 @@ if __name__ == '__main__':
                 exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_down = True
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            print("esc")
+            settings_page.reset()
+
         screen.fill("white")
         settings_page.draw( mouse_down )
 

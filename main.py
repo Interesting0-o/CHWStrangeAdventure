@@ -1,7 +1,6 @@
 import pygame
 import sys
 
-from ResourceLoader import ResourceLoader
 from SaveManager import SaveManager
 from settings import Settings
 from OpenAnimation import OpenAnimation
@@ -102,39 +101,9 @@ class Game:
         self.content_chapter = ContentChapter()
         self.start_chapter = StartChapter()
 
-
-
-
-    def init(self):
-
-        self.current_save_name = None
-        self.current_save = None
-
-        #d当前游戏是否暂停
-        self.is_pause = False
-
-        #存档相关
-        self.is_create_save = False
-        self.is_load_save = False
-
-        #初始化内容
-        self.is_content_load = False
-        self.is_content_init = False
-
-        #开始页面相关
-        self.start_text_page_start = False
-        self.quit_page_start = False
-        self.settings_page_start = False
-        self.load_page_start = False
-
-        #游戏开始类型
-        self.game_start_load = False
-        self.game_start_new = False
-
-        self.start_page.is_end = False
-
     def handle_event(self, event):
         #在起始页面时的事件处理
+        print(self.pause_page.continue_button_value,self.pause_page.back_button_value,self.pause_page.setting_button_value)
         if not self.start_page.is_end:
             #开始页面事件
             if self.start_page.start_button.is_pressed_down(event):
@@ -210,20 +179,15 @@ class Game:
             else:
                 #返回按钮事件
                 if self.pause_page.back_button_value:
-                    print(self.pause_page.back_button_value)
                     self.back_to_start()
-                    self.pause_page.back_button_value = False
-                    print(self.pause_page.back_button_value)
-
-
 
             #处理暂停事件
             self.pause_page.handle_event(event)
 
-
-            #处理暂停按钮
+            #处理暂停按钮事件
             if self.pause_page.continue_button_value:
                 self.is_pause = False
+                self.pause_page.reset()
             else:
                 self.is_pause = True
 
@@ -241,15 +205,6 @@ class Game:
         page.is_end = False
 
     def start_page_button_reset(self):
-        #开始页面button状态重置
-        self.start_page.start_button.img= ResourceLoader.start_button_animation[0]
-        self.start_page.start_button.index =0
-        self.start_page.quit_button.img= ResourceLoader.quit_button_animation[0]
-        self.start_page.quit_button.index =0
-        self.start_page.settings_button.img= ResourceLoader.settings_button_animation[0]
-        self.start_page.settings_button.index =0
-        self.start_page.load_button.img= ResourceLoader.load_button_animation[0]
-        self.start_page.load_button.index =0
 
         #按钮内容重置
         self.start_text_page_start = False
@@ -273,6 +228,18 @@ class Game:
 
         #开始页面的button状态重置
         self.start_page_button_reset()
+
+        #页面组重置
+        self.page_group.reset()
+
+        #游戏存档的载入和重置重置
+        self.is_content_init = False
+        self.is_content_load = False
+        #存档创建重置
+        self.is_create_save = False
+        self.is_load_save = False
+
+        self.is_pause = False
 
 
 
@@ -308,8 +275,6 @@ class Game:
                     if event.button == 1:
                         mouse_down = True
                 self.handle_event(event)
-
-
 
             dt = self.clock.tick(60) / 1000
             #检验是否对游戏进行设置并保存
@@ -399,7 +364,6 @@ class Game:
 
             #通过创建存档来开始游戏
             if self.game_start_new:
-                print(1)
                 self.start_page.is_end = True
                 self.start_chapter.show(self.player)
                 if self.is_create_save:
@@ -414,7 +378,6 @@ class Game:
 
             #通过载入存档来开始游戏
             if self.game_start_load:
-                print(2)
                 if self.is_load_save:
                     if not self.is_content_load:
                         self.content_chapter.read_config(self.current_save, self.character_group)
@@ -424,12 +387,12 @@ class Game:
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
                         self.content_chapter.show()
-            #在游戏中可以显示暂停页面
 
+            #在游戏中可以显示暂停页面
             if self.game_start_load or self.game_start_new:
                 self.pause_page.draw()
 
-            print(self.start_page.is_end ,"and",self.game_start_new,self.game_start_load)
+            # print(self.start_page.is_end ,"and",self.game_start_new,self.game_start_load)
 
             pygame.display.update()
 
@@ -437,4 +400,3 @@ class Game:
 if __name__ == "__main__":
     game = Game()
     game.run()
-

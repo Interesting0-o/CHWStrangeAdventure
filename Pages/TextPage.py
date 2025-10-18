@@ -139,6 +139,9 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            game.reset()
         screen.fill((255, 255, 255))
         game.draw()
         if game.is_end:

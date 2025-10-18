@@ -91,13 +91,13 @@ class StartPage(Page):
     def reset(self):
         self.is_end = False
         #按钮初始化
-        self.start_button.img = ResourceLoader.start_button_animation[0]
+        self.start_button.image = ResourceLoader.start_button_animation[0]
         self.start_button.index = 0
-        self.load_button.img = ResourceLoader.load_button_animation[0]
+        self.load_button.image= ResourceLoader.load_button_animation[0]
         self.load_button.index = 0
-        self.quit_button.img = ResourceLoader.quit_button_animation[0]
+        self.quit_button.image = ResourceLoader.quit_button_animation[0]
         self.quit_button.index = 0
-        self.settings_button.img = ResourceLoader.settings_button_animation[0]
+        self.settings_button.image = ResourceLoader.settings_button_animation[0]
         self.settings_button.index = 0
 
 

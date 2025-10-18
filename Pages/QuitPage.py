@@ -132,6 +132,10 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            quit_page.reset()
         screen.fill("white")
         quit_page.draw()
         pygame.display.update()

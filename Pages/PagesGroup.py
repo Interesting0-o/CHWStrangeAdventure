@@ -84,4 +84,11 @@ class PagesGroup:
         for page in self.pages:
             page.set_window_size(width, height)
 
+    def reset(self)->None:
+        """
+        重置所有页面
+        :return:
+        """
+        for page in self.pages:
+            page.reset()
 
