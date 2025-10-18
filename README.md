@@ -6,7 +6,7 @@
 本项目是一个课程设计，基于`Pygame`制作的GalGame游戏Demo。
 
 ## 联系方式 ##
-QQ: 3138421419 <br>
+QQ:  <br>
 Email: <EMAIL>
 ## 运行 ##
 下载并安装`Python3.x`环境,和`pygame`库<br>
