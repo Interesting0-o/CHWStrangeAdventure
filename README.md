@@ -30,3 +30,5 @@ python main.py
 
 ## 资源 ##
 采用`GPT SoVITS`语音合成技术，以及`Stable Diffusion`进行图片生成，资源全部来自网络。
+## 鸣谢 ##
+感谢`Pygame`团队的贡献，感谢`GPT SoVITS`团队的开源技术。
