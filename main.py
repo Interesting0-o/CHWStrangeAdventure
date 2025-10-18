@@ -133,6 +133,8 @@ class Game:
             #载入存档界面事件
             if self.load_page_start:
                 self.load_page.handle_event(event)
+                if self.load_page.delete_save():
+                    self.save_manager.delete_save_data(self.load_page.get_key()[:-4])
 
             #开始游戏后事件处理
             if not self.is_pause:
@@ -368,7 +370,7 @@ class Game:
                 self.start_chapter.show(self.player)
                 if self.is_create_save:
                     if not self.is_content_load:
-                        self.content_chapter.read_config(self.current_save, self.character_group)
+                        self.content_chapter.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
                         self.content_chapter.init()
@@ -380,7 +382,7 @@ class Game:
             if self.game_start_load:
                 if self.is_load_save:
                     if not self.is_content_load:
-                        self.content_chapter.read_config(self.current_save, self.character_group)
+                        self.content_chapter.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
                         self.content_chapter.init()

@@ -1,3 +1,5 @@
+import os
+
 import pygame
 import json
 from Chapters.Chapter import Chapter
@@ -29,7 +31,7 @@ class ContentChapter(Chapter):
         self.current_player = None
 
         self.is_choosing = False
-        self.is_chapter_end = None
+        self.is_chapter_end = False
 
         #存档数据
         self.save_data = None
@@ -71,7 +73,16 @@ class ContentChapter(Chapter):
         self.current_voice = None
         self.is_voice = False
 
+        #剧情文件管理
+        self.json_file = []
 
+
+    def reset(self):
+        pass
+
+    def read_json(self):
+        self.json_file = os.listdir(self.path[:-9] + r"/data")
+        return self.json_file
 
 
     def to_dict(self):
@@ -89,7 +100,7 @@ class ContentChapter(Chapter):
         }
 
 
-    def read_config(self,
+    def read_save(self,
         save_data,  # 存档数据
         character_group: CharacterGroup,  # 角色组
                     ):
@@ -105,9 +116,12 @@ class ContentChapter(Chapter):
         self.character_group = character_group
         self.current_chapter = save_data["chapter_data"]["chapter"]
 
-
+        #读取章节内容信息
         with open(self.path[:-9] + f"/data/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
             self.config = json.load(f)
+
+    def get_chapter_data(self):
+        return self.save_data["chapter_data"]["chapter"]
 
 
 
@@ -285,7 +299,7 @@ class ContentChapter(Chapter):
             #判断当前对话框类型是否为dialogue
             elif self.config[self.current_scene]["dialogues"][self.dialog_index]["type"]=="dialogue" :
 
-                # 修改当前状态呢量
+                # 修改当前状态
                 self.is_choosing = False
                 #人物图层渲染
                 speaker = self.config[self.current_scene]["dialogues"][self.dialog_index]["speaker"]
@@ -403,8 +417,10 @@ if __name__ == '__main__':
     char_group.add_character(demo)
 
     content_chapter = ContentChapter()
-    content_chapter.read_config(save_datas, char_group)
+    content_chapter.read_save(save_datas, char_group)
     content_chapter.init()
+
+    print(content_chapter.read_json())
 
 
     while True:

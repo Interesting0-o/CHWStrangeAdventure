@@ -87,6 +87,23 @@ class StartChapter(Chapter):
         else:
             self.mouse_down = False
 
+        # 按钮事件处理
+        if self.sure_button.is_pressed_down(self.mouse_down):
+            if self.input_box.text == "请输入您的称呼" or self.input_box.text == "请输入有效的称呼！" or self.input_box.text == "名称不可使用空白字符！":
+                self.input_box.text = "请输入有效的称呼！"
+            elif self.input_box.text == "":
+                self.input_box.text = "名称不可使用空白字符！"
+            else:
+                player.name = self.input_box.text
+                self.is_end = True
+
+    def reset(self):
+        """
+        重置本章节
+        :return:
+        """
+        self.is_end = False
+        self.input_box.text = ""
 
 
     def show(self,player:Player):
@@ -98,15 +115,7 @@ class StartChapter(Chapter):
             #按钮显示
             self.sure_button.hover_animation()
             self.display_surface.blit(self.sure_button.img, self.sure_button.rect)
-            #按钮事件处理
-            if self.sure_button.is_pressed_down(self.mouse_down):
-               if self.input_box.text =="请输入您的称呼" or  self.input_box.text == "请输入有效的称呼！" or  self.input_box.text == "名称不可使用空白字符！":
-                   self.input_box.text = "请输入有效的称呼！"
-               elif self.input_box.text == "":
-                    self.input_box.text = "名称不可使用空白字符！"
-               else:
-                    player.name = self.input_box.text
-                    self.is_end = True
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -122,6 +131,9 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                start_chapter.reset()
+
             start_chapter.handle_event(event)
 
 

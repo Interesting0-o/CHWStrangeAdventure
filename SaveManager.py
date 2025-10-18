@@ -37,7 +37,7 @@ class SaveManager:
             t.start()
     #删除保存游戏数据
     def delete_save_data(self, save_name):
-        os.remove(self.path+f"save/{save_name}.chw")
+        os.remove(self.path+rf"save\{save_name}.chw")
         self.save_datas.pop(save_name+".chw")
 
     #保存游戏数据

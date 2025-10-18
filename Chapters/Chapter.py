@@ -1,6 +1,5 @@
-import pygame
-
-class Chapter:
+from abc import ABC, abstractmethod
+class Chapter(ABC):
 
     def __init__(self):
 
@@ -21,9 +20,27 @@ class Chapter:
         self.window_width = width
         self.window_height = height
 
-
+    @abstractmethod
     def handle_event(self, event):
+        """
+        处理事件
+        :param event:
+        :return:
+        """
         pass
 
+    @abstractmethod
     def show(self):
+        """
+
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def reset(self):
+        """
+        重置内容
+        :return:
+        """
         pass
