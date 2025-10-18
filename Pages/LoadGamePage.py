@@ -10,13 +10,24 @@ from SaveManager import SaveManager
 
 class LoadGamePage(Page):
     def __init__(self):
+        """
+        初始化页面
+        """
         super().__init__()
+        #存档删除
+        self.save_is_delete = False
+        self.delete_save_index = None
+
         self.current_save_name = None
         self.current_save_data_index = None
-        self.load_save_done = False
         self.current_save_data = None
-        self.load_text_start = False
 
+
+        #询问页面
+        self.load_text_start = False
+        self.delete_text_start = False
+
+        self.load_save_done = False
         #存档资源
 
         self.current_page_text_rect = None
@@ -58,19 +69,41 @@ class LoadGamePage(Page):
             last_img.get_rect()
         )
 
+        #删除按钮初始化
+        delete = pygame.transform.scale(ResourceLoader.delete, (48, 64))
+        delete_hover = pygame.transform.scale(ResourceLoader.delete_hover, (48, 64))
+        self.delete_button_list = [MenuButton(
+            delete.copy(),
+            delete_hover.copy(),
+            delete.get_rect()
+        ) for i in range(6) ]
+
+
         #初始化页数
         self.page_num = 1
         self.save_surfaces = []
 
         #弹出页面
-        self.load_text_page = TextPage("是否载入存档")
+        self.load_text_page = TextPage("是否载入存档") #判断是否载入存档页面
+        self.delete_text_page = TextPage("是否删除存档") #判断删除存档页面
+
+
 
     def save_load(self,save_data:dict):
+        """
+        读取存档数据
+        :param save_data:
+        :return:
+        """
         self.save_data.clear()
         self.save_data = save_data.copy()
 
 
     def reset(self):
+        """
+        `Page`类的重置方法，重置页面状态
+        :return:
+        """
         self.is_end = False
         #黑场重置
         self.black_surface_alpha = 0
@@ -87,11 +120,21 @@ class LoadGamePage(Page):
         self.load_text_page.reset()
         self.load_text_start = False
 
+        self.delete_text_page.reset()
+        self.delete_text_start = False
+
 
 
     def init(self):
+        """
+        初始化页面
+        :return:
+        """
 
+        #询问页面初始化
         self.load_text_page.init()
+        self.delete_text_page.init()
+
         self.display_surface =pygame.display.get_surface()
 
         #黑场初始化
@@ -117,58 +160,14 @@ class LoadGamePage(Page):
         self.last_button.rect.center = (int(self.window_width * 0.12), int(self.window_height * 0.5))
 
 
-        #存档视图渲染
-        self.save_surfaces.clear()
+        #删除按钮初始化
+        for i in range(6):
+            self.delete_button_list[i].rect.topleft = (
+                self.window_width * 0.20 + i % 3 * self.window_width * 0.21,
+                self.window_height * 0.20 + i // 3 * self.window_height * 0.32)
 
-        save_surface_bg =pygame.Surface((self.window_width*0.2,self.window_height*0.3))
-        save_surface_bg.fill("green")
-        save_surface_bg2 = pygame.Surface((self.window_width*0.2,self.window_height*0.3))
-        save_surface_bg2.fill("#aaaaaa")
-
-
-        num = (len(self.save_data) // 6 + 1) * 6
-        keys = list(self.save_data.keys())
-        for i in range(num):
-            if i < len(self.save_data):
-                if self.save_data[keys[i]] !="Error":
-                    text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4],True,"white")
-                    text_rect = text.get_rect(midbottom=(self.window_width*0.1,self.window_height*0.15))
-                    temp = save_surface_bg.copy()
-                    bg_copy_ = pygame.transform.scale(ResourceLoader.background[self.save_data[keys[i]] ["bg"]].copy(),
-                                                      (self.window_width * 0.2, self.window_height * 0.3))
-                    temp.blit(bg_copy_,(0,0))
-                    temp.blit(text,text_rect)
-                    temp.set_colorkey("green")
-                    self.save_surfaces.append(MenuButton(
-                        temp,
-                        temp,
-                        temp.get_rect(topleft = (self.window_width*0.20+(i%6)%3*self.window_width*0.21,
-                                                 self.window_height*0.20 +(i%6)//3*self.window_height*0.32))
-                    ))
-                else:
-                    text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4] +" Error", True, "white")
-                    text_rect = text.get_rect(midbottom=(self.window_width*0.1, self.window_height * 0.15))
-                    temp = save_surface_bg2.copy()
-                    temp.blit(text, text_rect)
-                    temp_hover = temp.copy()
-                    self.save_surfaces.append(MenuButton(
-                        temp,
-                        temp_hover,
-                        temp.get_rect(topleft = (self.window_width*0.20+(i%6)%3*self.window_width*0.21,
-                                                 self.window_height*0.20 +(i%6)//3*self.window_height*0.32))
-                    ))
-            else:
-                text = ResourceLoader.font_MiSans_Demibold24.render("Empty", True, "white")
-                text_rect = text.get_rect(midbottom=(self.window_width*0.1, self.window_height * 0.15))
-                temp = save_surface_bg2.copy()
-                temp.blit(text, text_rect)
-                temp_hover = temp.copy()
-                self.save_surfaces.append(MenuButton(
-                    temp,
-                    temp_hover,
-                    temp.get_rect(topleft = (self.window_width*0.20+(i%6)%3*self.window_width*0.21,
-                                             self.window_height*0.20 +(i%6)//3*self.window_height*0.32))
-                ))
+        #存档按钮初始化
+        self.redraw_save()
 
         #当前页数
         self.current_page_text = ResourceLoader.font_loliti36.render("Page "+str(self.page_num), True, "black")
@@ -177,27 +176,54 @@ class LoadGamePage(Page):
         self.text_bg.fill("white")
 
     def handle_event(self, event):
+        """
+        处理事件
+        :param event:
+        :return:
+        """
+
+        #处理存档删除事件
+        if self.save_is_delete:
+            self.delete_save()
+            self.redraw_save()
+            self.save_is_delete = False
+            self.delete_text_page.reset()
+            self.delete_text_start = False
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
 
+                #下一页按钮事件
                 if self.next_button.rect.collidepoint(event.pos):
                     if len(self.save_data)//6 +1 >self.page_num :
                         self.page_num += 1
                         self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
                                                                                      "black")
 
+                #上一页按钮事件
                 elif self.last_button.rect.collidepoint(event.pos):
                     if self.page_num > 1:
                         self.page_num -= 1
                         self.current_page_text = ResourceLoader.font_loliti36.render("Page " + str(self.page_num), True,
                                                                                      "black")
-                #存档按钮事件
-                for i in range((self.page_num - 1) * 6, self.page_num * 6):
-                    if self.save_surfaces[i].rect.collidepoint(event.pos):
-                        if i < len(self.save_data):
-                            if self.save_data[list(self.save_data.keys())[i]] != "Error":
-                                self.current_save_data_index = i
-                                self.load_text_start = True
+
+                #关闭按钮事件
+                is_delete_hover = False
+                for i in range(6):
+                    if self.delete_button_list[i].rect.collidepoint(event.pos):
+                        if self.page_num * 6 - 6 + i < len(self.save_data):
+                            is_delete_hover = True
+                            self.delete_save_index = self.page_num * 6 - 6 + i
+                            self.delete_text_start = True
+
+                if not is_delete_hover:
+                    #存档按钮事件
+                    for i in range((self.page_num - 1) * 6, self.page_num * 6):
+                        if self.save_surfaces[i].rect.collidepoint(event.pos):
+                            if i < len(self.save_data):
+                                if self.save_data[list(self.save_data.keys())[i]] != "Error":
+                                    self.current_save_data_index = i
+                                    self.load_text_start = True
         #当再次询问界面启动
         if self.load_text_start:
 
@@ -205,7 +231,83 @@ class LoadGamePage(Page):
             if self.load_text_page.yes_button_value:
                 self.current_save_data = self.save_data[list(self.save_data.keys())[self.current_save_data_index]]
                 self.current_save_name = list(self.save_data.keys())[self.current_save_data_index]
+        #删除存档询问界面启动
+        if self.delete_text_start:
+            if self.delete_text_page.yes_button_value:
+                self.save_is_delete =True
 
+    def redraw_save(self):
+
+        num = (len(self.save_data) // 6 + 1) * 6
+        keys = list(self.save_data.keys())#存档名列表
+
+        self.save_surfaces.clear()
+
+        save_surface_bg = pygame.Surface((self.window_width * 0.2, self.window_height * 0.3))
+        save_surface_bg.fill("green")
+        save_surface_bg2 = pygame.Surface((self.window_width * 0.2, self.window_height * 0.3))
+        save_surface_bg2.fill("#aaaaaa")
+
+        # 存档按钮渲染
+        for i in range(num):
+            if i < len(self.save_data):
+                # 判断存档是否损坏
+                try:
+                    if self.save_data[keys[i]] != "Error":
+                        text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4], True, "white")
+                        text_rect = text.get_rect(midbottom=(self.window_width * 0.1, self.window_height * 0.15))
+                        temp = save_surface_bg.copy()
+                        bg_copy_ = pygame.transform.scale(
+                            ResourceLoader.background[self.save_data[keys[i]]["bg"]].copy(),
+                            (self.window_width * 0.2, self.window_height * 0.3))
+
+                        temp.blit(bg_copy_, (0, 0))
+                        temp.blit(text, text_rect)
+                        temp.set_colorkey("green")
+                        self.save_surfaces.append(MenuButton(
+                            temp,
+                            temp,
+                            temp.get_rect(topleft=(self.window_width * 0.20 + (i % 6) % 3 * self.window_width * 0.21,
+                                                   self.window_height * 0.20 + (
+                                                               i % 6) // 3 * self.window_height * 0.32))
+                        ))
+
+                except Exception as e:
+                    self.save_data[keys[i]] = "Error"
+                    print(e)
+
+                if self.save_data[keys[i]] == "Error":
+                    text = ResourceLoader.font_MiSans_Demibold24.render(keys[i][:-4] + " Error", True, "white")
+                    text_rect = text.get_rect(midbottom=(self.window_width * 0.1, self.window_height * 0.15))
+                    temp = save_surface_bg2.copy()
+                    temp.blit(text, text_rect)
+                    temp_hover = temp.copy()
+                    self.save_surfaces.append(MenuButton(
+                        temp,
+                        temp_hover,
+                        temp.get_rect(topleft=(self.window_width * 0.20 + (i % 6) % 3 * self.window_width * 0.21,
+                                               self.window_height * 0.20 + (i % 6) // 3 * self.window_height * 0.32))
+                    ))
+            else:
+                text = ResourceLoader.font_MiSans_Demibold24.render("Empty", True, "white")
+                text_rect = text.get_rect(midbottom=(self.window_width * 0.1, self.window_height * 0.15))
+                temp = save_surface_bg2.copy()
+                temp.blit(text, text_rect)
+                temp_hover = temp.copy()
+                self.save_surfaces.append(MenuButton(
+                    temp,
+                    temp_hover,
+                    temp.get_rect(topleft=(self.window_width * 0.20 + (i % 6) % 3 * self.window_width * 0.21,
+                                           self.window_height * 0.20 + (i % 6) // 3 * self.window_height * 0.32))
+                ))
+
+    def delete_save(self):
+        if self.save_is_delete:
+            key = list(self.save_data.keys())[self.delete_save_index]
+            self.save_data.pop(key)
+            return key
+        else:
+            return None
 
     def draw(self):
         # 黑场进入
@@ -245,6 +347,10 @@ class LoadGamePage(Page):
             self.bg_copy.blit(self.save_surfaces[i].img, self.save_surfaces[i].rect)
             self.save_surfaces[i].hover_animation_blit((0, self.bg_h))
 
+            #删除按钮渲染
+            self.bg_copy.blit(self.delete_button_list[i].img, self.delete_button_list[i].rect)
+            self.delete_button_list[i].hover_animation_blit((0, self.bg_h))
+
 
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
@@ -252,7 +358,7 @@ class LoadGamePage(Page):
 
         self.next_button.hover_animation_blit((0, self.bg_h))
         self.last_button.hover_animation_blit((0, self.bg_h))
-
+        #存档弹窗渲染
         if self.load_text_start:
             self.load_text_page.draw()
 
@@ -260,6 +366,14 @@ class LoadGamePage(Page):
             self.load_text_page.is_end = False
             self.load_text_start = False
             self.load_text_page.no_button_value = False
+        #删除弹窗渲染
+        if self.delete_text_start:
+            self.delete_text_page.draw()
+
+        if self.delete_text_page.is_end:
+            self.delete_text_page.is_end = False
+            self.delete_text_start = False
+            self.delete_text_page.no_button_value = False
 
 
 
@@ -287,4 +401,5 @@ if __name__ == '__main__':
             page.reset()
         screen.fill("white")
         page.draw()
+        print(page.delete_save())
         pygame.display.update()

@@ -52,11 +52,11 @@ class ResourceLoader:
     last = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last.png")
     last_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last_hover.png")
 
-    pause = pygame.image.load(__file__[:-18] + r"\resource\img\icon\pause.png")
-    pause_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\pause_hover.png")
-
     save = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save.png")
     save_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save_hover.png")
+
+    delete = pygame.image.load(__file__[:-18] + r"\resource\img\icon\delete.png")
+    delete_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\delete_hover.png")
 
 
 
