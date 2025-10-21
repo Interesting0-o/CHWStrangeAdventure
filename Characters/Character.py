@@ -3,5 +3,5 @@ class Character:
         self.name = None
         self.emotions = {}
         self.current_emotion = None
-        self.gongluezhi = 0
         self.Id = None
+        self.name_surface = None

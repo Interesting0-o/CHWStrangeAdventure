@@ -24,7 +24,7 @@ class ContentChapter(Chapter):
         #场景记录
 
         self.is_button_on = False
-        self.current_player_honor = None
+        self.current_player_honor = 0
         self.current_chapter = None
         self.scene_record = []
         #玩家类
@@ -84,7 +84,6 @@ class ContentChapter(Chapter):
         self.json_file = os.listdir(self.path[:-9] + r"/data")
         return self.json_file
 
-
     def to_dict(self):
         return {
             "player":{
@@ -98,7 +97,6 @@ class ContentChapter(Chapter):
             },
             "bg":self.config[self.current_scene]['bg']
         }
-
 
     def read_save(self,
         save_data,  # 存档数据
@@ -116,14 +114,8 @@ class ContentChapter(Chapter):
         self.character_group = character_group
         self.current_chapter = save_data["chapter_data"]["chapter"]
 
-        #读取章节内容信息
-        with open(self.path[:-9] + f"/data/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
-            self.config = json.load(f)
-
     def get_chapter_data(self):
         return self.save_data["chapter_data"]["chapter"]
-
-
 
     def init(self):
 
@@ -209,9 +201,6 @@ class ContentChapter(Chapter):
             save.get_rect(center=(self.window_width*0.9 +50,self.window_height*0.92))
         )
 
-
-
-
     def handle_event(self, event):
 
         #事件处理：按钮按下
@@ -239,7 +228,6 @@ class ContentChapter(Chapter):
 
         self.next_text(event)
 
-
     def next_text(self,event):
 
         if not (self.is_choosing or self.is_button_on):
@@ -251,8 +239,6 @@ class ContentChapter(Chapter):
                     self.next_text_event = True
             else:
                 self.next_text_event = False
-
-
 
     def show(self):
         #背景渲染
@@ -321,11 +307,12 @@ class ContentChapter(Chapter):
                     if speaker =="player":
                         speaker_name = ResourceLoader.font_MiSans_Demibold36.render(self.current_player+":", True, "white")
                     else:
-                        speaker_name = ResourceLoader.font_MiSans_Demibold36.render(speaker+":", True, "white")
+                        speaker_name = self.character_group.get_character(speaker).name_surface
                     self.dialog_bg_copy.blit(speaker_name,(
                         self.window_width*0.1,
                         self.window_height*0.65
                     ))
+
                 #音频载入
                 if  self.is_voice_on:
                     if speaker != "旁白" and speaker !="player":
@@ -387,6 +374,19 @@ class ContentChapter(Chapter):
         self.save_button.hover_animation()
         self.display_surface.blit(self.save_button.img, self.save_button.rect)
 
+    def chapter_read(self):
+        #读取章节内容信息
+        with open(self.path[:-9] + f"/data/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
+            self.config = json.load(f)
+
+    def next_chapter(self):
+        if self.is_chapter_end:
+            # self.is_chapter_end = False
+            next_chapter_index = self.json_file.index(self.get_chapter_data()+".json")+1
+            if next_chapter_index >= len(self.json_file):
+                self.is_end = True
+            else:
+                self.current_chapter = self.json_file[next_chapter_index][:-4]
 
 
 if __name__ == '__main__':
@@ -410,14 +410,12 @@ if __name__ == '__main__':
 
     demo = DemoCharacter()
 
-    player = Player()
-    player.name = "陈海文"
-
     char_group =CharacterGroup()
     char_group.add_character(demo)
 
     content_chapter = ContentChapter()
     content_chapter.read_save(save_datas, char_group)
+    content_chapter.chapter_read()
     content_chapter.init()
 
     print(content_chapter.read_json())
@@ -431,7 +429,7 @@ if __name__ == '__main__':
                 exit()
             content_chapter.handle_event(event)
         content_chapter.show()
-        if content_chapter.is_chapter_end:
-            print("都结束了，")
+        content_chapter.next_chapter()
+        print(content_chapter.current_chapter)
 
         pygame.display.update()

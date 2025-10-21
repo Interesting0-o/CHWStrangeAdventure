@@ -13,6 +13,7 @@ class DemoCharacter(Character):
             "neutral":ResourceLoader.demo_character_neutral,
         }
         self.Id = "DC"
+        self.name_surface = ResourceLoader.font_MiSans_Demibold36.render(self.name+":", True, (255, 255, 255))
 
     def __str__(self):
         return self.name
