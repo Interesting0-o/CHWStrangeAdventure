@@ -1,0 +1,143 @@
+{
+  "end_scene": "C1_2",
+  "C1_1":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "choice",
+    "choice_num": 3,
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "这是一个普通的图书馆"
+      },
+      {
+        "type": "dialogue",
+        "speaker" : "旁白",
+        "text": "一位少女走在路上"
+      },
+      {
+        "type": "dialogue",
+        "speaker" : "旁白",
+        "text": "她眼睛里闪着光，看到了你，径直走向你"
+      },
+            {
+        "type": "dialogue",
+        "speaker" : "player",
+        "text": "你好，请问有什么可以帮助您？"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "我想借阅一下《陈海文的奇妙冒险》这本书。",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_001"
+        }
+      },
+      {
+        "type": "choice",
+        "choices": [
+          {
+            "choiceId": "choice_1",
+            "text": "好的，我帮你去拿",
+            "nextScene":"C1_1:if_1"
+          },
+          {
+            "choiceId": "choice_2",
+            "text": "抱歉，这本书暂时借不到",
+            "nextScene":"C1_1:if_2"
+          },
+          {
+            "choiceId": "choice_3",
+            "text": "(表演一段空中劈叉)",
+            "nextScene":"C1_1:if_3"
+          }
+        ]
+      }
+    ]
+  },
+  "C1_1:if_1":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_2",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "你将借阅的书籍放在了女孩的面前"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "好的，请问还有什么需要帮助吗？"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "谢谢你，我想我还需要一些时间来适应这里的环境。",
+        "character": {
+          "emotion":"neutral",
+          "position":"center",
+          "voice":"v_002"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "不客气，祝你阅读愉快！"
+      }
+    ]
+  },
+  "C1_1:if_2":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_2",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "那…好吧。",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_003"
+        }
+      }
+    ]
+  },
+  "C1_1:if_3":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_2",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "请问，你是有什么大病吗！",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_004"
+        }
+      }
+    ]
+  },
+  "C1_2":{
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "next_scene": "C1_3",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "text": "好的，请问还有什么需要帮助吗？"
+      }
+    ]
+  }
+}
