@@ -243,6 +243,12 @@ class Game:
 
         self.is_pause = False
 
+        #重置章节
+        self.start_chapter.reset()
+        self.content_chapter.reset()
+
+
+
 
 
 
@@ -261,7 +267,7 @@ class Game:
         self.start_page.set_window_size(self.window_width, self.window_height)
         self.start_page.init()
         self.content_chapter.set_window_size(self.window_width, self.window_height)
-        self.start_chapter.init()
+        self.start_chapter.init(self.player)
 
 
 
@@ -304,7 +310,7 @@ class Game:
                 #重置章节大小并初始化
                 self.start_chapter.set_window_size(Settings.screen_size[temp_screen_size_index][0],
                                                     Settings.screen_size[temp_screen_size_index][1])
-                self.start_chapter.init()
+                self.start_chapter.init(self.player)
                 #重置内容大小并初始化
                 self.content_chapter.set_window_size(Settings.screen_size[temp_screen_size_index][0],
                                                     Settings.screen_size[temp_screen_size_index][1])
@@ -367,7 +373,7 @@ class Game:
             #通过创建存档来开始游戏
             if self.game_start_new:
                 self.start_page.is_end = True
-                self.start_chapter.show(self.player)
+                self.start_chapter.show()
                 if self.is_create_save:
                     if not self.is_content_load:
                         self.content_chapter.read_save(self.current_save, self.character_group)
@@ -395,6 +401,8 @@ class Game:
             #在游戏中可以显示暂停页面
             if self.game_start_load or self.game_start_new:
                 self.pause_page.draw()
+
+
 
             # print(self.start_page.is_end ,"and",self.game_start_new,self.game_start_load)
 

@@ -8,6 +8,8 @@ from Characters.Player import *
 class StartChapter(Chapter):
     def __init__(self):
         super().__init__()
+        #角色初始化
+        self.player = None
 
         self.input_box = None
         #背景图初始化
@@ -62,7 +64,8 @@ class StartChapter(Chapter):
             img_bg.get_rect(),
         )
 
-    def init(self):
+    def init(self,current_player:Player):
+        self.player = current_player
         self.display_surface = pygame.display.get_surface()
         #输入框初始化
 
@@ -94,7 +97,7 @@ class StartChapter(Chapter):
             elif self.input_box.text == "":
                 self.input_box.text = "名称不可使用空白字符！"
             else:
-                player.name = self.input_box.text
+                self.player.name = self.input_box.text
                 self.is_end = True
 
     def reset(self):
@@ -106,7 +109,7 @@ class StartChapter(Chapter):
         self.input_box.text = ""
 
 
-    def show(self,player:Player):
+    def show(self):
         if not self.is_end:
             #背景显示
             self.display_surface.fill("black")
@@ -120,12 +123,12 @@ class StartChapter(Chapter):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
-
+    player = Player()
     #初始化
     start_chapter = StartChapter()
-    start_chapter.init()
+    start_chapter.init(player)
 
-    player = Player()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -137,5 +140,5 @@ if __name__ == '__main__':
             start_chapter.handle_event(event)
 
 
-        start_chapter.show(player)
+        start_chapter.show()
         pygame.display.update()
