@@ -373,6 +373,7 @@ class Game:
                         self.content_chapter.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
+                        self.content_chapter.chapter_read()                        
                         self.content_chapter.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
@@ -385,6 +386,7 @@ class Game:
                         self.content_chapter.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
+                        self.content_chapter.chapter_read()                        
                         self.content_chapter.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:

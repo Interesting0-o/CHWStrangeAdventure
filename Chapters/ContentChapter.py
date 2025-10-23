@@ -1,5 +1,4 @@
 import os
-
 import pygame
 import json
 from Chapters.Chapter import Chapter
@@ -78,7 +77,42 @@ class ContentChapter(Chapter):
 
 
     def reset(self):
-        pass
+        #保存
+        self.save_saves = False
+        #场景记录
+
+        self.is_button_on = False
+        self.current_chapter = None
+        self.scene_record = []
+
+        #玩家内容
+        self.current_player = None
+
+        self.is_choosing = False
+        self.is_chapter_end = False
+
+        #存档数据
+        self.save_data = None
+        self.config = None
+        self.current_scene = None
+        self.dialog_index = None
+
+        # 选项框内容
+        self.choice_box.clear()
+
+        #事件设置
+        self.next_text_event = False
+
+        #角色组
+        self.character_group = None
+
+        #选项条件重载
+        self.is_choice_reloads = True
+
+        #音频资源
+        self.is_voice_on = True
+        self.current_voice = None
+        self.is_voice = False
 
     def read_json(self):
         self.json_file = os.listdir(self.path[:-9] + r"/data")
