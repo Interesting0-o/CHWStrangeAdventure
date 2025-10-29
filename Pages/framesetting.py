@@ -2,7 +2,6 @@ import pygame
 from Elements.DropdownMenu import DropdownMenu
 from Elements.MenuButton import MenuButton
 from Pages.Page import Page
-from settings import Settings
 
 
 class FrameSetting(Page):
@@ -38,9 +37,9 @@ class FrameSetting(Page):
         self.fullscreen_menu_current_option = fullscreen_auto_index
         self.fullscreen_menu = DropdownMenu(
             self.fullscreen_list,
-            (150, 30),
-            2,
-            self.font,
+            option_size=(150, 30),
+            num=2,
+            menu_font=self.font,
             auto_index = self.fullscreen_menu_current_option,
         )
 
@@ -49,9 +48,9 @@ class FrameSetting(Page):
         self.resolution_menu_current_option = resolution_auto_index
         self.resolution_menu = DropdownMenu(
             self.resolution_list,
-            (150, 30),
-            4,
-            self.font,
+            option_size=(150, 30),
+            num=4,
+            menu_font=self.font,
             auto_index = self.resolution_menu_current_option,
         )
         #设置保存按钮
@@ -83,16 +82,53 @@ class FrameSetting(Page):
         self.bg_surface_rect = self.bg_surface.get_rect(topleft = location)
         self.tar_location = (int(self.bg_surface_rect.width *0.8),int(self.bg_surface_rect.height *0.1))
         self.bg_surface.fill((255, 255, 255))
+
+
         #下拉菜单初始化
-        self.resolution_menu.init(self.tar_location)
-        self.fullscreen_menu.init((self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
+        self.resolution_menu.init(tar_location=self.tar_location
+                                  )
+        self.fullscreen_menu.init(tar_location=(self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
+
         #保存设置按钮初始化
         self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.8*0.6)
 
+
+
+
+    def set_drop(self,fra_set:tuple[int,int]):
+        """
+        设置下拉菜单
+        :param fra_set:第一个参数是分辨率，第二个参数是全屏
+        :return:
+        """
+        self.resolution_menu.set_index(fra_set[0])
+        self.fullscreen_menu.set_index(fra_set[1])
+
+
+
+    def reset(self):
+        self.set_drop((self.resolution_menu_current_option,self.fullscreen_menu_current_option))
+        self.resolution_menu.set_open(False)
+        self.fullscreen_menu.set_open(False)
+
+
+    def handle_event(self,event):
+        """
+        处理事件
+        :param event:
+        :return:
+        """
+        self.resolution_menu.handle_event(event)
+        self.fullscreen_menu.handle_event(event)
+
+
+
+
+
+
+
     def draw(self,
-             mouse_down:bool,
-             # current_screen:pygame.Surface, #当前屏幕
-             location:tuple[int,int] = (0,0),#bg_surface位置
+             location:tuple[int,int] = (0,0)#bg_surface位置
              ):
         self.bg_surface.fill((255, 255, 255))
 
@@ -101,9 +137,7 @@ class FrameSetting(Page):
         self.bg_surface.blit(self.text_fullscreen, self.text_fullscreen_rect)
         self.fullscreen_menu.draw(
             self.bg_surface,
-            location,
-            mouse_down,
-            (self.tar_location[0],int(self.bg_surface_rect.height *0.18))
+            location
         )
 
         #分辨率设置
@@ -111,8 +145,6 @@ class FrameSetting(Page):
         self.resolution_menu.draw(
             self.bg_surface,
             location,
-            mouse_down,
-            self.tar_location
         )
 
         #保存设置按钮
@@ -130,30 +162,33 @@ class FrameSetting(Page):
         else:
             self.isSettingsChange = False
 
-    def reset(self):
-        pass
 
-if __name__ == '__main__':
+
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
-    frame_setting = FrameSetting(0,0)
-    frame_setting.init((100,100))
+    frame_setting = FrameSetting(0, 0)
+    frame_setting.init((100, 100))
     clock = pygame.time.Clock()
 
     while True:
-        mouse_down = False
         clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_down = True
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                frame_setting.reset()
+            frame_setting.handle_event(event)
+
         screen.fill("black")
         screen.blit(frame_setting.bg_surface, frame_setting.bg_surface_rect)
-        frame_setting.draw(mouse_down,(100,100))
-
-
-
-
+        frame_setting.draw((100, 100))
         pygame.display.update()
+
+if __name__ == '__main__':
+    test()

@@ -1,7 +1,6 @@
 import threading
 import pygame
 import os
-from Event import EventBus
 from concurrent.futures import ThreadPoolExecutor
 
 class SaveLoad:
@@ -12,7 +11,6 @@ class SaveLoad:
         return cls.instance
     
     def __init__(self):
-        self.event_bus = EventBus()
         self.pool = ThreadPoolExecutor(max_workers=20)
         self.number = 0
         self.lock = threading.Lock()

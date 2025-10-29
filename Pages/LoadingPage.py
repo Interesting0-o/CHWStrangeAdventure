@@ -169,7 +169,12 @@ class LoadingPage(Page):
             self.display_surface.blit(self.loading_text[self.text_show_index]["text"], self.loading_text[self.text_show_index]["rect"])
 
 
-if __name__ == '__main__':
+
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
 
     screen = pygame.display.set_mode((1280, 720))
@@ -187,3 +192,5 @@ if __name__ == '__main__':
         screen.fill("#ffcd72")
         loading_page.draw(dt)
         pygame.display.update()
+if __name__ == '__main__':
+    test()

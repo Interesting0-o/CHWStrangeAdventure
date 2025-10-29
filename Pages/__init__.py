@@ -7,6 +7,8 @@ from .framesetting import FrameSetting
 from .LoadGamePage import LoadGamePage
 from .PausePage import PausePage
 from .TextPage import TextPage
+from .StartPage import StartPage
+from .ContentChapter import ContentChapter
 
 __all__= [
     "QuitPage",
@@ -17,6 +19,8 @@ __all__= [
     "FrameSetting",
     "LoadGamePage",
     "PausePage",
-    "TextPage"
+    "TextPage",
+    "StartChapter",
+    "ContentChapter"
       ]
 

@@ -168,8 +168,11 @@ class CircularSlider(pygame.sprite.Sprite):
         self.value = max(self.min_val, min(value, self.max_val))
         self.update_knob_position()
 
-
-if __name__ == '__main__':
+def test():
+    """
+    测试函数
+    :return:
+    """
     import pygame
     import sys
 
@@ -182,12 +185,12 @@ if __name__ == '__main__':
 
     # 创建滑块实例
     slider = CircularSlider(
-        x=400, 
-        y=300, 
-        track_length=300, 
-        track_height=20, 
-        min_val=0, 
-        max_val=100, 
+        x=400,
+        y=300,
+        track_length=300,
+        track_height=20,
+        min_val=0,
+        max_val=100,
         initial_val=50,
         continuous=True,
         knob_color=(255, 100, 100),
@@ -205,24 +208,24 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            
+
             # 处理滑块事件
             slider.handle_event(event)
-        
+
         # 清空屏幕
         screen.fill((240, 240, 240))
-        
+
         # 绘制滑块
         slider.draw(screen)
-        
+
         # 显示当前值
         value_text = font.render(f"值: {slider.get_value():.1f}", True, (0, 0, 0))
         screen.blit(value_text, (350, 250))
-        
+
         # 显示滑条尺寸
         size_text = font.render(f"滑条尺寸: {slider.track_length}x{slider.track_height}", True, (0, 0, 0))
         screen.blit(size_text, (320, 200))
-        
+
         # 更新显示
         pygame.display.flip()
         clock.tick(60)
@@ -231,5 +234,5 @@ if __name__ == '__main__':
     sys.exit()
 
 
-
-
+if __name__ == '__main__':
+    test()

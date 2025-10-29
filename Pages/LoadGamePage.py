@@ -383,9 +383,11 @@ class LoadGamePage(Page):
             self.delete_text_start = False
             self.delete_text_page.no_button_value = False
 
-
-
-if __name__ == '__main__':
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
@@ -410,3 +412,7 @@ if __name__ == '__main__':
         screen.fill("white")
         page.draw()
         pygame.display.update()
+
+
+if __name__ == '__main__':
+    test()

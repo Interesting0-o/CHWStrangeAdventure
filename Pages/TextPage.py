@@ -125,7 +125,12 @@ class TextPage(Page):
         if self.no_button.is_pressed_blit(self.text_window_rect.topleft):
             self.no_button_value = True
 
-if __name__ == '__main__':
+
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
@@ -148,3 +153,7 @@ if __name__ == '__main__':
             game.renew()
         pygame.display.update()
         clock.tick(60)
+
+
+if __name__ == '__main__':
+    test()

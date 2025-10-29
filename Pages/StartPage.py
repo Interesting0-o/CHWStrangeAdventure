@@ -116,18 +116,17 @@ class StartPage(Page):
         self.display_surface.blit(self.title, self.title_rect)
         self.display_surface.blit(self.version,self.version_rect)
 
-if __name__ == '__main__':
+
+
+def test():
     pygame.init()
-    screen = pygame.display.set_mode((1280,720))
+    screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption('StartPage', "StartPage")
     clock = pygame.time.Clock()
     start_page = StartPage()
     start_page.init()
     while True:
-        clock.tick(Settings.FPS)
-        x,y = pygame.mouse.get_pos()
-        mouses = pygame.mouse.get_pos()
-        keys = pygame.key.get_pressed()
+        clock.tick(60)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -146,3 +145,6 @@ if __name__ == '__main__':
                 print("click quit button")
         pygame.display.update()
 
+
+if __name__ == '__main__':
+    test()

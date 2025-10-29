@@ -203,8 +203,11 @@ class PausePage(Page):
 
 
 
-
-if __name__ == '__main__':
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
 
@@ -222,4 +225,6 @@ if __name__ == '__main__':
         pause_page.draw()
         pygame.display.update()
 
+if __name__ == '__main__':
+    test()
 

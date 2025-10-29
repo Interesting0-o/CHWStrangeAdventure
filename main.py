@@ -6,7 +6,6 @@ from settings import Settings
 from OpenAnimation import OpenAnimation
 from Pages import *
 from Characters import *
-from Chapters import *
 import json
 
 
@@ -43,7 +42,7 @@ class Game:
         self.window_width = 1280
         self.window_height = 720
         #读取设置文件
-        f = open("settings.json" , "r", encoding="utf-8")
+        f = open("config.json", "r", encoding="utf-8")
         self.setting_date = json.load(f)
         self.window_width = Settings.screen_size[self.setting_date["frame_settings"]["screen_size_index"]][0]
         self.window_height = Settings.screen_size[self.setting_date["frame_settings"]["screen_size_index"]][1]
@@ -135,6 +134,11 @@ class Game:
                 self.load_page.handle_event(event)
                 if self.load_page.delete_save():
                     self.save_manager.delete_save_data(self.load_page.get_key()[:-4])
+
+            #设置页面事件
+            if self.settings_page_start:
+                self.settings_page.handle_event(event)
+
 
             #开始游戏后事件处理
             if not self.is_pause:
@@ -247,13 +251,6 @@ class Game:
         self.start_chapter.reset()
         self.content_chapter.reset()
 
-
-
-
-
-
-
-
     def run(self):
         #初始化开头动画
         self.open_animation.init()
@@ -297,7 +294,7 @@ class Game:
                 #更改设置文件
                 self.setting_date["frame_settings"]["screen_size_index"] = temp_screen_size_index
                 self.setting_date["frame_settings"]["screen_set_index"] = temp_screen_set_index
-                with open("settings.json", "w", encoding="utf-8") as f:
+                with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(self.setting_date, f, ensure_ascii=False, indent=4)
                 self.settings_page.frame_setting.isSettingsChange = False
 
@@ -401,8 +398,6 @@ class Game:
             #在游戏中可以显示暂停页面
             if self.game_start_load or self.game_start_new:
                 self.pause_page.draw()
-
-
 
             # print(self.start_page.is_end ,"and",self.game_start_new,self.game_start_load)
 

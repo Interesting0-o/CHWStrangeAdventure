@@ -117,7 +117,11 @@ class QuitPage(Page):
             self.no_button_value = True
 
 
-if __name__ == "__main__":
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     quit_page = QuitPage()
     screen = pygame.display.set_mode((quit_page.window_width, quit_page.window_height))
@@ -139,3 +143,7 @@ if __name__ == "__main__":
         screen.fill("white")
         quit_page.draw()
         pygame.display.update()
+
+
+if __name__ == "__main__":
+    test()

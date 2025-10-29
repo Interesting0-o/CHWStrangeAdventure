@@ -1,14 +1,14 @@
 import os
 import pygame
 import json
-from Chapters.Chapter import Chapter
+from Pages.Page import Page
 from ResourceLoader import ResourceLoader
 from settings import Settings
 from Elements.MenuButton import MenuButton
 from Characters import *
 
 
-class ContentChapter(Chapter):
+class ContentChapter(Page):
     def __init__(self):
         super().__init__()
 
@@ -115,7 +115,7 @@ class ContentChapter(Chapter):
         self.is_voice = False
 
     def read_json(self):
-        self.json_file = os.listdir(self.path[:-9] + r"/data")
+        self.json_file = os.listdir(self.path[:-9] + r"/plot")
         return self.json_file
 
     def to_dict(self):
@@ -274,7 +274,7 @@ class ContentChapter(Chapter):
             else:
                 self.next_text_event = False
 
-    def show(self):
+    def draw(self):
         #背景渲染
         self.display_surface.blit(self.current_bg, (0, 0))
 
@@ -410,7 +410,7 @@ class ContentChapter(Chapter):
 
     def chapter_read(self):
         #读取章节内容信息
-        with open(self.path[:-9] + f"/data/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
+        with open(self.path[:-9] + f"/plot/{self.save_data["chapter_data"]["chapter"]}.json", "r",encoding="utf-8") as f:
             self.config = json.load(f)
 
     def next_chapter(self):
@@ -422,8 +422,11 @@ class ContentChapter(Chapter):
             else:
                 self.current_chapter = self.json_file[next_chapter_index][:-4]
 
-
-if __name__ == '__main__':
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock =pygame.time.Clock()
@@ -462,8 +465,12 @@ if __name__ == '__main__':
                 pygame.quit()
                 exit()
             content_chapter.handle_event(event)
-        content_chapter.show()
+        content_chapter.draw()
         content_chapter.next_chapter()
         print(content_chapter.current_chapter)
 
         pygame.display.update()
+
+
+if __name__ == '__main__':
+    test()

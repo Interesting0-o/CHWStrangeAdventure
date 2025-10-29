@@ -30,6 +30,6 @@ class Settings:
         pass
 
 if __name__ == '__main__':
-    file = open("settings.json", "r",encoding="utf-8")
+    file = open("config.json", "r", encoding="utf-8")
     settings = json.load(file)
     print(settings["frame_settings"]["screen_size_index"])

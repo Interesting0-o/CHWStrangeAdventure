@@ -107,7 +107,7 @@ class MenuButton:
         """
         当图层贴至其他图层时，判断鼠标是否按下
         :param left_top: 上级图层的左上角坐标
-        :param mouse_down:
+        :param mouse_down: 通过时间判断获取
         :return:
         """
         if self.is_hovered_blit(left_top) and mouse_down:
@@ -116,7 +116,11 @@ class MenuButton:
             return False
 
 
-if __name__ == '__main__':
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
@@ -140,3 +144,7 @@ if __name__ == '__main__':
         screen.blit(button.img, button.rect)
         button.hover_animation()
         pygame.display.update()
+
+
+if __name__ == '__main__':
+    test()

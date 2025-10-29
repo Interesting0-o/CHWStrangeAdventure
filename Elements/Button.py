@@ -174,8 +174,7 @@ class Button(pygame.sprite.Sprite):
 
         """
 
-        if self.is_hovered() and mouse_down:
-            self.setting_mode = 1 - self.setting_mode
+        self.is_hovered()
         if self.hover or self.setting_mode==1:
             if self.index < length:
                 self.index += int(60 / fps) * 2
@@ -189,6 +188,13 @@ class Button(pygame.sprite.Sprite):
                     self.index
                 ]
 
+
+    def set_mode(self):
+        """
+        设置按钮模式，在设置界面使用
+        :return:
+        """
+        self.setting_mode = 1-self.setting_mode
 
     def is_pressed_down(self,event):
         """

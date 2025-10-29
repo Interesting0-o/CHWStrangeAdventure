@@ -11,7 +11,11 @@ class SettingsPage(Page):
     def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
         super().__init__()
 
+
+        #鼠标按下状态
+        self.mouse_down = False
         #黑场专场内容
+
         self.black_surface = pygame.Surface((3840, 2160))
         self.black_surface.fill((0, 0, 0))
         self.black_surface_alpha = 0
@@ -88,10 +92,34 @@ class SettingsPage(Page):
         self.frame_button.setting_mode = 0
         self.frame_button.index = 0
 
+        #下拉菜单重置
+        self.frame_setting.reset()
 
-    def draw(self,
-             mouse_down:bool, #鼠标按下状态
-             ):
+    def handle_event(self, event):
+        """
+        事件处理
+        :param event:
+        :return:
+        """
+        #处理页面设置按钮
+        if self.frame_button.is_hovered_blit((0,self.bg_h)):
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                print("click")
+                self.frame_button.set_mode()
+
+        #处理界面设置页面事件
+        self.frame_setting.handle_event(event)
+
+
+
+
+
+
+    def draw(self):
+        """
+        绘制
+        :return:
+        """
 
         #黑场进入
         if not self.close_button_value:
@@ -126,22 +154,20 @@ class SettingsPage(Page):
         if self.frame_button.setting_mode == 1:
             self.bg_copy.blit(self.frame_setting.bg_surface,
                               (400/1280*self.window_width,150/720*self.window_height))
-            self.frame_setting.draw(mouse_down,
+            self.frame_setting.draw(
                                     (int(0.3125*self.window_width),int(0.2*self.window_height))
                                     )
 
         #按钮渲染
-        self.frame_button.setting_button_animation(mouse_down)
+        self.frame_button.setting_button_animation(False)
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
         #按钮事件处理
         if self.close_button.is_pressed_blit((0,self.bg_h)):
             self.close_button_value = True
 
 
-if __name__ == '__main__':
 
-    from Page import Page
-
+def test():
 
 
     pygame.init()
@@ -153,12 +179,11 @@ if __name__ == '__main__':
     settings_page.init()
 
     while True:
-        mouse_down = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_down = True
+            settings_page.handle_event(event)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
@@ -166,8 +191,11 @@ if __name__ == '__main__':
             settings_page.reset()
 
         screen.fill("white")
-        settings_page.draw( mouse_down )
+        settings_page.draw()
 
         clock.tick(60)
         pygame.display.update()
+
+if __name__ == '__main__':
+    test()
 

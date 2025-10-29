@@ -141,8 +141,11 @@ class InputBox:
                                  (composing_rect.left, underline_y),
                                  (composing_rect.right, underline_y), 1)
 
-
-if __name__ == "__main__":
+def test():
+    """
+    测试函数
+    :return:
+    """
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("输入框测试 - 支持中文输入")
@@ -153,7 +156,7 @@ if __name__ == "__main__":
         location=(100, 100),
         size=(400, 40),
         max_length=20,
-        font =pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 24)
+        font=pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 24)
     )
 
     # 提示文本
@@ -189,3 +192,6 @@ if __name__ == "__main__":
         clock.tick(60)
 
     pygame.quit()
+
+if __name__ == "__main__":
+    test()

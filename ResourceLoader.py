@@ -1,88 +1,139 @@
-from Save_Load import SaveLoad
 import pygame
+import threading
+import os
 pygame.font.init()
 
 class ResourceLoader:
 
     #路径
-    path = __file__[:-18]
-    #字体
-    font_loliti24 = pygame.font.Font(path+r"\resource\font\萝莉体 第二版.ttf", 24)
-    font_loliti36 = pygame.font.Font(path + r"\resource\font\萝莉体 第二版.ttf", 36)
-    font_loliti48 = pygame.font.Font(path + r"\resource\font\萝莉体 第二版.ttf", 48)
-    font_MiSans_Demibold24 = pygame.font.Font(path+r"\resource\font\MiSans\MiSans-Demibold.ttf", 24)
-    font_MiSans_Demibold36 = pygame.font.Font(path + r"\resource\font\MiSans\MiSans-Demibold.ttf", 36)
+    path = __file__[:-18] + r"\resource"
+    img_resource_path = {
+        #图片资源
+        'bg':path + r'\img\bg',
+        'ChapterBG':path + r'\img\ChapterBG',
+        'icon':path + r'\img\icon',
+        'title':path + r'\img\title'
+    }
+    bg_dict = {}
+    chapter_bg_dict = {}
+    icon_dict = {}
+    title_dict = {}
 
-
-    #按钮
-    yes_button_animation = [
-        pygame.image.load(__file__[:-18] +rf"/resource/img/button/yes_button/yes_button_{i:02d}.png") for i in range(30)
-    ]
-    no_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/no_button/no_button_{i:02d}.png") for i in range(30)
-    ]
-    close_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/close_button/close_button_{i:02d}.png") for i in range(30)
-    ]
-    frame_setting_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/frame_setting_button/frame_setting_button_{i:02d}.png") for i in range(30)
-    ]
-    start_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/start_button/start_button_1{i:02d}.png") for i in range(30)
-    ]
-    settings_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/settings_button/settings_button_{i:02d}.png") for i in range(30)
-    ]
-    load_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/load_button/load_button_{i:02d}.png") for i in range(30)
-    ]
-    quit_button_animation = [
-        pygame.image.load(__file__[:-18] + rf"/resource/img/button/quit_button/quit_button_{i:02d}.png") for i in range(30)
-    ]
-
-    #图标icon
-    voice = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice.png")
-    voice_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\voice_hover.png")
-
-    back = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back.png")
-    back_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\back_hover.png")
-
-    next = pygame.image.load(__file__[:-18] + r"\resource\img\icon\next.png")
-    next_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\next_hover.png")
-
-    last = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last.png")
-    last_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\last_hover.png")
-
-    save = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save.png")
-    save_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\save_hover.png")
-
-    delete = pygame.image.load(__file__[:-18] + r"\resource\img\icon\delete.png")
-    delete_hover = pygame.image.load(__file__[:-18] + r"\resource\img\icon\delete_hover.png")
-
-
-
-    #游戏场景的背景
-    background = {
-        "library": pygame.image.load(__file__[:-18] + r"\resource\img\ChapterBG\library.png")
+    img_dict = {
+        "bg":bg_dict,
+        "ChapterBG":chapter_bg_dict,
+        "icon":icon_dict,
+        "title":title_dict
     }
 
-    #游戏开始界面背景
-    start_bg = pygame.image.load(__file__[:-18] + r"/resource/img/bg/bg.png")
-    title_bg = pygame.image.load(__file__[:-18] + r"/resource/img/title/title.png")
-
-    # 对话框
-    dialog_box = pygame.image.load(__file__[:-18] + r"\resource\img\bg\DialogBox.png")
-
-    #对话款背景
-    dialog_bg = pygame.image.load(__file__[:-18] + r"\resource\img\BG\DialogBG.png")
-
-    #DemoCharacter资源
-    demo_character_neutral = pygame.image.load(__file__[:-18] + r"/resource/characters/demoCharacter/img/neutral.png")
-    demo_character_voice ={
-
+    button_resource_path = {
+        #按钮资源
+        'close_button':path + r'\img\button\close_button',
+        'frame_setting_button':path + r'\img/button\frame_setting_button',
+        'load_button':path + r'\img\button/load_button',
+        'no_button':path + r'\img\button\no_button',
+        'quit_button':path + r'\img\button\quit_button',
+        'settings_button':path + r'\img\button\settings_button',
+        'start_button':path + r'\img\button\start_button',
+        'yes_button':path + r'\img\button\yes_button'
     }
-    #游戏ui
-    big_ui = pygame.image.load(path + r"/resource/img/bg/SettingsPageBG.png")
-    quit_window = pygame.image.load(path + r"/resource/img/title/quit.png")
+    button_dict = {}
 
 
+    font_resource_path = {
+        "MiSansDemibold" : path + r'\font\MiSans-Demibold.ttf',
+        "loli":path + r'\font\萝莉体 第二版.ttf',
+    }
+    font_size = [24,36]
+    font_dict = {}
+
+    #检查所有资源是否加载完毕
+    is_load_finish = False
+
+    current_progress = 0
+
+
+    def __init__(self):
+        pass
+
+    def load_all_resource(self)->None:
+        """
+        加载所有资源
+        :return:
+        """
+        #加载所有的图片资源
+        img_thread = [
+            threading.Thread(target=self.load_img,args=(path,self.img_dict[name]))
+            for name,path in self.img_resource_path.items()
+        ]
+        #加载所有的按钮资源
+        button_thread = [
+            threading.Thread(target=self.load_button,args=(name,path))
+            for name,path in self.button_resource_path.items()
+        ]
+
+        font_24_thread = [
+            threading.Thread(target=self.load_font,args=(name,path,24))
+            for name ,path in self.font_resource_path.items()
+        ]
+        font_36_thread = [
+            threading.Thread(target=self.load_font,args=(name,path,36))
+            for name,path in self.font_resource_path.items()
+        ]
+        #启动所有线程
+        for thread in img_thread + button_thread + font_24_thread + font_36_thread:
+            thread.start()
+
+
+
+    def load_font(self,name,path,size:int)->None:
+        """
+        加载字体
+        :param name: 字体名称
+        :param path: 字体路径
+        :param size: 字体大小
+        :return: None
+        """
+        self.font_dict[name + str(size)] = pygame.font.Font(path, size)
+        self.current_progress += 1
+
+
+    def load_button(self,name:str,path:str) -> None:
+        """
+        加载按钮资源
+        :param name: 按钮名称
+        :param path: 按钮的路径
+        :return: None
+        """
+        self.button_dict[name] = [ pygame.image.load(path+rf"\{name}_{i:02d}.png")
+                                   for i in range(30)]
+        self.current_progress += 1
+
+    def load_img(self,path:str, tar_dic:dict)->None:
+        """
+        加载图片资源
+        :param path:
+        :param tar_dic:
+        :return:
+        """
+        all_files = os.listdir(path)
+        for file in all_files:
+            tar_dic[file[:-4]] = pygame.image.load(path+rf"\{file}")
+            self.current_progress += 1
+
+
+
+
+
+def test():
+    loader = ResourceLoader()
+    print(loader.img_resource_path)
+    print(loader.button_resource_path)
+    print(loader.font_resource_path)
+    print()
+    loader.load_all_resource()
+    print(loader.current_progress)
+
+
+if __name__ == '__main__':
+    test()

@@ -1,11 +1,11 @@
 import pygame
-from Chapters.Chapter import Chapter
+from Pages.Page import Page
 from Elements.InputBox import InputBox
 from Elements.MenuButton import MenuButton
 from ResourceLoader import ResourceLoader
 from Characters.Player import *
 
-class StartChapter(Chapter):
+class StartChapter(Page):
     def __init__(self):
         super().__init__()
         #角色初始化
@@ -64,8 +64,10 @@ class StartChapter(Chapter):
             img_bg.get_rect(),
         )
 
-    def init(self,current_player:Player):
-        self.player = current_player
+    def set_player(self, player:Player):
+        self.player = player
+
+    def init(self):
         self.display_surface = pygame.display.get_surface()
         #输入框初始化
 
@@ -109,7 +111,7 @@ class StartChapter(Chapter):
         self.input_box.text = ""
 
 
-    def show(self):
+    def draw(self):
         if not self.is_end:
             #背景显示
             self.display_surface.fill("black")
@@ -120,14 +122,16 @@ class StartChapter(Chapter):
             self.display_surface.blit(self.sure_button.img, self.sure_button.rect)
 
 
-if __name__ == '__main__':
+
+
+def test():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     player = Player()
-    #初始化
+    # 初始化
     start_chapter = StartChapter()
-    start_chapter.init(player)
-
+    start_chapter.init()
+    start_chapter.set_player(player)
 
     while True:
         for event in pygame.event.get():
@@ -139,6 +143,9 @@ if __name__ == '__main__':
 
             start_chapter.handle_event(event)
 
-
-        start_chapter.show()
+        start_chapter.draw()
         pygame.display.update()
+
+
+if __name__ == '__main__':
+   test()
