@@ -4,10 +4,6 @@ class MenuButton:
     """
     专为菜单按钮设计的类
     """
-    hover:bool = False
-    pressed:bool = False
-    is_selected:bool = False
-
     def __init__(self,
                  img:pygame.Surface,       #正常显示时的图片
                  img_hover:pygame.Surface, #鼠标悬停时的图片
@@ -19,101 +15,50 @@ class MenuButton:
         self.rect = img_rect
 
 
-    def is_hovered(self):
+    def is_hover(self,left_top:tuple[int,int] = (0,0)):
         """
         判断鼠标是否悬停在按钮上
         :return:
         """
-        mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
-
-
-    def is_hovered_blit(self,left_top:tuple[int,int]):
-        """
-        当图层贴至其他图层时，判断鼠标是否悬停在按钮上
-        :param left_top:
-        :return:
-        """
         center_x,center_y =pygame.mouse.get_pos()
-        if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
+        return True if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])) else False
 
-    def hover_animation(self):
+    def hover_animation(self,left_top:tuple[int,int] = (0,0)):
         """
         鼠标悬停动画
         :return:
         """
+        self.img = self.img_list[0] if self.is_hover(left_top) else self.img_list[1]
 
-        if self.is_hovered():
-            self.img = self.img_list[1]
-        else:
-            self.img = self.img_list[0]
 
-    def hover_animation_blit(self,left_top:tuple[int,int]):
+    def is_press(self,left_top:tuple[int,int] = (0,0)):
         """
-        当图层贴至其他图层时，鼠标悬停动画
+        判断鼠标是否按下,长按会一直触发该事件
         :param left_top:
         :return:
         """
-        if self.is_hovered_blit(left_top):
-            self.img = self.img_list[1]
-        else:
-            self.img = self.img_list[0]
+        return True if self.is_hover(left_top) and pygame.mouse.get_pressed()[0] else False
 
-    def is_pressed(self):
-        """
-        判断鼠标是否点击
-        :return:
-        """
-        if self.is_hovered() and pygame.mouse.get_pressed()[0]:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
 
-    def is_pressed_blit(self,left_top:tuple[int,int]):
+    def is_pressed_down(self,event:pygame.event.Event,left_top:tuple[int,int] = (0,0)):
         """
-        当图层贴至其他图层时，判断鼠标是否点击
-        :param left_top: 上级图层的左上角坐标
+        判断鼠标是否按下返回事件
+        :param left_top:
+        :param event:
         :return:
         """
-        if self.is_hovered_blit(left_top) and pygame.mouse.get_pressed()[0]:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
-    def is_pressed_down(self,mouse_down:bool):
-        """
-        判断鼠标是否按下
-        :param mouse_down:
-        :return:
-        """
-        if self.is_hovered() and mouse_down:
-            return True
-        else:
-            return False
-    def is_pressed_down_blit(self,left_top:tuple[int,int],mouse_down:bool):
-        """
-        当图层贴至其他图层时，判断鼠标是否按下
-        :param left_top: 上级图层的左上角坐标
-        :param mouse_down: 通过时间判断获取
-        :return:
-        """
-        if self.is_hovered_blit(left_top) and mouse_down:
-            return True
-        else:
-            return False
+        return True if self.is_hover(left_top) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1  else False
+
+    def draw(self,
+             bg_surface:pygame.Surface,#背景Surface
+             left_top:tuple[int,int] = (0,0),#b背景Surface的左上角坐标
+             ):
+
+        self.hover_animation(left_top)
+        bg_surface.blit(self.img,self.rect)
+
+
+
 
 
 def test():
@@ -124,6 +69,7 @@ def test():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
+
     img = pygame.Surface((100, 50))
     img.fill("white")
     img_hover = pygame.Surface((100, 50))
@@ -133,6 +79,7 @@ def test():
         img_hover,
         img.get_rect()
     )
+
     button.rect.center = (640, 360)
 
     while True:
@@ -141,8 +88,11 @@ def test():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-        screen.blit(button.img, button.rect)
-        button.hover_animation()
+            if button.is_pressed_down(event):
+                print("按下")
+
+
+        button.draw(screen)
         pygame.display.update()
 
 

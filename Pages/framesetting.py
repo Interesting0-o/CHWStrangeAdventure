@@ -2,6 +2,7 @@ import pygame
 from Elements.DropdownMenu import DropdownMenu
 from Elements.MenuButton import MenuButton
 from Pages.Page import Page
+from ResourceLoader import ResourceLoader
 
 
 class FrameSetting(Page):
@@ -14,8 +15,8 @@ class FrameSetting(Page):
         self.bg_surface_rect = None
         self.bg_surface = None
         #字体导入
-        self.font = pygame.font.Font(self.path[:-6] + r"/resource/font/MiSans/MiSans-Demibold.ttf", 24)
-        self.font2 = pygame.font.Font(self.path[:-6] + r"/resource/font/MiSans/MiSans-Demibold.ttf", 34)
+        self.font = ResourceLoader.font_dict["MiSansDemibold24"]
+        self.font2 = ResourceLoader.font_dict["MiSansDemibold36"]
         self.text_resolution = self.font.render("分辨率:", True, (0, 0, 0))
         self.text_resolution_rect = self.text_resolution.get_rect(topleft =(30,self.window_height * 0.07))
         self.text_fullscreen = self.font.render("全屏选项:", True, (0, 0, 0))
@@ -171,6 +172,11 @@ def test():
     """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
     frame_setting = FrameSetting(0, 0)
     frame_setting.init((100, 100))
     clock = pygame.time.Clock()

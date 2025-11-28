@@ -1,6 +1,7 @@
 import pygame
 import threading
 import os
+import json
 pygame.font.init()
 
 class ResourceLoader:
@@ -47,6 +48,20 @@ class ResourceLoader:
     font_size = [24,36]
     font_dict = {}
 
+
+    #剧情加载
+
+    plot_resource_path = path + r'\plot'
+    plot_dict = {}
+
+    characters_resource_path = {
+        #角色资源
+        "DemoCharacter":path + r'\characters\DemoCharacter',
+    }
+    demo_character_dict = {}
+
+
+
     #检查所有资源是否加载完毕
     is_load_finish = False
 
@@ -54,7 +69,7 @@ class ResourceLoader:
 
 
     def __init__(self):
-        pass
+        self.thread_list = []
 
     def load_all_resource(self)->None:
         """
@@ -71,7 +86,7 @@ class ResourceLoader:
             threading.Thread(target=self.load_button,args=(name,path))
             for name,path in self.button_resource_path.items()
         ]
-
+        #加载所有的字体资源
         font_24_thread = [
             threading.Thread(target=self.load_font,args=(name,path,24))
             for name ,path in self.font_resource_path.items()
@@ -80,11 +95,32 @@ class ResourceLoader:
             threading.Thread(target=self.load_font,args=(name,path,36))
             for name,path in self.font_resource_path.items()
         ]
+        #加载所有的角色资源
+        characters_thread = [
+            threading.Thread(target=self.load_img,args=(path,self.demo_character_dict))
+            for name,path in self.characters_resource_path.items()
+        ]
+
+        #加载剧情资源
+        plot_thread = threading.Thread(target=self.load_plot)
+
+        #将所有线程加入列表
+        self.thread_list = img_thread + button_thread + font_24_thread + font_36_thread + characters_thread + [plot_thread]
+
         #启动所有线程
-        for thread in img_thread + button_thread + font_24_thread + font_36_thread:
+        for thread in self.thread_list:
             thread.start()
 
-
+    def load_plot(self)->None:
+        """
+        加载剧情资源
+        :return:
+        """
+        all_files = os.listdir(self.plot_resource_path)
+        for file in all_files:
+            with open(self.plot_resource_path + rf"\{file}",'r',encoding='utf-8') as f:
+                 self.plot_dict[file[:-5]] = json.load(f)
+            self.current_progress += 1
 
     def load_font(self,name,path,size:int)->None:
         """
@@ -96,7 +132,6 @@ class ResourceLoader:
         """
         self.font_dict[name + str(size)] = pygame.font.Font(path, size)
         self.current_progress += 1
-
 
     def load_button(self,name:str,path:str) -> None:
         """
@@ -122,17 +157,33 @@ class ResourceLoader:
             self.current_progress += 1
 
 
+    def wait_load_finish(self)->None:
+        for t in self.thread_list:
+            t.join()
+
+    def get_progress(self)->float:
+        return self.current_progress / 35
+
+    def check_load_finish(self)->bool:
+        """
+        检查资源是否加载完毕
+        :return:
+        """
+        pass
+
+
 
 
 
 def test():
+    import time
     loader = ResourceLoader()
-    print(loader.img_resource_path)
-    print(loader.button_resource_path)
-    print(loader.font_resource_path)
-    print()
     loader.load_all_resource()
+    # while loader.get_progress() !=1:
+    #     print(loader.get_progress())
+    loader.wait_load_finish()
     print(loader.current_progress)
+    print(loader.characters_dict)
 
 
 if __name__ == '__main__':

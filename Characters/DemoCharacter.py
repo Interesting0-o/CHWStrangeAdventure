@@ -10,10 +10,10 @@ class DemoCharacter(Character):
         super().__init__()
         self.name = "DemoCharacter"
         self.emotions = {
-            "neutral":ResourceLoader.demo_character_neutral,
+            "neutral":ResourceLoader.demo_character_dict["neutral"],
         }
         self.Id = "DC"
-        self.name_surface = ResourceLoader.font_MiSans_Demibold36.render(self.name+":", True, (255, 255, 255))
+        self.name_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(self.name+":", True, (255, 255, 255))
 
     def __str__(self):
         return self.name

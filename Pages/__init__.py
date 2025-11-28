@@ -8,7 +8,7 @@ from .LoadGamePage import LoadGamePage
 from .PausePage import PausePage
 from .TextPage import TextPage
 from .StartPage import StartPage
-from .ContentChapter import ContentChapter
+from .GameScene import GameScene
 
 __all__= [
     "QuitPage",
@@ -21,6 +21,6 @@ __all__= [
     "PausePage",
     "TextPage",
     "StartChapter",
-    "ContentChapter"
+    "GameScene"
       ]
 

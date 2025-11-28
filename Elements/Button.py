@@ -1,225 +1,123 @@
 import pygame
 
-
-class Button(pygame.sprite.Sprite):
+class Button:
     def __init__(self,
-                 surface:pygame.Surface,
+                 surface_list:list[pygame.Surface],
                  ):
         """
         初始化按钮
-        
         参数:
-            surface: 按钮的图片
-            
+            surface: 按钮的图片列表
         """
-        super().__init__()
-        self.image = surface
+        self.image = surface_list[0]
         self.rect = self.image.get_rect()
-        self.animation_list =[]
+        self.animation_list =surface_list
         self.index = 0
-        self.hover = False
-        self.pressed = False
         self.setting_mode = 0
+        self.value = False
 
 
-    def is_hovered(self):
+    def is_hover(self,left_top:tuple =(0,0)):
         """
-        当button直接渲染在screen时
         判断鼠标是否在按钮上
-        :return:
-        """
-        pos =pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
-
-    def is_hovered_blit(self,left_top:tuple):
-        """
-        当button需要blit到其他surface上时
         :param left_top:
         :return:
         """
         center_x,center_y =pygame.mouse.get_pos()
-        if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
+        return True if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])) else False
 
-    def is_hovered_over_blit(self,left_top:tuple):
+    def is_press(self,left_top:tuple=(0,0)):
         """
-        当button需要blit到其他surface上时
-        判断鼠标是否在按钮上已经离开
-        :param left_top:
-        :return:
-        """
-        center_x, center_y = pygame.mouse.get_pos()
-        if self.hover:
-            if not self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])):
-                self.hover = False
-                return True
-            else:
-                return False
-        else:
-            return False
-
-
-    def is_pressed(self):
-        """
-        当button直接渲染在screen时
-        判断鼠标是否在按钮上按下
-        :return:
-        """
-        mouses_list = pygame.mouse.get_pressed()
-        if self.is_hovered() and mouses_list[0]==True and not self.pressed:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
-
-    def is_pressed_blit(self,left_top:tuple):
-        """
-        当button需要blit到其他surface上时
         判断鼠标是否在按钮上按下
         :param left_top:
         :return:
         """
         mouses_list = pygame.mouse.get_pressed()
-        if self.is_hovered_blit(left_top) and mouses_list[0]==True and not self.pressed:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
+        return True if self.is_hover(left_top) and mouses_list[0] else False
 
-
-
-    def is_hover_over(self):
-        """
-        当button直接渲染在screen时
-        判断鼠标是否在按钮上已经离开
-        :return:
-        """
-        pos = pygame.mouse.get_pos()
-        if self.hover:
-            if not  self.rect.collidepoint(pos):
-                self.hover = False
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def hover_animation_blit(self,left_top:tuple,length:int =28,fps:int = 60):
+    def hover_animation(self,left_top:tuple=(0,0),length:int =28,fps:int = 60):
         """
         当button需要blit到其他surface上时
         :param left_top:
-        :param length:
-        :return:
-        """
-        self.is_hovered_blit(left_top)
-
-
-        if self.hover:
-            if self.index < length:
-                self.index += int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
-        if not self.hover:
-            if self.index >0:
-                self.index -= int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
-
-    def hover_animation(self,length:int =28,fps:int = 60):
-
-
-        """
-        当button直接渲染在screen时
         :param length:
         :param fps:
         :return:
         """
-        self.is_hovered()
-        if self.hover:
+        self.is_hover(left_top)
+        if self.is_hover(left_top):
             if self.index < length:
                 self.index += int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
-        if not self.hover:
+                self.image = self.animation_list[self.index]
+        if not self.is_hover(left_top):
             if self.index >0:
                 self.index -= int(60/fps)*2
-                self.image = self.animation_list[
-                    self.index
-                ]
+                self.image = self.animation_list[self.index]
 
     def setting_button_animation(self,
                                  mouse_down:bool,
                                  length:int =28,
+                                 left_top:tuple = (0,0),
                                  fps:int = 60):
         """
         设置按钮动画,在设置界面使用，当被点击时变为最后一帧效果其余和hover_animation一样
         :param mouse_down: event中的鼠标按下事件
         :param length:
+        :param left_top:
         :param fps:
         :return:
-
         """
 
-        self.is_hovered()
-        if self.hover or self.setting_mode==1:
+        self.is_hover(left_top)
+        if self.is_hover(left_top) or self.setting_mode==1:
             if self.index < length:
                 self.index += int(60 / fps) * 2
-                self.image = self.animation_list[
-                    self.index
-                ]
-        elif not self.hover:
+                self.image = self.animation_list[self.index]
+        elif not self.is_hover(left_top):
             if self.index > 0:
                 self.index -= int(60 / fps) * 2
-                self.image = self.animation_list[
-                    self.index
-                ]
+                self.image = self.animation_list[self.index]
 
 
-    def set_mode(self):
-        """
-        设置按钮模式，在设置界面使用
-        :return:
-        """
-        self.setting_mode = 1-self.setting_mode
-
-    def is_pressed_down(self,event):
+    def is_pressed_down(self,
+                        event:pygame.event.Event,
+                        left_top:tuple = (0,0)
+                        ):
         """
         当button直接渲染在screen时
-        :param event:
-        :return:
-        """
-        if event.type ==pygame.MOUSEBUTTONDOWN and event.button ==1 and self.is_hovered():
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
-
-    def is_pressed_down_blit(self,event,left_top:tuple):
-        """
-        当button需要blit到其他surface上时
         :param event:
         :param left_top:
         :return:
         """
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hovered_blit(left_top):
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
+        return True if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hover(left_top) else False
+
+
+def test():
+    from ResourceLoader import ResourceLoader
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    clock = pygame.time.Clock()
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
+
+    button = Button(loader.button_dict['start_button'])
+
+    while True:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if button.is_pressed_down(event):
+                print('start')
+
+        screen.blit(button.image, button.rect)
+        button.hover_animation()
+        pygame.display.update()
+
+
+if __name__ == '__main__':
+    test()
 

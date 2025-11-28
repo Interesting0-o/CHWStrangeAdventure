@@ -51,8 +51,8 @@ class LoadGamePage(Page):
 
 
         #关闭按钮初始化
-        self.close_button = Button(ResourceLoader.close_button_animation[0])
-        self.close_button.animation_list = ResourceLoader.close_button_animation
+        self.close_button = Button(ResourceLoader.button_dict["close_button"][0])
+        self.close_button.animation_list = ResourceLoader.button_dict["close_button"]
         self.close_button_value = False
 
         #翻页按钮初始化
