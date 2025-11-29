@@ -1,22 +1,25 @@
 from typing import List
+
+from Elements.MenuButton import MenuButton
 from Elements.Button import Button
 import pygame
 
 
 class ButtonGroup:
     def __init__(self):
-        self.__buttons: List[Button] = []
+        self.__buttons: List[Button|MenuButton] = []
 
 
-    def add_button(self,button:Button):
+    def add_button(self,*buttons:Button|MenuButton):
         """
         添加按钮到按钮组
-        :param button:
+        :param buttons:
         :return:
         """
-        self.__buttons.append(button)
+        for button in buttons:
+            self.__buttons.append(button)
 
-    def remove_button(self,button:Button):
+    def remove_button(self,button:Button|MenuButton):
         """
         移除按钮
         :param button:
@@ -48,3 +51,24 @@ class ButtonGroup:
         """
         for button in self.__buttons:
             button.draw(surface)
+
+    def is_hover(self,left_top:tuple =(0,0)):
+        """
+        判断是否在按钮组上
+        :param left_top:
+        :return:
+        """
+        for button in self.__buttons:
+            if button.is_hover(left_top):
+                return True
+        return False
+
+    def hover_animation(self,left_top:tuple =(0,0)):
+        """
+        按钮组上移动画
+        :param left_top:
+        :return:
+        """
+        for button in self.__buttons:
+            button.hover_animation(left_top)
+

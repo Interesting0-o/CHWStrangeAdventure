@@ -8,27 +8,32 @@
       {
         "type": "dialogue",
         "speaker": "旁白",
-        "text": "这是一个普通的图书馆"
+        "text": "这是一个普通的图书馆",
+        "photo": null
       },
       {
         "type": "dialogue",
         "speaker" : "旁白",
-        "text": "一位少女走在路上"
+        "text": "一位少女走在路上",
+        "photo": null
       },
       {
         "type": "dialogue",
         "speaker" : "旁白",
-        "text": "她眼睛里闪着光，看到了你，径直走向你"
+        "text": "她眼睛里闪着光，看到了你，径直走向你",
+        "photo": null
       },
-            {
+      {
         "type": "dialogue",
         "speaker" : "player",
-        "text": "你好，请问有什么可以帮助您？"
+        "text": "你好，请问有什么可以帮助您？",
+        "photo": null
       },
       {
         "type": "dialogue",
         "speaker": "DemoCharacter",
         "text": "我想借阅一下《陈海文的奇妙冒险》这本书。",
+        "photo": null,
         "character": {
           "emotion": "neutral",
           "position": "center",
@@ -37,6 +42,7 @@
       },
       {
         "type": "choice",
+        "photo": null,
         "choices": [
           {
             "choiceId": "choice_1",
@@ -62,21 +68,25 @@
     "bgm": "normal",
     "end_with": "dialogue",
     "next_scene": "C1_2",
+    "last_scene": "C1_1",
     "dialogues": [
       {
         "type": "dialogue",
         "speaker": "旁白",
-        "text": "你将借阅的书籍放在了女孩的面前"
+        "text": "你将借阅的书籍放在了女孩的面前",
+        "photo": null
       },
       {
         "type": "dialogue",
         "speaker": "player",
-        "text": "好的，请问还有什么需要帮助吗？"
+        "text": "好的，请问还有什么需要帮助吗？",
+        "photo": null
       },
       {
         "type": "dialogue",
         "speaker": "DemoCharacter",
         "text": "谢谢你，我想我还需要一些时间来适应这里的环境。",
+        "photo": null,
         "character": {
           "emotion":"neutral",
           "position":"center",
@@ -86,7 +96,8 @@
       {
         "type": "dialogue",
         "speaker": "player",
-        "text": "不客气，祝你阅读愉快！"
+        "text": "不客气，祝你阅读愉快！",
+        "photo": null
       }
     ]
   },
@@ -95,11 +106,13 @@
     "bgm": "normal",
     "end_with": "dialogue",
     "next_scene": "C1_2",
+    "last_scene": "C1_1",
     "dialogues": [
       {
         "type": "dialogue",
         "speaker": "DemoCharacter",
         "text": "那…好吧。",
+        "photo": null,
         "character": {
           "emotion": "neutral",
           "position": "center",
@@ -113,11 +126,13 @@
     "bgm": "normal",
     "end_with": "dialogue",
     "next_scene": "C1_2",
+    "last_scene": "C1_1",
     "dialogues": [
       {
         "type": "dialogue",
         "speaker": "DemoCharacter",
         "text": "请问，你是有什么大病吗！",
+        "photo": null,
         "character": {
           "emotion": "neutral",
           "position": "center",
@@ -130,12 +145,14 @@
     "bg": "library",
     "bgm": "normal",
     "end_with": "dialogue",
-    "next_scene": "C1_3",
+    "next_scene": null,
+    "last_scene": [ "C1_1:if_1", "C1_1:if_2", "C1_1:if_3"],
     "dialogues": [
       {
         "type": "dialogue",
         "speaker": "player",
-        "text": "好的，请问还有什么需要帮助吗？"
+        "text": "好的，请问还有什么需要帮助吗？",
+        "photo": null
       }
     ]
   }

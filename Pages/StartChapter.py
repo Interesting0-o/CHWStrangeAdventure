@@ -13,13 +13,21 @@ class StartChapter(Page):
 
         self.input_box = None
         #背景图初始化
-        self.bg = ResourceLoader.dialog_box
+        self.bg = ResourceLoader.bg_dict["DialogBox"]
         self.bg_copy = self.bg
         self.bg_rect = None
         #按钮初始化
+        self._button_define_()
+
+    def _button_define_(self):
+        """
+        按钮定义
+        :return:
+        """
+        #按钮初始化
         text = "确定"
         #按钮图片(未选中时)初始化
-        img = ResourceLoader.font_loliti36.render(text, True, "orange")
+        img = ResourceLoader.font_dict["loli36"].render(text, True, "orange")
         img_rect = img.get_rect()
         img_bg = pygame.surface.Surface((img_rect.width + 80, img_rect.height + 10))
         img_bg.fill("green")
@@ -38,7 +46,7 @@ class StartChapter(Page):
         img_bg.blit(img,img_rect)
         img_bg.set_colorkey("green")
         #按钮图片(选中时)初始化
-        img_hover = ResourceLoader.font_loliti36.render(text, True, "white")
+        img_hover = ResourceLoader.font_dict["loli36"].render(text, True, "white")
         img_hover_rect = img_hover.get_rect()
         img_hover_bg = pygame.surface.Surface((img_rect.width + 80, img_rect.height + 10))
         img_hover_bg.fill("green")
@@ -64,6 +72,7 @@ class StartChapter(Page):
             img_bg.get_rect(),
         )
 
+
     def set_player(self, player:Player):
         self.player = player
 
@@ -74,7 +83,7 @@ class StartChapter(Page):
         self.input_box = InputBox(
             location=(self.window_width/2 - 200, self.window_height/2 - 50 ),
             size=(400, 50),
-            font=ResourceLoader.font_MiSans_Demibold24,
+            font=ResourceLoader.font_dict["MiSansDemibold24"],
             max_length=15,
             text = "请输入您的称呼"
         )
@@ -87,13 +96,9 @@ class StartChapter(Page):
 
     def handle_event(self, event):
         self.input_box.handle_event(event)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            self.mouse_down = True
-        else:
-            self.mouse_down = False
 
         # 按钮事件处理
-        if self.sure_button.is_pressed_down(self.mouse_down):
+        if self.sure_button.is_press_down(event):
             if self.input_box.text == "请输入您的称呼" or self.input_box.text == "请输入有效的称呼！" or self.input_box.text == "名称不可使用空白字符！":
                 self.input_box.text = "请输入有效的称呼！"
             elif self.input_box.text == "":
@@ -125,6 +130,11 @@ class StartChapter(Page):
 
 
 def test():
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     player = Player()
