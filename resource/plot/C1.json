@@ -1,10 +1,9 @@
 {
-  "end_scene": "C1_2",
   "C1_1":{
     "bg": "library",
     "bgm": "normal",
     "end_with": "choice",
-    "choice_num": 3,
+    "last_scene": null,
     "dialogues": [
       {
         "type": "dialogue",

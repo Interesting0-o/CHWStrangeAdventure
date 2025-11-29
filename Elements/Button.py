@@ -44,14 +44,12 @@ class Button:
         :return:
         """
         self.is_hover(left_top)
-        if self.is_hover(left_top):
-            if self.index < length:
-                self.index += int(60/fps)*2
-                self.image = self.animation_list[self.index]
-        if not self.is_hover(left_top):
-            if self.index >0:
-                self.index -= int(60/fps)*2
-                self.image = self.animation_list[self.index]
+        if self.is_hover(left_top) and self.index < length:
+            self.index += int(60/fps)*2
+            self.image = self.animation_list[self.index]
+        if not self.is_hover(left_top) and self.index >0:
+            self.index -= int(60/fps)*2
+            self.image = self.animation_list[self.index]
 
     def setting_button_animation(self,
                                  mouse_down:bool,
@@ -90,6 +88,8 @@ class Button:
         """
         return True if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hover(left_top) else False
 
+    def draw(self,bg_surface:pygame.Surface):
+        bg_surface.blit(self.image,self.rect)
 
 def test():
     from ResourceLoader import ResourceLoader

@@ -1,6 +1,6 @@
 import pygame
 
-class CircularSlider(pygame.sprite.Sprite):
+class Slider(pygame.sprite.Sprite):
     def __init__(self,
                   x, y,
                     track_length, track_height, 
@@ -184,7 +184,7 @@ def test():
     pygame.display.set_caption("增强版圆形滑块示例")
 
     # 创建滑块实例
-    slider = CircularSlider(
+    slider = Slider(
         x=400,
         y=300,
         track_length=300,

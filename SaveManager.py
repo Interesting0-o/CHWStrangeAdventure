@@ -24,6 +24,11 @@ class SaveManager:
         self.save_datas = {}
 
     def thread_read(self,file):
+        """
+        用于线程读取保存游戏数据
+        :param file:
+        :return:
+        """
         try:
             with open(self.path+f"save/{file}", "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -37,11 +42,21 @@ class SaveManager:
             t.start()
     #删除保存游戏数据
     def delete_save_data(self, save_name):
+        """
+        删除保存游戏数据
+        :param save_name:
+        :return:
+        """
         os.remove(self.path+rf"save\{save_name}.chw")
         self.save_datas.pop(save_name+".chw")
 
     #保存游戏数据
     def save_save_data(self,data:dict):
+        """
+        保存游戏数据
+        :param data:
+        :return:
+        """
         current_time = str(datetime.datetime.now().strftime("%Y-%m-%d"))
         save_name = data["player"]["name"] + current_time
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
@@ -51,13 +66,30 @@ class SaveManager:
 
     #覆盖保存游戏数据
     def cover_save_data(self,data:dict):
+        """
+        覆盖保存游戏数据
+        :param data:
+        :return:
+        """
         save_name = data["player"]["name"] + str(datetime.datetime.now().strftime("%Y-%m-%d"))
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         self.save_datas[save_name] = save_name
         return save_name
+        
+    #等待所有保存游戏数据读取完成
+    def wait_load_finish(self):
+        """
+        等待所有保存游戏数据读取完成
+        :return:
+        """
+        while len(self.save_datas)!= len(os.listdir(self.path+'save')):
+            pass
 
 
 if __name__ == '__main__':
     save_manager = SaveManager()
     save_manager.init_save_data()
+    print(save_manager.save_datas)
+    save_manager.wait_load_finish()
+    print(save_manager.save_datas)

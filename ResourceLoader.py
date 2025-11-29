@@ -183,7 +183,7 @@ def test():
     #     print(loader.get_progress())
     loader.wait_load_finish()
     print(loader.current_progress)
-    print(loader.characters_dict)
+    print(loader.bg_dict["DialogBg"])
 
 
 if __name__ == '__main__':

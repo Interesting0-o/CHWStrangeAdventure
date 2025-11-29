@@ -146,6 +146,14 @@ def test():
     测试函数
     :return:
     """
+
+    from ResourceLoader import ResourceLoader
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
+
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("输入框测试 - 支持中文输入")
@@ -156,11 +164,11 @@ def test():
         location=(100, 100),
         size=(400, 40),
         max_length=20,
-        font=pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 24)
+        font=ResourceLoader.font_dict["MiSansDemibold24"]
     )
 
     # 提示文本
-    font = pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 24)
+    font = ResourceLoader.font_dict["MiSansDemibold24"]
     hint_text = "点击输入框开始输入，支持中文输入法"
 
     running = True

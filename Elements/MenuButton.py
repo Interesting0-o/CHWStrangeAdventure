@@ -10,7 +10,8 @@ class MenuButton:
                  img_rect,            #图片的位置
                  ):
         #初始化
-        self.img_list = [img,img_hover,img]
+        # img_list: [normal, hover]
+        self.img_list = [img, img_hover]
         self.img = img
         self.rect = img_rect
 
@@ -28,7 +29,8 @@ class MenuButton:
         鼠标悬停动画
         :return:
         """
-        self.img = self.img_list[0] if self.is_hover(left_top) else self.img_list[1]
+        # 当鼠标悬停时显示 hover 图，否则显示正常图
+        self.img = self.img_list[1] if self.is_hover(left_top) else self.img_list[0]
 
 
     def is_press(self,left_top:tuple[int,int] = (0,0)):
@@ -40,7 +42,7 @@ class MenuButton:
         return True if self.is_hover(left_top) and pygame.mouse.get_pressed()[0] else False
 
 
-    def is_pressed_down(self,event:pygame.event.Event,left_top:tuple[int,int] = (0,0)):
+    def is_press_down(self,event:pygame.event.Event,left_top:tuple[int,int] = (0,0)):
         """
         判断鼠标是否按下返回事件
         :param left_top:
@@ -51,10 +53,7 @@ class MenuButton:
 
     def draw(self,
              bg_surface:pygame.Surface,#背景Surface
-             left_top:tuple[int,int] = (0,0),#b背景Surface的左上角坐标
              ):
-
-        self.hover_animation(left_top)
         bg_surface.blit(self.img,self.rect)
 
 
