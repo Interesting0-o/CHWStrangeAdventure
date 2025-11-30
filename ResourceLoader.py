@@ -78,7 +78,7 @@ class ResourceLoader:
         """
         #加载所有的图片资源
         img_thread = [
-            threading.Thread(target=self.load_img,args=(path,self.img_dict[name]))
+            threading.Thread(target=self.load_img,args=(path,ResourceLoader.img_dict[name]))
             for name,path in self.img_resource_path.items()
         ]
         #加载所有的按钮资源
@@ -119,7 +119,7 @@ class ResourceLoader:
         all_files = os.listdir(self.plot_resource_path)
         for file in all_files:
             with open(self.plot_resource_path + rf"\{file}",'r',encoding='utf-8') as f:
-                 self.plot_dict[file[:-5]] = json.load(f)
+                 ResourceLoader.plot_dict[file[:-5]] = json.load(f)
             self.current_progress += 1
 
     def load_font(self,name,path,size:int)->None:
@@ -130,7 +130,7 @@ class ResourceLoader:
         :param size: 字体大小
         :return: None
         """
-        self.font_dict[name + str(size)] = pygame.font.Font(path, size)
+        ResourceLoader.font_dict[name + str(size)] = pygame.font.Font(path, size)
         self.current_progress += 1
 
     def load_button(self,name:str,path:str) -> None:
@@ -140,7 +140,7 @@ class ResourceLoader:
         :param path: 按钮的路径
         :return: None
         """
-        self.button_dict[name] = [ pygame.image.load(path+rf"\{name}_{i:02d}.png")
+        ResourceLoader.button_dict[name] = [ pygame.image.load(path+rf"\{name}_{i:02d}.png")
                                    for i in range(30)]
         self.current_progress += 1
 
@@ -183,7 +183,7 @@ def test():
     #     print(loader.get_progress())
     loader.wait_load_finish()
     print(loader.current_progress)
-    print(loader.bg_dict["DialogBg"])
+    print(loader.bg_dict["DialogBG"])
 
 
 if __name__ == '__main__':

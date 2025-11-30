@@ -22,7 +22,7 @@ class MenuButton:
         :return:
         """
         center_x,center_y =pygame.mouse.get_pos()
-        return True if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])) else False
+        return  self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1]))
 
     def hover_animation(self,left_top:tuple[int,int] = (0,0)):
         """
@@ -87,11 +87,12 @@ def test():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if button.is_pressed_down(event):
+            if button.is_press_down(event):
                 print("按下")
 
 
         button.draw(screen)
+        button.hover_animation()
         pygame.display.update()
 
 

@@ -24,7 +24,7 @@ class Button:
         :return:
         """
         center_x,center_y =pygame.mouse.get_pos()
-        return True if self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1])) else False
+        return self.rect.collidepoint((center_x - left_top[0], center_y - left_top[1]))
 
     def is_press(self,left_top:tuple=(0,0)):
         """

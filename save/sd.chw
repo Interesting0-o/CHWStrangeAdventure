@@ -7,6 +7,6 @@
         "chapter":"C1",
         "scene":"C1_1",
         "dialog_index":0
-    }
-
+    },
+    "bg":"library"
 }

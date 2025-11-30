@@ -1,7 +1,6 @@
 import datetime
 import json
 import os
-import pygame
 import threading
 
 class SaveManager:
@@ -21,7 +20,7 @@ class SaveManager:
     path = __file__[:-14]
 
     def __init__(self):
-        self.save_datas = {}
+        self.save_datas = {} #保存在字典中的存档名称会带有.chw后缀
 
     def thread_read(self,file):
         """
@@ -33,10 +32,14 @@ class SaveManager:
             with open(self.path+f"save/{file}", "r", encoding="utf-8") as f:
                 data = json.load(f)
                 self.save_datas[file] = data
-        except Exception as e:
+        except Exception:
             self.save_datas[file] = "Error"
     #读取保存游戏数据
     def init_save_data(self):
+        """
+        初始化保存游戏数据
+        :return:
+        """
         for file in os.listdir(self.path+'save'):
             t = threading.Thread(target=self.thread_read, args=(file,))
             t.start()
