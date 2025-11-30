@@ -1,5 +1,3 @@
-from typing import List
-
 from Elements.MenuButton import MenuButton
 from Elements.Button import Button
 import pygame
@@ -7,7 +5,7 @@ import pygame
 
 class ButtonGroup:
     def __init__(self):
-        self.__buttons: List[Button|MenuButton] = []
+        self.__buttons: list[Button|MenuButton] = []
 
 
     def add_button(self,*buttons:Button|MenuButton):

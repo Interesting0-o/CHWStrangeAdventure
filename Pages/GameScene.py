@@ -70,7 +70,7 @@ class GameScene(Page):
 
 
     def reset(self):
-        self.is_end = False
+        super().reset()
 
         #角色组
         self.character_group = None
@@ -404,10 +404,11 @@ class GameScene(Page):
         if self.current_scene is None:
             try:
                 print(str(int(self.current_chapter[1:])+1))
+
                 chapter = "C" + str(int(self.current_chapter[1:])+1)
-                self.plot[chapter]
-
-
+                if chapter not in self.plot.keys():
+                    raise KeyError
+                #正常切换到下一个章节
                 self.current_chapter = chapter
                 self.current_scene = self.plot[self.current_chapter].keys()[0]
                 self.dialog_index = 0
@@ -465,8 +466,7 @@ class GameScene(Page):
         """
 
         #判断是否到达结尾
-        if self.is_end:
-            return
+        super().handle_event(event)
         # 按钮动画启动
         self.button_group.hover_animation()
 
@@ -496,8 +496,7 @@ class GameScene(Page):
 
     def draw(self):
         #判断是否到达结尾
-        if self.is_end:
-            return
+        super().draw()
         #背景渲染
         self.display_surface.blit(self.current_bg, (0, 0))
 

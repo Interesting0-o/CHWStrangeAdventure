@@ -76,7 +76,7 @@ class Button:
                 self.image = self.animation_list[self.index]
 
 
-    def is_pressed_down(self,
+    def is_press_down(self,
                         event:pygame.event.Event,
                         left_top:tuple = (0,0)
                         ):
@@ -110,7 +110,7 @@ def test():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if button.is_pressed_down(event):
+            if button.is_press_down(event):
                 print('start')
 
         screen.blit(button.image, button.rect)

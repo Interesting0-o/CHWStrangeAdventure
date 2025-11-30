@@ -19,14 +19,15 @@ class Page(ABC):
         """
         pass
 
-
+    @abstractmethod
     def handle_event(self, event):
         """
         子类有选择的实现事件处理方法
         :param event:
         :return:
         """
-        pass
+        if self.is_end:
+            return
 
     @abstractmethod
     def draw(self):
@@ -34,7 +35,8 @@ class Page(ABC):
         子类实现绘制方法
         :return:
         """
-        pass
+        if self.is_end:
+            return
 
     @abstractmethod
     def reset(self):
@@ -42,9 +44,10 @@ class Page(ABC):
         子类实现重置方法
         :return:
         """
-        pass
+        self.is_end = False
 
-    def rect_show(self,rect:pygame.Rect):
+    @staticmethod
+    def rect_show(rect:pygame.Rect):
         """
         显示碰撞矩形
         :param rect:
@@ -53,7 +56,7 @@ class Page(ABC):
         color = pygame.Surface(rect.size)
         color.set_colorkey("black")
         pygame.draw.rect(color,"red", (rect.x+2,rect.y+2,rect.width-4,rect.height-4),2)
-        self.display_surface.blit(color, rect)
+        pygame.display.get_surface().blit(color, rect)
 
     def set_window_size(self, width:int = -1, height:int = -1 ,
                         size:tuple[int,int] = (-1,-1)
