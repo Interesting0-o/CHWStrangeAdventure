@@ -83,7 +83,8 @@ class TextPage(Page):
         绘制页面
         :return:
         """
-        super().draw()
+        if self.is_end :
+            return
 
         #黑场动画
         if not self.no_button_value: #取消按钮未按下时

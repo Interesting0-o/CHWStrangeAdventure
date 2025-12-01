@@ -37,8 +37,6 @@ class DropdownMenu:
         self.current_index = auto_index  #当前选中项索引！！！
         self.menu_options = menu_options
         self.is_open = False
-        self.hover = False
-        self.pressed = False
         self.select_index = 0
         self.options = []
         self.tar_location = None
@@ -85,55 +83,24 @@ class DropdownMenu:
             self.select_index += 1
         self.select_index = auto_index
 
-    def is_hovered(self):
-        """
-        判断鼠标是否悬停在收缩时背景上
-        :return:
-        """
-        mouse_pos = pygame.mouse.get_pos()
-        if self.current_option_bg_rect.collidepoint(mouse_pos):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
 
-    def is_hovered_blite(self,left_top:tuple[int,int]):
+    def is_hover(self,left_top:tuple[int,int] = (0,0)):
         """
         当图层被贴在其他图层上时，判断鼠标是否悬停在收缩时背景上
         :param left_top:
         :return:
         """
         center_x,center_y =pygame.mouse.get_pos()
-        if self.current_option_bg_rect.collidepoint((center_x - left_top[0], center_y - left_top[1])):
-            self.hover = True
-            return True
-        else:
-            self.hover = False
-            return False
-    def is_pressed(self):
-        """
-        判断鼠标是否按下在收缩时背景上
-        :return:
-        """
-        if self.is_hovered() and pygame.mouse.get_pressed()[0]:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
-    def is_pressed_blite(self,left_top:tuple[int,int]):
+        return self.current_option_bg_rect.collidepoint((center_x - left_top[0], center_y - left_top[1]))
+
+    def is_press(self,left_top:tuple[int,int] = (0,0)):
         """
         当图层被贴在其他图层上时，判断鼠标是否按下在收缩时背景上
         :param left_top:
         :return:
         """
-        if self.is_hovered_blite(left_top) and pygame.mouse.get_pressed()[0]:
-            self.pressed = True
-            return True
-        else:
-            self.pressed = False
-            return False
+        return self.is_hover(left_top) and pygame.mouse.get_pressed()[0]
+
 
     def current_visible(self,display:bool = True):
         """
@@ -161,10 +128,14 @@ class DropdownMenu:
 
     def select_option_animation_blit(self,left_top:tuple[int,int]):
         for i in range(self.num):
-            self.options[i].hover_animation_blit(left_top)
+            self.options[i].hover_animation(left_top)
             self.select_option_bg.blit(self.options[i].img, self.options[i].rect)
-            print(i,self.options[i].rect.topleft)
-            if self.options[i].is_pressed_blit(left_top) :
+
+            if __name__ == "__main__":
+                #测试用
+                print(i,self.options[i].rect.topleft)
+
+            if self.options[i].is_press(left_top):
                 self.current_show = MenuButton(
                     self.options[i].img_list[0],
                     self.options[i].img_list[1],
@@ -182,7 +153,7 @@ class DropdownMenu:
         """
         #通过事件监听判断是否打开下拉列表
 
-        if self.location is not None and self.current_show.is_hovered_blit((self.tar_location[0]+self.location[0],self.tar_location[1]+self.location[1])):
+        if self.location is not None and self.current_show.is_hover((self.tar_location[0]+self.location[0],self.tar_location[1]+self.location[1])):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.is_open:
                     self.is_open = False
@@ -198,7 +169,7 @@ class DropdownMenu:
         self.location = location
 
         #收缩时表单的选项动画
-        self.current_show.hover_animation_blit((
+        self.current_show.hover_animation((
             self.tar_location[0] + self.location[0], self.tar_location[1] + self.location[1]
         ))
         self.current_option_bg.blit(self.current_show.img, (0, 0))
@@ -230,19 +201,27 @@ class DropdownMenu:
         self.is_open = is_open
 
 def test():
+    from ResourceLoader import ResourceLoader
+
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
 
     def show_pos(bg_surface):
         text = "鼠标位置：{}".format(pygame.mouse.get_pos())
-        font1 = pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 20)
+        font1 = ResourceLoader().font_dict["MiSansDemibold24"]
         text_surface = font1.render(text, True, (0, 0, 0))
         bg_surface.blit(text_surface, (100, 100))
+
+
     """
     测试函数
     :return:
     """
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
-    font = pygame.font.Font(r"E:\code\GameDemo\resource\font\MiSans\MiSans-Demibold.ttf", 20)
+    font = ResourceLoader().font_dict["MiSansDemibold24"]
     options = ["选项1", "选项2", "选项3", "选项4"]
     options2 = ["选项1", "选项2", "选项3", "选项4", "选项5"]
 

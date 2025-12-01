@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 class Page(ABC):
     path  = __file__[:-8]
 
-    @abstractmethod
     def __init__(self):
         self.window_width = 1280
         self.window_height = 720
@@ -17,7 +16,7 @@ class Page(ABC):
         子类实现初始化方法
         :return:
         """
-        pass
+        ...
 
     @abstractmethod
     def handle_event(self, event):
@@ -26,8 +25,7 @@ class Page(ABC):
         :param event:
         :return:
         """
-        if self.is_end:
-            return
+        ...
 
     @abstractmethod
     def draw(self):
@@ -35,8 +33,7 @@ class Page(ABC):
         子类实现绘制方法
         :return:
         """
-        if self.is_end:
-            return
+        ...
 
     @abstractmethod
     def reset(self):
@@ -44,7 +41,7 @@ class Page(ABC):
         子类实现重置方法
         :return:
         """
-        self.is_end = False
+        ...
 
     @staticmethod
     def rect_show(rect:pygame.Rect):

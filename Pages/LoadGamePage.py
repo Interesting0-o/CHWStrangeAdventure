@@ -325,7 +325,7 @@ class LoadGamePage(Page):
 
 
     def reset(self):
-        super().reset()
+        self.is_end = False
 
         #黑场资源重置
         self.black_surface_alpha = 0
@@ -406,7 +406,8 @@ class LoadGamePage(Page):
         :return:
         """
         # 判断是否关闭按钮被点击
-        super().handle_event(event)
+        if self.is_end:
+            return
 
         #处理按钮事件
         self._button_event_(event)

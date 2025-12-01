@@ -95,6 +95,14 @@ class StartChapter(Page):
         self.sure_button.rect.center = (int(self.window_width/2), int(self.window_height/2 +60))
 
     def handle_event(self, event):
+        """
+        事件处理
+        :param event:
+        :return:
+        """
+        if self.is_end:
+            return
+
         self.input_box.handle_event(event)
 
         # 按钮事件处理
@@ -117,6 +125,14 @@ class StartChapter(Page):
 
 
     def draw(self):
+        """
+        绘制
+        :return:
+        """
+        #检验是否结束
+        if self.is_end:
+            return
+
         if not self.is_end:
             #背景显示
             self.display_surface.fill("black")

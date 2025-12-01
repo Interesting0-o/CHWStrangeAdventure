@@ -45,7 +45,7 @@ class ResourceLoader:
         "MiSansDemibold" : path + r'\font\MiSans-Demibold.ttf',
         "loli":path + r'\font\萝莉体 第二版.ttf',
     }
-    font_size = [24,36]
+    font_size = [24,36,48]
     font_dict = {}
 
 
@@ -95,6 +95,10 @@ class ResourceLoader:
             threading.Thread(target=self.load_font,args=(name,path,36))
             for name,path in self.font_resource_path.items()
         ]
+        font_48_thread = [
+            threading.Thread(target=self.load_font,args=(name,path,48))
+            for name,path in self.font_resource_path.items()
+        ]
         #加载所有的角色资源
         characters_thread = [
             threading.Thread(target=self.load_img,args=(path,self.demo_character_dict))
@@ -105,7 +109,7 @@ class ResourceLoader:
         plot_thread = threading.Thread(target=self.load_plot)
 
         #将所有线程加入列表
-        self.thread_list = img_thread + button_thread + font_24_thread + font_36_thread + characters_thread + [plot_thread]
+        self.thread_list = img_thread + button_thread + font_24_thread + font_36_thread + font_48_thread + characters_thread + [plot_thread]
 
         #启动所有线程
         for thread in self.thread_list:

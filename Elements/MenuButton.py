@@ -39,7 +39,7 @@ class MenuButton:
         :param left_top:
         :return:
         """
-        return True if self.is_hover(left_top) and pygame.mouse.get_pressed()[0] else False
+        return  self.is_hover(left_top) and pygame.mouse.get_pressed()[0]
 
 
     def is_press_down(self,event:pygame.event.Event,left_top:tuple[int,int] = (0,0)):
@@ -49,7 +49,7 @@ class MenuButton:
         :param event:
         :return:
         """
-        return True if self.is_hover(left_top) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1  else False
+        return self.is_hover(left_top) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
 
     def draw(self,
              bg_surface:pygame.Surface,#背景Surface

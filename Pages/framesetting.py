@@ -68,12 +68,13 @@ class FrameSetting(Page):
         self.save_button = MenuButton(#实例化按钮
             self.save_button_bg,
             self.save_button_hover_bg,
-            self.save_button_bg.get_rect(center = (self.window_width*0.5*0.6,self.window_height*0.8*0.7))
+            self.save_button_bg.get_rect(center = (self.window_width*0.5*0.6,self.window_height*0.8*0.8))
         )
 
     def init(self,
              location:tuple[int,int] = (0,0),       #bg_surface位置
              ):
+        self.display_surface = pygame.display.get_surface()
 
         #背景设置
         self.bg_surface = pygame.surface.Surface((
@@ -119,20 +120,34 @@ class FrameSetting(Page):
         :param event:
         :return:
         """
-        self.resolution_menu.handle_event(event)
-        self.fullscreen_menu.handle_event(event)
+        if self.is_end:
+            return
+        #下拉菜单事件处理
+        if not self.fullscreen_menu.is_open:
+            self.resolution_menu.handle_event(event)
+
+        #全屏设置事件处理
+        if not self.resolution_menu.is_open:
+            self.fullscreen_menu.handle_event(event)
+
+        #保存修改
+        if self.save_button.is_press(self.bg_surface_rect.topleft):
+            self.isSettingsChange = True
+        else:
+            self.isSettingsChange = False
 
 
-
-
-
-
+    def is_settings_change(self):
+        return self.isSettingsChange
 
     def draw(self,
              location:tuple[int,int] = (0,0)#bg_surface位置
              ):
         self.bg_surface.fill((255, 255, 255))
 
+        if self.is_end:
+            return
+        #背景渲染
 
         #全屏设置
         self.bg_surface.blit(self.text_fullscreen, self.text_fullscreen_rect)
@@ -149,19 +164,10 @@ class FrameSetting(Page):
         )
 
         #保存设置按钮
-        self.save_button.hover_animation_blit(self.bg_surface_rect.topleft)
+        self.save_button.hover_animation(self.bg_surface_rect.topleft)
         self.bg_surface.blit(self.save_button.img, self.save_button.rect)
 
-        #保存修改
-        if self.save_button.is_pressed_blit(self.bg_surface_rect.topleft):
-            self.isSettingsChange = True
-            # current_screen = pygame.display.set_mode(Settings.screen_size[self.resolution_menu.get_index()],
-            #                                  flags =Settings.screen_set[self.fullscreen_menu.get_index()])
-            # self.set_window_size(Settings.screen_size[self.resolution_menu.get_index()][0],
-            #                       Settings.screen_size[self.resolution_menu.get_index()][1])
-            # self.init(location)
-        else:
-            self.isSettingsChange = False
+
 
 
 
@@ -179,6 +185,7 @@ def test():
 
     frame_setting = FrameSetting(0, 0)
     frame_setting.init((100, 100))
+    frame_setting.is_end = True
     clock = pygame.time.Clock()
 
     while True:

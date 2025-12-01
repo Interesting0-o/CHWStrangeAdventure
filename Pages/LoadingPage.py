@@ -38,7 +38,7 @@ class LoadingPage(Page):
         self.text_show_index = 0
         self.total_time = 0
         for i in range(6):
-            text = ResourceLoader.font_loliti48.render("Loading"+i*".",True,(255,255,255))
+            text = ResourceLoader.font_dict["MiSansDemibold48"].render("Loading"+i*".",True,(255,255,255))
             rect = text.get_rect()
             self.loading_text.append({
                 "text":text,
@@ -106,7 +106,14 @@ class LoadingPage(Page):
             self.ball_reset()
 
 
-
+    def handle_event(self, event):
+        """
+        事件处理
+        :param event:
+        :return:
+        """
+        if self.is_end:
+            return
 
     def init(self):
         self.display_surface = pygame.display.get_surface()
@@ -178,6 +185,12 @@ def test():
     pygame.init()
 
     screen = pygame.display.set_mode((1280, 720))
+
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
 
     loading_page = LoadingPage()
     loading_page.init()

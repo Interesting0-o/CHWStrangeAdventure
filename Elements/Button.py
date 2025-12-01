@@ -33,7 +33,7 @@ class Button:
         :return:
         """
         mouses_list = pygame.mouse.get_pressed()
-        return True if self.is_hover(left_top) and mouses_list[0] else False
+        return self.is_hover(left_top) and mouses_list[0]
 
     def hover_animation(self,left_top:tuple=(0,0),length:int =28,fps:int = 60):
         """
@@ -86,10 +86,17 @@ class Button:
         :param left_top:
         :return:
         """
-        return True if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hover(left_top) else False
+        return  event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.is_hover(left_top)
 
     def draw(self,bg_surface:pygame.Surface):
         bg_surface.blit(self.image,self.rect)
+
+    def set_mode(self):
+        """
+        设置按钮模式，在设置界面使用
+        :return:
+        """
+        self.setting_mode = 1-self.setting_mode
 
 def test():
     from ResourceLoader import ResourceLoader

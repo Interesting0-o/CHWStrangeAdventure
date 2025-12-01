@@ -2,6 +2,7 @@ import pygame
 from settings import Settings
 from Pages.Page import Page
 from Elements.Button import Button
+from Elements.ButtonGroup import ButtonGroup
 from ResourceLoader import ResourceLoader
 
 class StartPage(Page):
@@ -9,9 +10,9 @@ class StartPage(Page):
         super().__init__()
         #创建背景图片和标题
 
-        self.bg_image = ResourceLoader.start_bg.convert()
+        self.bg_image = ResourceLoader.bg_dict['bg']
         self.bg_rect = self.bg_image.get_rect()
-        self.title =ResourceLoader.title_bg.convert_alpha()
+        self.title =ResourceLoader.title_dict['title']
         self.title_rect = self.title.get_rect()
         self.bg_image_copy = self.bg_image.copy()
         self.title_copy = self.title.copy()
@@ -23,9 +24,9 @@ class StartPage(Page):
         self.load_button = None
         self.quit_button = None
         self.settings_button = None
-        self.button_group = pygame.sprite.Group()
+        self.button_group = ButtonGroup()
         #版本信息显示
-        self.font_1 = ResourceLoader.font_loliti24
+        self.font_1 = ResourceLoader.font_dict["loli24"]
         self.version =self.font_1.render("游戏版本："+Settings.GAME_VERSION,True,(0,0,0))
         self.version_rect = self.version.get_rect()
         
@@ -35,18 +36,12 @@ class StartPage(Page):
 
         #按钮初始化
         if True:
-            self.start_button =Button(ResourceLoader.start_button_animation[0])
-            self.load_button = Button(ResourceLoader.load_button_animation[0])
-            self.quit_button = Button(ResourceLoader.quit_button_animation[0])
-            self.settings_button = Button(ResourceLoader.settings_button_animation[0])
+            self.start_button =Button(ResourceLoader.button_dict["start_button"])
+            self.load_button = Button(ResourceLoader.button_dict["load_button"])
+            self.quit_button = Button(ResourceLoader.button_dict["quit_button"])
+            self.settings_button = Button(ResourceLoader.button_dict["settings_button"])
 
-            # 载入Button动画
-            self.start_button.animation_list = ResourceLoader.start_button_animation
-            self.load_button.animation_list = ResourceLoader.load_button_animation
-            self.quit_button.animation_list = ResourceLoader.quit_button_animation
-            self.settings_button.animation_list = ResourceLoader.settings_button_animation
-
-            self.button_group.add(
+            self.button_group.add_button(
                 self.start_button,
                 self.load_button,
                 self.settings_button,
@@ -87,31 +82,50 @@ class StartPage(Page):
                 self.display_surface.get_size()[1]*0.3
             ))
 
+    def handle_event(self, event):
+        if self.is_end:
+            return
+
+        #按钮动画
+
+        self.start_button.hover_animation()
+        self.load_button.hover_animation()
+        self.settings_button.hover_animation()
+        self.quit_button.hover_animation()
+
+        if self.start_button.is_press_down(event):
+            print("start button pressed")
+
+        if self.load_button.is_press_down(event):
+            print("load button pressed")
+
+        if self.settings_button.is_press_down(event):
+            print("settings button pressed")
+
+        if self.quit_button.is_press_down(event):
+            print("quit button pressed")
 
     def reset(self):
         self.is_end = False
         #按钮初始化
-        self.start_button.image = ResourceLoader.start_button_animation[0]
+        self.start_button.image = self.start_button.animation_list[0]
         self.start_button.index = 0
-        self.load_button.image= ResourceLoader.load_button_animation[0]
+        self.load_button.image= self.load_button.animation_list[0]
         self.load_button.index = 0
-        self.quit_button.image = ResourceLoader.quit_button_animation[0]
+        self.quit_button.image = self.quit_button.animation_list[0]
         self.quit_button.index = 0
-        self.settings_button.image = ResourceLoader.settings_button_animation[0]
+        self.settings_button.image = self.settings_button.animation_list[0]
         self.settings_button.index = 0
 
 
     def draw(self):
+        if self.is_end:
+            return
+
+
         self.display_surface.blit(self.bg_image, self.bg_rect)
         self.display_surface.blit(self.buttons_bg,self.buttons_bg_rect)
         self.button_group.draw(self.display_surface)
-
-
-        if not self.is_end:
-            self.start_button.hover_animation()
-            self.load_button.hover_animation()
-            self.settings_button.hover_animation()
-            self.quit_button.hover_animation()
 
         self.display_surface.blit(self.title, self.title_rect)
         self.display_surface.blit(self.version,self.version_rect)
@@ -123,8 +137,14 @@ def test():
     screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption('StartPage', "StartPage")
     clock = pygame.time.Clock()
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
     start_page = StartPage()
     start_page.init()
+
     while True:
         clock.tick(60)
 
@@ -132,17 +152,9 @@ def test():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-        start_page.draw()
+            start_page.handle_event(event)
 
-        if __name__ == "__main__":
-            if start_page.start_button.is_pressed():
-                print("click start button")
-            if start_page.load_button.is_pressed():
-                print("click load button")
-            if start_page.settings_button.is_pressed():
-                print("click Settings button")
-            if start_page.quit_button.is_pressed():
-                print("click quit button")
+        start_page.draw()
         pygame.display.update()
 
 

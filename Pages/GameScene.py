@@ -466,7 +466,9 @@ class GameScene(Page):
         """
 
         #判断是否到达结尾
-        super().handle_event(event)
+        if self.is_end:
+            return
+
         # 按钮动画启动
         self.button_group.hover_animation()
 
@@ -496,7 +498,9 @@ class GameScene(Page):
 
     def draw(self):
         #判断是否到达结尾
-        super().draw()
+        if self.is_end:
+            return
+
         #背景渲染
         self.display_surface.blit(self.current_bg, (0, 0))
 

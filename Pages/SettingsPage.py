@@ -11,35 +11,35 @@ class SettingsPage(Page):
     def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
         super().__init__()
 
+        self.close_button_value = False  # 关闭按钮状态
 
-        #鼠标按下状态
-        self.mouse_down = False
         #黑场专场内容
-
         self.black_surface = pygame.Surface((3840, 2160))
         self.black_surface.fill((0, 0, 0))
         self.black_surface_alpha = 0
 
         # 背景读取
         self.bg_copy = None  # 实际上使用的背景
-        self.bg = ResourceLoader.big_ui.copy() #作为资源
+        self.bg = ResourceLoader.bg_dict["SettingsPageBG"]#作为资源
         self.bg_h = -60
         self.bg_alpha = 0
 
-        #关闭按钮初始化
-        self.close_button = Button(ResourceLoader.close_button_animation[0])
-        self.close_button.animation_list = ResourceLoader.close_button_animation
-        self.close_button_value = False
-
-
-        #画面设置按钮初始化
-        self.frame_button = Button(ResourceLoader.frame_setting_button_animation[0])
-        self.frame_button.animation_list = ResourceLoader.frame_setting_button_animation
-        self.isFrameSetting = False
+        #按钮定义
+        self._button_define_()
 
         #画面设置页面
         self.frame_setting = FrameSetting(fullscreen_auto_index,resolution_auto_index)
 
+    def _button_define_(self):
+
+        #关闭按钮初始化
+        self.close_button = Button(ResourceLoader.button_dict["close_button"])
+        self.close_button_value = False
+
+
+        #画面设置按钮初始化
+        self.frame_button = Button(ResourceLoader.button_dict["frame_setting_button"])
+        self.isFrameSetting = False
 
     def init(self):
         """
@@ -73,11 +73,11 @@ class SettingsPage(Page):
         #画面设置页面初始化
         self.frame_setting.init((int(0.3125*self.window_width),int(0.2*self.window_height)))
         self.frame_setting.bg_surface_rect.topleft = (int(0.3125*self.window_width),int(0.2*self.window_height))
+        self.frame_setting.is_end = True
 
     def reset(self):
         #黑场重置
         self.black_surface_alpha = 0
-
 
         #背景重置
         self.bg_h = -60
@@ -101,26 +101,29 @@ class SettingsPage(Page):
         :param event:
         :return:
         """
+        if self.is_end:
+            return
+
+        self.close_button.hover_animation()
+
+        #处理关闭按钮事件
+        if self.close_button.is_press_down(event,(0,self.bg_h)):
+            self.close_button_value = True
+
         #处理页面设置按钮
-        if self.frame_button.is_hovered_blit((0,self.bg_h)):
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if self.frame_button.is_press_down(event,(0,self.bg_h)):
                 print("click")
                 self.frame_button.set_mode()
+                self.frame_setting.is_end = not self.frame_setting.is_end
 
         #处理界面设置页面事件
         self.frame_setting.handle_event(event)
 
-
-
-
-
-
-    def draw(self):
+    def _black_enter_(self):
         """
-        绘制
+        黑场进入动画
         :return:
         """
-
         #黑场进入
         if not self.close_button_value:
             if self.black_surface_alpha <120:
@@ -142,33 +145,41 @@ class SettingsPage(Page):
                 if self.bg_alpha <= 0:
                     self.is_end = True
 
-        #按钮渲染
-        self.close_button.hover_animation_blit((0,0))
-        self.bg_copy.blit(self.close_button.image, self.close_button.rect)
-
-
         #画面元素渲染
         self.display_surface.blit(self.black_surface, (0, 0))
         self.display_surface.blit(self.bg_copy, (0, self.bg_h))
+
+    def _draw_button_(self):
+        self.bg_copy.blit(self.close_button.image, self.close_button.rect)
+
+    def draw(self):
+        """
+        绘制
+        :return:
+        """
+
+        if self.is_end:
+            return
+
+
+        #黑场动画
+        self._black_enter_()
+
+        #按钮渲染
+        self._draw_button_()
+
         #画面设置页面渲染
-        if self.frame_button.setting_mode == 1:
-            self.bg_copy.blit(self.frame_setting.bg_surface,
-                              (400/1280*self.window_width,150/720*self.window_height))
-            self.frame_setting.draw(
-                                    (int(0.3125*self.window_width),int(0.2*self.window_height))
-                                    )
+        self.bg_copy.blit(self.frame_setting.bg_surface, self.frame_setting.bg_surface_rect)
+        self.frame_setting.draw((int(0.3125*self.window_width),int(0.2*self.window_height)))
 
         #按钮渲染
         self.frame_button.setting_button_animation(False)
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
-        #按钮事件处理
-        if self.close_button.is_pressed_blit((0,self.bg_h)):
-            self.close_button_value = True
-
-
 
 def test():
-
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
 
     pygame.init()
     settings_page = SettingsPage(0,0)
