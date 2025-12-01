@@ -97,7 +97,7 @@ class Game:
         self.character_group.add_character( self.demo_character)
         
         #初始化章节
-        self.content_chapter = ContentChapter()
+        self.game_scene = GameScene()
         self.start_chapter = StartChapter()
 
     def handle_event(self, event):
@@ -160,10 +160,10 @@ class Game:
                             self.is_create_save = True
                     #处理内容章节事件
                     if self.is_content_init and self.is_content_load:
-                        self.content_chapter.handle_event(event)
+                        self.game_scene.handle_event(event)
                         #处理存档保存事件
-                        if self.content_chapter.save_saves:
-                            self.current_save = self.content_chapter.to_dict()
+                        if self.game_scene.save_saves:
+                            self.current_save = self.game_scene.to_dict()
                             self.current_save_name = self.save_manager.save_save_data(self.current_save)
 
                 #通过载入按钮来开始游戏
@@ -176,10 +176,10 @@ class Game:
 
                     #处理内容章节事件
                     if self.is_content_init and self.is_content_load:
-                        self.content_chapter.handle_event(event)
+                        self.game_scene.handle_event(event)
                         #处理存档保存事件
-                        if self.content_chapter.save_saves:
-                            self.current_save = self.content_chapter.to_dict()
+                        if self.game_scene.save_saves:
+                            self.current_save = self.game_scene.to_dict()
                             self.current_save_name = self.save_manager.save_save_data(self.current_save)
             #暂停之后的事件处理
             else:
@@ -249,7 +249,7 @@ class Game:
 
         #重置章节
         self.start_chapter.reset()
-        self.content_chapter.reset()
+        self.game_scene.reset()
 
     def run(self):
         #初始化开头动画
@@ -263,7 +263,7 @@ class Game:
 
         self.start_page.set_window_size(self.window_width, self.window_height)
         self.start_page.init()
-        self.content_chapter.set_window_size(self.window_width, self.window_height)
+        self.game_scene.set_window_size(self.window_width, self.window_height)
         self.start_chapter.init(self.player)
 
 
@@ -283,7 +283,7 @@ class Game:
 
             dt = self.clock.tick(60) / 1000
             #检验是否对游戏进行设置并保存
-            if self.settings_page.frame_setting.isSettingsChange:
+            if self.settings_page.frame_setting.is_settings_change():
                 #获取所修改的设置
                 temp_screen_size_index = self.settings_page.frame_setting.resolution_menu.get_index()
                 temp_screen_set_index = self.settings_page.frame_setting.fullscreen_menu.get_index()
@@ -309,10 +309,10 @@ class Game:
                                                     Settings.screen_size[temp_screen_size_index][1])
                 self.start_chapter.init(self.player)
                 #重置内容大小并初始化
-                self.content_chapter.set_window_size(Settings.screen_size[temp_screen_size_index][0],
+                self.game_scene.set_window_size(Settings.screen_size[temp_screen_size_index][0],
                                                     Settings.screen_size[temp_screen_size_index][1])
                 if self.is_content_load and self.is_content_init:
-                    self.content_chapter.init()
+                    self.game_scene.init()
 
 
             #开平动画绘制
@@ -373,27 +373,27 @@ class Game:
                 self.start_chapter.show()
                 if self.is_create_save:
                     if not self.is_content_load:
-                        self.content_chapter.read_save(self.current_save, self.character_group)
+                        self.game_scene.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
-                        self.content_chapter.chapter_read()                        
-                        self.content_chapter.init()
+                        self.game_scene.chapter_read()                        
+                        self.game_scene.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
-                        self.content_chapter.show()
+                        self.game_scene.show()
 
             #通过载入存档来开始游戏
             if self.game_start_load:
                 if self.is_load_save:
                     if not self.is_content_load:
-                        self.content_chapter.read_save(self.current_save, self.character_group)
+                        self.game_scene.read_save(self.current_save, self.character_group)
                         self.is_content_load = True
                     if not self.is_content_init:
-                        self.content_chapter.chapter_read()                        
-                        self.content_chapter.init()
+                        self.game_scene.chapter_read()                        
+                        self.game_scene.init()
                         self.is_content_init = True
                     if self.is_content_load and self.is_content_init:
-                        self.content_chapter.show()
+                        self.game_scene.show()
 
             #在游戏中可以显示暂停页面
             if self.game_start_load or self.game_start_new:

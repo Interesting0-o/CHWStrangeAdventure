@@ -41,8 +41,8 @@ class QuitPage(Page):
         self.black_bg_alpha = 0
         #背景资源
         self.quit_window_rect = self.quit_window.get_rect(center = (
-            int(self.window_width/2),
-            int(self.window_height/2)))
+            int(Page.window_width/2),
+            int(Page.window_height/2)))
         self.quit_window_rect.centery -= 55
 
         self.yes_button.rect = self.yes_button.image.get_rect(center =(200,200))
@@ -61,7 +61,7 @@ class QuitPage(Page):
         self.quit_window_alpha = 0
         self.quit_window.set_alpha(self.quit_window_alpha)
         self.quit_window_rect = self.quit_window.get_rect(center = (
-            int(self.window_width/2),int(self.window_height/2)-55)
+            int(Page.window_width/2),int(Page.window_height/2)-55)
         )
         #按钮值重置
         self.yes_button_value = False

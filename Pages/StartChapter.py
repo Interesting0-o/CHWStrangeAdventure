@@ -81,7 +81,7 @@ class StartChapter(Page):
         #输入框初始化
 
         self.input_box = InputBox(
-            location=(self.window_width/2 - 200, self.window_height/2 - 50 ),
+            location=(Page.window_width/2 - 200, Page.window_height/2 - 50 ),
             size=(400, 50),
             font=ResourceLoader.font_dict["MiSansDemibold24"],
             max_length=15,
@@ -90,9 +90,9 @@ class StartChapter(Page):
         #背景图缩放
         self.bg = pygame.transform.scale_by(self.bg_copy,0.8)
         self.bg_rect = self.bg.get_rect()
-        self.bg_rect.center = (int(self.window_width/2), int(self.window_height/2))
+        self.bg_rect.center = (int(Page.window_width/2), int(Page.window_height/2))
         #按钮位置
-        self.sure_button.rect.center = (int(self.window_width/2), int(self.window_height/2 +60))
+        self.sure_button.rect.center = (int(Page.window_width/2), int(Page.window_height/2 +60))
 
     def handle_event(self, event):
         """

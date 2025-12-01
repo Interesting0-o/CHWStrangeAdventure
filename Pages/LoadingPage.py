@@ -23,7 +23,7 @@ class LoadingPage(Page):
 
         for i in range(5):
             rect = self.loading_ball.get_rect()
-            rect.center = (int(self.window_width*(0.2+(i+1)*0.1)), self.window_height//2)
+            rect.center = (int(Page.window_width*(0.2+(i+1)*0.1)), Page.window_height//2)
             self.ball_state.append({
                 "rect": rect,
                 "start":False,
@@ -52,7 +52,7 @@ class LoadingPage(Page):
             self.ball_state[i]["end"] = False
             self.ball_state[i]["run_time"] = 0
             self.ball_state[i]["is_highest"] = False
-            self.ball_state[i]["rect"].centery = self.window_height//2
+            self.ball_state[i]["rect"].centery = Page.window_height//2
 
 
     def ball_move(self,d_t):
@@ -65,37 +65,37 @@ class LoadingPage(Page):
             if i==0 and self.ball_state[0]["end"]==False:
 
                 #第一个球开始移动,判断最后一个球是否移动到中心
-                if abs(self.ball_state[4]["rect"].centery-self.window_height//2)<1:#最后一个球移动到中心（误差控制）
+                if abs(self.ball_state[4]["rect"].centery-Page.window_height//2)<1:#最后一个球移动到中心（误差控制）
 
                     self.ball_state[i]["run_time"] += d_t
                     self.ball_state[i]["run_time"]%=1
-                    self.ball_state[i]["rect"].centery = 60 * math.sin(2*math.pi*self.ball_state[i]["run_time"] +math.pi/2) +self.window_height//2-60
+                    self.ball_state[i]["rect"].centery = 60 * math.sin(2*math.pi*self.ball_state[i]["run_time"] +math.pi/2) +Page.window_height//2-60
 
                     #判断当前小球是否到达最高点
-                    if abs(self.ball_state[i]["rect"].centery - self.window_height//2 +120)<1:
+                    if abs(self.ball_state[i]["rect"].centery - Page.window_height//2 +120)<1:
                         self.ball_state[i]["is_highest"] = True
 
                 #是否经过一次完整的移动后运动到中心
-                if self.ball_state[i]["is_highest"] and abs(self.ball_state[i]["rect"].centery - self.window_height//2)<0.1:#第一个球移动到中心
-                    self.ball_state[i]["rect"].centery = self.window_height//2
+                if self.ball_state[i]["is_highest"] and abs(self.ball_state[i]["rect"].centery - Page.window_height//2)<0.1:#第一个球移动到中心
+                    self.ball_state[i]["rect"].centery = Page.window_height//2
                     self.ball_state[i]["end"] = True
 
             #判断上一个球是否到达中心
-            elif abs(self.ball_state[i-1]["rect"].centery - self.window_height//2+60)<1:
+            elif abs(self.ball_state[i-1]["rect"].centery - Page.window_height//2+60)<1:
                 self.ball_state[i]["start"] = True
             if self.ball_state[i]["start"] and not self.ball_state[i]["end"]:
 
                 self.ball_state[i]["run_time"] += d_t
                 self.ball_state[i]["run_time"]%=1
-                self.ball_state[i]["rect"].centery = 60 * math.sin(2*math.pi*self.ball_state[i]["run_time"] +math.pi/2) +self.window_height//2-60
+                self.ball_state[i]["rect"].centery = 60 * math.sin(2*math.pi*self.ball_state[i]["run_time"] +math.pi/2) +Page.window_height//2-60
 
                 #判断当前小球是否到达最高点
-                if abs(self.ball_state[i]["rect"].centery - self.window_height//2 +120)<1:
+                if abs(self.ball_state[i]["rect"].centery - Page.window_height//2 +120)<1:
                     self.ball_state[i]["is_highest"] = True
             #判断是否经过一次完整的移动后运动到中心
             if self.ball_state[i]["is_highest"] and abs(
-                    self.ball_state[i]["rect"].centery - self.window_height // 2) < 1:
-                self.ball_state[i]["rect"].centery = self.window_height // 2
+                    self.ball_state[i]["rect"].centery - Page.window_height // 2) < 1:
+                self.ball_state[i]["rect"].centery = Page.window_height // 2
                 self.ball_state[i]["end"] = True
 
         #判断所有球是否都结束了
@@ -120,7 +120,7 @@ class LoadingPage(Page):
 
         #设置文字显示位置
         for i in range(6):
-            self.loading_text[i]["rect"].center = (self.window_width//2,self.window_height*0.65)
+            self.loading_text[i]["rect"].center = (Page.window_width//2,Page.window_height*0.65)
 
 
 
@@ -134,7 +134,7 @@ class LoadingPage(Page):
         #初始化小球位置与状态
         for i in range(5):
             rect = self.loading_ball.get_rect()
-            rect.center = (int(self.window_width*(0.2+(i+1)*0.1)), self.window_height//2)
+            rect.center = (int(Page.window_width*(0.2+(i+1)*0.1)), Page.window_height//2)
             self.ball_state[i]["rect"] = rect
             self.ball_state[i]["start"] = False
             self.ball_state[i]["end"] = False

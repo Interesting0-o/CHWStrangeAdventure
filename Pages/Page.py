@@ -2,11 +2,13 @@ import pygame
 from abc import ABC, abstractmethod
 class Page(ABC):
     path  = __file__[:-8]
+    window_width = 1280
+    window_height = 720
+    window_fps = 60
+
 
     def __init__(self):
-        self.window_width = 1280
-        self.window_height = 720
-        self.window_fps = 60
+
         self.display_surface = None
         self.is_end = False
 
@@ -44,7 +46,7 @@ class Page(ABC):
         ...
 
     @staticmethod
-    def rect_show(rect:pygame.Rect):
+    def rect_show(rect:pygame.Rect)->None:
         """
         显示碰撞矩形
         :param rect:
@@ -55,21 +57,17 @@ class Page(ABC):
         pygame.draw.rect(color,"red", (rect.x+2,rect.y+2,rect.width-4,rect.height-4),2)
         pygame.display.get_surface().blit(color, rect)
 
-    def set_window_size(self, width:int = -1, height:int = -1 ,
-                        size:tuple[int,int] = (-1,-1)
-                        ):
+
+    @staticmethod
+    def set_window_size(width:int , height:int)->None:
         """
         传入两个参数，或者一个元组参数，设置窗口大小
-        :param size:
         :param width:
         :param height:
         :return:
         """
-        if width != -1 and height != -1 :
-            self.window_width = width
-            self.window_height = height
-        else:
-            self.window_width, self.window_height = size
+        Page.window_width = width
+        Page.window_height = height
 
 
 

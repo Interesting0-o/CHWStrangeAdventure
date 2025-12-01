@@ -95,6 +95,20 @@ class SettingsPage(Page):
         #下拉菜单重置
         self.frame_setting.reset()
 
+    def get_fullscreen_set(self)->int:
+        """
+        获取当前全屏设置的索引
+        :return:
+        """
+        return self.frame_setting.get_fullscreen_set()
+
+    def get_resolution_set(self)->int:
+        """
+        获取当前分辨率设置的索引
+        :return:
+        """
+        return self.frame_setting.get_resolution_set()
+
     def handle_event(self, event):
         """
         事件处理

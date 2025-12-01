@@ -73,12 +73,12 @@ class LoadGamePage(Page):
         :return:
         """
         #关闭按钮位置
-        self.close_button.rect.left = int(self.window_width * 0.86)
-        self.close_button.rect.top = int(self.window_height * 0.07)
+        self.close_button.rect.left = int(Page.window_width * 0.86)
+        self.close_button.rect.top = int(Page.window_height * 0.07)
 
         #设置按钮位置
-        self.next_button.rect.center = (int(self.window_width * 0.88), int(self.window_height * 0.5))
-        self.last_button.rect.center = (int(self.window_width * 0.12), int(self.window_height * 0.5))
+        self.next_button.rect.center = (int(Page.window_width * 0.88), int(Page.window_height * 0.5))
+        self.last_button.rect.center = (int(Page.window_width * 0.12), int(Page.window_height * 0.5))
 
 
     def _draw_button_(self):
@@ -276,7 +276,7 @@ class LoadGamePage(Page):
         # 补充空白存档
         for i in range(num):
             self.save_view_list.append(self.SaveView(None,None,None,True))
-        size = (int(self.window_width*0.2),int(self.window_height*0.3))
+        size = (int(Page.window_width*0.2),int(Page.window_height*0.3))
 
         self.SaveView.empty_bg_init(size[0],size[1])
         self.SaveView.error_bg_init(size[0],size[1])
@@ -285,8 +285,8 @@ class LoadGamePage(Page):
         for i in range(len(self.save_view_list)):
             self.save_view_list[i].init(size[0],size[1])
             #设置存档视图位置
-            self.save_view_list[i].set_location(self.window_width*0.20+(i%6)%3*self.window_width*0.21,
-                                                 self.window_height*0.20 +(i%6)//3*self.window_height*0.32)
+            self.save_view_list[i].set_location(Page.window_width*0.20+(i%6)%3*Page.window_width*0.21,
+                                                 Page.window_height*0.20 +(i%6)//3*Page.window_height*0.32)
 
     def _draw_save_view_(self):
         """
@@ -346,7 +346,7 @@ class LoadGamePage(Page):
             self.page_text.append(white)
 
         #获取文字的位置
-        self.page_text_rect =[ surface.get_rect(center=(self.window_width/2, self.window_height*0.85)) for surface in self.page_text]
+        self.page_text_rect =[ surface.get_rect(center=(Page.window_width/2, Page.window_height*0.85)) for surface in self.page_text]
 
     def _draw_page_(self):
         self.bg_scale.blit(self.page_text[self.page_num-1],self.page_text_rect[self.page_num-1])
@@ -384,11 +384,11 @@ class LoadGamePage(Page):
         self.display_surface = pygame.display.get_surface()
 
         #缩放背景
-        self.bg_scale = pygame.transform.scale(self.bg, (self.window_width, self.window_height))
+        self.bg_scale = pygame.transform.scale(self.bg, (Page.window_width, Page.window_height))
 
         #初始化存档视图列表
         for save_view in self.save_view_list:
-            save_view.init(self.window_width,self.window_height)
+            save_view.init(Page.window_width,Page.window_height)
 
         #初始化页数
         self._page_num_init_()

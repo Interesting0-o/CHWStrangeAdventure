@@ -71,6 +71,20 @@ class FrameSetting(Page):
             self.save_button_bg.get_rect(center = (self.window_width*0.5*0.6,self.window_height*0.8*0.8))
         )
 
+    def get_fullscreen_set(self)->int:
+        """
+        获取当前全屏设置的索引
+        :return:
+        """
+        return self.fullscreen_menu.get_index()
+
+    def get_resolution_set(self)->int:
+        """
+        获取当前分辨率设置的索引
+        :return:
+        """
+        return self.resolution_menu.get_index()
+
     def init(self,
              location:tuple[int,int] = (0,0),       #bg_surface位置
              ):

@@ -72,18 +72,6 @@ class PagesGroup:
         for page in self.pages:
             page.handle_event(event)
 
-
-
-    def set_window_size(self, width:int, height:int)->None:
-        """
-        窗口大小改变时，更新所有页面
-        :param width:
-        :param height:
-        :return:
-        """
-        for page in self.pages:
-            page.set_window_size(width, height)
-
     def reset(self)->None:
         """
         重置所有页面

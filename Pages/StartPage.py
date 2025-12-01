@@ -51,22 +51,22 @@ class StartPage(Page):
     def init(self):
         self.display_surface = pygame.display.get_surface()
         #版本资源
-        self.version_rect.bottomleft=(10,self.window_height-20)
+        self.version_rect.bottomleft=(10,Page.window_height-20)
         #实例化按钮
-        self.start_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6)
-        self.load_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+70)
-        self.quit_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+210)
-        self.settings_button.rect.center = (self.window_width * 0.5, self.window_height * 0.6+140)
+        self.start_button.rect.center = (Page.window_width * 0.5, Page.window_height * 0.6)
+        self.load_button.rect.center = (Page.window_width * 0.5, Page.window_height * 0.6+70)
+        self.quit_button.rect.center = (Page.window_width * 0.5, Page.window_height * 0.6+210)
+        self.settings_button.rect.center = (Page.window_width * 0.5, Page.window_height * 0.6+140)
 
         #按钮选项框绘制
         self.buttons_bg_rect = self.buttons_bg.get_rect(center = (
-            self.window_width * 0.5,
-            self.window_height * 0.6+105
+            Page.window_width * 0.5,
+            Page.window_height * 0.6+105
         ))
         pygame.draw.rect(self.buttons_bg,"white",(0,0,240,350),border_radius=20)
         self.buttons_bg.set_colorkey("#000000")
         self.buttons_bg.set_alpha(128)
-        self.title_rect.center = (int(self.window_width /2), int(self.window_height * 0.13))
+        self.title_rect.center = (int(Page.window_width /2), int(Page.window_height * 0.13))
         #判断背景图片是否需要缩放
         if self.bg_rect.size != self.display_surface.get_size():
             self.bg_image = pygame.transform.scale(self.bg_image_copy, self.display_surface.get_size())
