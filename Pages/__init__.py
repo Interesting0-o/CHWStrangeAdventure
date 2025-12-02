@@ -7,8 +7,9 @@ from .framesetting import FrameSetting
 from .LoadGamePage import LoadGamePage
 from .PausePage import PausePage
 from .TextPage import TextPage
-from .StartPage import StartPage
+from .StartChapter import StartChapter
 from .GameScene import GameScene
+from .OpenAnimation import OpenAnimation
 
 __all__= [
     "QuitPage",
@@ -21,6 +22,7 @@ __all__= [
     "PausePage",
     "TextPage",
     "StartChapter",
-    "GameScene"
+    "GameScene",
+    "OpenAnimation"
       ]
 

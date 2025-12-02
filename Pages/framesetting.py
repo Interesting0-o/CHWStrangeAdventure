@@ -199,7 +199,6 @@ def test():
 
     frame_setting = FrameSetting(0, 0)
     frame_setting.init((100, 100))
-    frame_setting.is_end = True
     clock = pygame.time.Clock()
 
     while True:

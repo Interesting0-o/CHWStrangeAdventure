@@ -6,6 +6,14 @@ class PagesGroup:
         添加页面到PagesGroup
         """
         self.pages:list[Page] = []
+        self.is_init = False
+
+    def __len__(self)->int:
+        """
+        获取页面数量
+        :return:
+        """
+        return len(self.pages)
 
     def add_page(self,*pages:Page):
         """
@@ -57,11 +65,8 @@ class PagesGroup:
         :return:
         """
         for page in self.pages:
-            try:
-                page.init()
-            except Exception as e:
-                print(f"页面{page.path}初始化失败：{e}")
-                exit()
+            page.init()
+        self.is_init = True
 
     def handle_event(self, event)->None:
         """
@@ -80,3 +85,17 @@ class PagesGroup:
         for page in self.pages:
             page.reset()
 
+    def is_pages_init(self)->bool:
+        """
+        判断是否所有页面都初始化
+        :return:
+        """
+        return self.is_init
+
+    def change_page_end(self)->None:
+        """
+        切换页面结束
+        :return:
+        """
+        for page in self.pages:
+            page.is_end = True

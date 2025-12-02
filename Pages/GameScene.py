@@ -116,13 +116,12 @@ class GameScene(Page):
         #角色组
         self.character_group = character_group
 
+        #获取当前章节资源
+        self.plot = ResourceLoader.plot_dict
 
     def init(self):
         #获取当前窗口
         self.display_surface = pygame.display.get_surface()
-
-        #获取当前章节资源
-        self.plot = ResourceLoader.plot_dict
 
         self.current_bg = ResourceLoader.chapter_bg_dict[self.get_current_bg()]
         self.current_bg_scale = pygame.transform.scale(self.current_bg, (self.window_width, self.window_height))

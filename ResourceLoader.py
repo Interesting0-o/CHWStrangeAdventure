@@ -173,21 +173,22 @@ class ResourceLoader:
         检查资源是否加载完毕
         :return:
         """
-        pass
+        return self.current_progress ==37
 
 
 
 
 
 def test():
-    import time
     loader = ResourceLoader()
     loader.load_all_resource()
     # while loader.get_progress() !=1:
     #     print(loader.get_progress())
+    print(loader.check_load_finish())
     loader.wait_load_finish()
     print(loader.current_progress)
     print(loader.bg_dict["DialogBG"])
+    print(loader.check_load_finish())
 
 
 if __name__ == '__main__':

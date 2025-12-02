@@ -43,6 +43,8 @@ class SaveManager:
         for file in os.listdir(self.path+'save'):
             t = threading.Thread(target=self.thread_read, args=(file,))
             t.start()
+
+
     #删除保存游戏数据
     def delete_save_data(self, save_name):
         """
@@ -89,6 +91,13 @@ class SaveManager:
         while len(self.save_datas)!= len(os.listdir(self.path+'save')):
             pass
 
+    #检测读取进度
+    def check_load_finish(self):
+        """
+        检测读取进度
+        :return:
+        """
+        return len(self.save_datas) == len(os.listdir(self.path+'save'))
 
 if __name__ == '__main__':
     save_manager = SaveManager()
@@ -96,3 +105,4 @@ if __name__ == '__main__':
     print(save_manager.save_datas)
     save_manager.wait_load_finish()
     print(save_manager.save_datas)
+    print(save_manager.check_load_finish())
