@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.3.5",
+    "opencv-python>=4.11.0.86",
     "pygame>=2.6.1",
 ]
