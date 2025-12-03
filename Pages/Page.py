@@ -8,9 +8,10 @@ class Page(ABC):
 
 
     def __init__(self):
-
         self.display_surface = None
         self.is_end = False
+        self.is_show = False
+
 
     @abstractmethod
     def init(self):

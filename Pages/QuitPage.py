@@ -54,6 +54,7 @@ class QuitPage(Page):
         :return:
         """
         self.is_end = False
+        self.is_show = False
         # 黑场重置
         self.black_bg_alpha = 0
         self.black_bg.set_alpha(self.black_bg_alpha)
@@ -79,6 +80,10 @@ class QuitPage(Page):
         :param event:
         :return:
         """
+        if self.is_end:
+            self.is_show = False
+            return
+
         self.yes_button.hover_animation(self.quit_window_rect.topleft)
         self.no_button.hover_animation(self.quit_window_rect.topleft)
         #按钮按下事件处理
@@ -127,6 +132,8 @@ class QuitPage(Page):
     def draw(self):
         if self.is_end:
             return
+
+        self.is_show = True
 
         #黑场动画绘制
         self._black_enter_()

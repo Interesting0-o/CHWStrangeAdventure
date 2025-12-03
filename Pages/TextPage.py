@@ -49,6 +49,7 @@ class TextPage(Page):
 
     def reset(self):
         self.is_end = False
+        self.is_show = False
         # 黑场重置
         self.black_bg_alpha = 0
         self.black_bg.set_alpha(self.black_bg_alpha)
@@ -69,6 +70,7 @@ class TextPage(Page):
 
     def handle_event(self, event):
         if self.is_end:
+            self.is_show = False
             return
 
         #按钮按下事件处理
@@ -83,8 +85,10 @@ class TextPage(Page):
         绘制页面
         :return:
         """
-        if self.is_end :
+        if self.is_end:
             return
+
+        self.is_show = True
 
         #黑场动画
         if not self.no_button_value: #取消按钮未按下时

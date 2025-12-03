@@ -76,6 +76,8 @@ class SettingsPage(Page):
         self.frame_setting.is_end = True
 
     def reset(self):
+        self.is_end = False
+        self.is_show = False
         #黑场重置
         self.black_surface_alpha = 0
 
@@ -116,6 +118,7 @@ class SettingsPage(Page):
         :return:
         """
         if self.is_end:
+            self.is_show = False
             return
 
         self.close_button.hover_animation()
@@ -173,9 +176,10 @@ class SettingsPage(Page):
         """
 
         if self.is_end:
+            self.is_show = False
             return
 
-
+        self.is_show = True
         #黑场动画
         self._black_enter_()
 

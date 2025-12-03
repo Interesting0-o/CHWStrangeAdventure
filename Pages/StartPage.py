@@ -82,31 +82,61 @@ class StartPage(Page):
                 self.display_surface.get_size()[1]*0.3
             ))
 
-    def handle_event(self, event):
+
+    def is_start_down(self,event:pygame.event.Event):
+        """
+        检测是否开始按键按下
+        :param event:
+        :return:
+        """
+        return False if self.is_end else  self.start_button.is_press_down(event)
+
+    def is_load_down(self,event:pygame.event.Event):
+        """
+        检测是否开始按键按下
+        :param event:
+        :return:
+        """
+        return  False if self.is_end else self.load_button.is_press_down(event)
+
+    def is_settings_down(self,event:pygame.event.Event):
+        """
+        检测是否开始按键按下
+        :param event:
+        :return:
+        """
+        return  False if  self.is_end else self.settings_button.is_press_down(event)
+
+    def is_quit_down(self,event:pygame.event.Event):
+        """
+        检测是否开始按键按下
+        :param event:
+        :return:
+        """
+        return  False if self.is_end else self.quit_button.is_press_down(event)
+
+    def handle_event(self, event: pygame.event.Event):
         if self.is_end:
+            self.is_show = False
             return
 
-        #按钮动画
-
-        self.start_button.hover_animation()
-        self.load_button.hover_animation()
-        self.settings_button.hover_animation()
-        self.quit_button.hover_animation()
-
-        if self.start_button.is_press_down(event):
+        #按钮事件处理
+        if self.is_start_down(event):
             print("start button pressed")
 
-        if self.load_button.is_press_down(event):
+        if self.is_load_down(event):
             print("load button pressed")
 
-        if self.settings_button.is_press_down(event):
+        if self.is_settings_down(event):
             print("settings button pressed")
 
-        if self.quit_button.is_press_down(event):
+        if self.is_quit_down(event):
             print("quit button pressed")
 
     def reset(self):
         self.is_end = False
+        self.is_show = False
+
         #按钮初始化
         self.start_button.image = self.start_button.animation_list[0]
         self.start_button.index = 0
@@ -122,7 +152,15 @@ class StartPage(Page):
         if self.is_end:
             return
 
+        self.is_show = True
 
+        #按钮动画
+        self.start_button.hover_animation()
+        self.load_button.hover_animation()
+        self.settings_button.hover_animation()
+        self.quit_button.hover_animation()
+
+        #按钮绘制
         self.display_surface.blit(self.bg_image, self.bg_rect)
         self.display_surface.blit(self.buttons_bg,self.buttons_bg_rect)
         self.button_group.draw(self.display_surface)
