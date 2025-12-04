@@ -43,12 +43,36 @@ class SettingsScene(Page):
         self.isFrameSetting = False
 
 
+    def reset_set(self):
+        """
+        重置设置
+        :return:
+        """
+        #按钮值重置
+        self.close_button_value = False
+
+
+        self.frame_button.image = self.frame_button.animation_list[0]
+        self.frame_button.setting_mode = 0
+        self.frame_button.index = 0
+
+        #下拉菜单重置
+        self.frame_setting.reset()
+
+
     def is_settings_change(self)->bool:
         """
         判断是否有设置变更
         :return:
         """
         return self.frame_setting.is_settings_change()
+
+    def set_settings_change(self,setting:bool)->None:
+        """
+        设置设置变更
+        :return:
+        """
+        self.frame_setting.isSettingsChange = setting
 
     def init(self):
         """

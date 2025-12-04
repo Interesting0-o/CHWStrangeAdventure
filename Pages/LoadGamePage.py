@@ -1,4 +1,6 @@
 import pygame
+
+from Pages.PagesGroup import PagesGroup
 from ResourceLoader import ResourceLoader
 from Elements.Button import Button
 from Elements.MenuButton import MenuButton
@@ -7,9 +9,11 @@ from Pages.TextPage import TextPage
 from SaveManager import SaveManager
 
 
-class LoadGamePage(Page):
+class LoadGameScene(Page):
     def __init__(self):
         super().__init__()
+
+        self.save_manager:SaveManager = None #声明存档管理器
 
         self.close_button_value = False
 
@@ -28,7 +32,7 @@ class LoadGamePage(Page):
 
         #存档数据
         self.save_data = {}
-        self.save_view_list:list[LoadGamePage.SaveView] = []
+        self.save_view_list:list[LoadGameScene.SaveView] = []
 
 
         #当前存档的页数
@@ -39,8 +43,14 @@ class LoadGamePage(Page):
         self.is_save_load = False #声明是否开始载入存档
 
         #textPage类型
+        self.tp_group = PagesGroup()
+
         self.tp_is_load:TextPage = TextPage("是否载入存档?")
         self.tp_is_delete:TextPage = TextPage("是否删除存档?")
+        self.tp_group.add_page(self.tp_is_load,self.tp_is_delete)
+
+        self.to_empty_index:int = -1 #声明需要删除存档的索引
+        self.to_load_index:int = -1 #声明需要载入存档的索引
 
     def _text_page_init_(self):
         """
@@ -52,7 +62,6 @@ class LoadGamePage(Page):
 
         self.tp_is_load.is_end = True
         self.tp_is_delete.is_end = True
-
 
     def _button_define_(self):
         #关闭按钮初始化
@@ -98,7 +107,6 @@ class LoadGamePage(Page):
         self.next_button.rect.center = (int(Page.window_width * 0.88), int(Page.window_height * 0.5))
         self.last_button.rect.center = (int(Page.window_width * 0.12), int(Page.window_height * 0.5))
 
-
     def _draw_button_(self):
         """
         绘制按钮
@@ -136,14 +144,31 @@ class LoadGamePage(Page):
             if self.page_num < 1:
                 self.page_num = len(self.save_view_list)//6+1
 
+    def _sort_save_view_(self,is_init:bool = False):
+        """
+        快速排序存档视图列表，将不是空拍和错误的存档放在前面
+        :return:
+        """
+        # 快速排序
+        size = (int(Page.window_width * 0.2), int(Page.window_height * 0.3))
+
+        self.save_view_list.sort(key=lambda x: x.ID,reverse=True)
+
+        #设置存档视图位置
+        for i in range(len(self.save_view_list)):
+            if is_init:
+                self.save_view_list[i].init(size[0], size[1])
+            #设置存档视图位置
+            self.save_view_list[i].set_location(int(Page.window_width*0.20+(i%6)%3*Page.window_width*0.21),
+                                                 int(Page.window_height*0.20 +(i%6)//3*Page.window_height*0.32))
+
+
 
 
     class SaveView:
 
         empty_bg = None #声明空白背景
         error_bg = None #声明错误背景
-        current_save = {} #当前存档数据
-        save_manager = None #存档管理器
 
         def __init__(self,
                      save_data:dict|None,
@@ -160,6 +185,12 @@ class LoadGamePage(Page):
 
             self.bg = None #声明背景Surface
             self.bg_rect = None #声明背景Rect
+
+            self.is_delete_press = False #声明是否按下删除按钮
+            self.is_load_press = False #声明是否按下载入按钮
+
+            self.ID:int = 0 #声明存档序数
+
 
 
         def _bg_init_(self,window_width:int,window_height:int):
@@ -180,12 +211,12 @@ class LoadGamePage(Page):
             :return:
             """
             # 错误背景初始化
-            LoadGamePage.SaveView.error_bg = pygame.Surface((window_width, window_height))
-            LoadGamePage.SaveView.error_bg.fill("#aaaaaa")
+            LoadGameScene.SaveView.error_bg = pygame.Surface((window_width, window_height))
+            LoadGameScene.SaveView.error_bg.fill("#aaaaaa")
             # 错误文字渲染
             text = ResourceLoader.font_dict["MiSansDemibold24"].render("Error", True, "white")
 
-            LoadGamePage.SaveView.error_bg.blit(text, text.get_rect(center=(window_width/2, window_height/2)))
+            LoadGameScene.SaveView.error_bg.blit(text, text.get_rect(center=(window_width/2, window_height/2)))
 
             print("error load")
 
@@ -195,27 +226,31 @@ class LoadGamePage(Page):
             空白背景初始化
             :return:
             """
-            LoadGamePage.SaveView.empty_bg = pygame.Surface((window_width, window_height))
-            LoadGamePage.SaveView.empty_bg.fill("#aaaaaa")
+            LoadGameScene.SaveView.empty_bg = pygame.Surface((window_width, window_height))
+            LoadGameScene.SaveView.empty_bg.fill("#aaaaaa")
 
             text = ResourceLoader.font_dict["MiSansDemibold24"].render("Empty", True, "white")
 
-            LoadGamePage.SaveView.empty_bg.blit(text, text.get_rect(center=(window_width/2, window_height/2)))
+            LoadGameScene.SaveView.empty_bg.blit(text, text.get_rect(center=(window_width/2, window_height/2)))
 
             print("empty load")
 
         def init(self,window_width:int,window_height:int):
             #如果存档数据为空，则显示empty_bg
             if self.is_empty:
-                self.bg = LoadGamePage.SaveView.empty_bg
+                self.bg = LoadGameScene.SaveView.empty_bg
+                self.ID = 0
+
 
             #如果存档数据为Error，则显示error_bg
             elif self.save_data == "Error":
-                self.bg = LoadGamePage.SaveView.error_bg
+                self.bg = LoadGameScene.SaveView.error_bg
+                self.ID = 1
 
             #否则显示正常背景
             else:
                 self._bg_init_(window_width,window_height)
+                self.ID = 3
 
         def set_location(self,x:int,y:int):
             """
@@ -248,6 +283,13 @@ class LoadGamePage(Page):
             """
             return True if self.is_hover(left_top) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 else False
 
+        def tarns_to_empty(self):
+            """
+            转换为空白存档
+            :return:
+            """
+            self.is_empty = True
+            self.init(self.bg.get_width(),self.bg.get_height())
 
         def handle_event(self, event:pygame.event.Event):
             """
@@ -263,19 +305,18 @@ class LoadGamePage(Page):
 
             #当错误存档时，只处理删除按钮事件
             if self.save_data == "Error" and self.delete_button.is_press_down(event):
-                print("删除存档被点击")
-                self.is_empty = True
-                self.init(self.bg.get_width(),self.bg.get_height())
+                self.is_delete_press = True
+
 
             #当正常存档时，处理删除按钮和存档视图事件
             elif self.save_data != "Error":
                 if not self.delete_button.is_hover() and self.is_press_down(event) :
-                    LoadGamePage.SaveView.current_save = self.save_data
+                    self.is_load_press = True
                     print("存档视图被点击")
+
+                #删除按钮按下时
                 elif self.delete_button.is_press_down(event):
-                    print("删除存档按钮被点击")
-                    self.is_empty = True
-                    self.init(self.bg.get_width(), self.bg.get_height())
+                    self.is_delete_press = True
 
         def draw(self,bg_surface:pygame.Surface):
             """
@@ -306,12 +347,8 @@ class LoadGamePage(Page):
         self.SaveView.empty_bg_init(size[0],size[1])
         self.SaveView.error_bg_init(size[0],size[1])
 
-        #设置存档视图位置
-        for i in range(len(self.save_view_list)):
-            self.save_view_list[i].init(size[0],size[1])
-            #设置存档视图位置
-            self.save_view_list[i].set_location(int(Page.window_width*0.20+(i%6)%3*Page.window_width*0.21),
-                                                 int(Page.window_height*0.20 +(i%6)//3*Page.window_height*0.32))
+        #排序并初始化存档视图
+        self._sort_save_view_(True)
 
     def _draw_save_view_(self):
         """
@@ -327,9 +364,27 @@ class LoadGamePage(Page):
         :param event:
         :return:
         """
+        flag_empty = True
+        flag_load = True
+
         if not self.tp_is_load.is_show and not self.tp_is_delete.is_show:
             for i in range(self.page_num*6-6,self.page_num*6):
                 self.save_view_list[i].handle_event(event)
+
+                #获取需要删除的存档索引
+                if self.save_view_list[i].is_delete_press:
+                    self.to_empty_index = i
+                    flag_empty = False
+
+                if self.save_view_list[i].is_load_press:
+                    self.to_load_index = i
+                    flag_load = False
+
+        if flag_empty:
+            self.to_empty_index = -1
+
+        if flag_load:
+            self.to_load_index = -1
 
     def save_load(self,save_manger:SaveManager):
         """
@@ -337,7 +392,7 @@ class LoadGamePage(Page):
         :param save_manger:
         :return:
         """
-        self.SaveView.save_manager = save_manger
+        self.save_manager = save_manger
         self.save_data.clear()
         self.save_data = save_manger.save_datas
 
@@ -351,7 +406,6 @@ class LoadGamePage(Page):
         ]
         self.is_save_load = True
 
-
     def reset(self):
         self.is_end = False
         self.is_show = False
@@ -361,6 +415,16 @@ class LoadGamePage(Page):
         self.bg_h = -55
         self.bg_alpha = 0
         self.close_button_value = False
+
+        #重置提示框
+        self.tp_is_delete.reset()
+        self.tp_is_delete.is_end = True
+        self.tp_is_load.reset()
+        self.tp_is_load.is_end = True
+
+        #重置存档页数
+        self.to_empty_index = -1
+
 
     def _page_num_init_(self):
 
@@ -376,6 +440,7 @@ class LoadGamePage(Page):
 
         #获取文字的位置
         self.page_text_rect =[ surface.get_rect(center=(Page.window_width/2, Page.window_height*0.85)) for surface in self.page_text]
+
 
     def _draw_page_(self):
         self.bg_scale.blit(self.page_text[self.page_num-1],self.page_text_rect[self.page_num-1])
@@ -408,8 +473,92 @@ class LoadGamePage(Page):
         self.display_surface.blit(self.black_surface, (0, 0))
         self.display_surface.blit(self.bg_scale, (0, self.bg_h))
 
-    def get_current_save(self):
-        return self.SaveView.current_save
+    def _delete_event_(self,event:pygame.event.Event):
+        """
+        处理存档删除事件
+        :param event:
+        :return:
+        """
+
+        if self.to_empty_index !=-1:
+            # 判断删除提示框是否未重载
+            if not self.tp_is_delete.is_reset:
+                self.tp_is_delete.reset()
+                self.tp_is_delete.is_reset = True
+
+            print("删除存档")
+            self.tp_is_delete.is_end = False
+
+            #处理是否载入提示框事件
+            if self.tp_is_delete.is_no_button_down(event):
+                # 重置提示框改为初始状态
+                self.tp_is_delete.is_reset = False
+                self.tp_is_delete.no_button_value = True
+                print("no按钮被点击")
+
+                #将存档视图恢复正常
+                self.save_view_list[self.to_empty_index].is_delete_press = False
+                self.to_empty_index = -1
+
+            elif self.tp_is_delete.is_yes_button_down(event):
+                print("yes按钮被点击")
+                #删除存档
+                self.save_view_list[self.to_empty_index].tarns_to_empty()
+
+                #删除存档文件
+                self.save_manager.delete_save_data(self.save_view_list[self.to_empty_index].name)
+
+                # 删除提示框关闭,重置检测改为未重置
+                self.tp_is_delete.is_reset = False
+                self.tp_is_delete.no_button_value = True
+
+                #将存档视图恢复正常
+                self.save_view_list[self.to_empty_index].is_delete_press = False
+                self.to_empty_index = -1
+
+                #重新排序存档视图列表
+                self._sort_save_view_()
+
+    def _load_event_(self,event:pygame.event.Event):
+        """
+        处理存档加载事件
+        :param event:
+        :return:
+        """
+        if self.to_load_index !=-1:
+            # 判断载入提示框是否未重载
+            if not self.tp_is_load.is_reset:
+                self.tp_is_load.reset()
+                self.tp_is_load.is_reset = True
+
+                print("载入存档")
+                self.tp_is_load.is_end = False
+
+            #处理是否载入提示框事件
+            if self.tp_is_load.is_no_button_down(event):
+                # 重置提示框改为初始状态
+                self.tp_is_load.is_reset = False
+                self.tp_is_load.no_button_value = True
+                print("no按钮被点击")
+
+                #将存档视图恢复正常
+                self.save_view_list[self.to_load_index].is_load_press = False
+                self.to_load_index = -1
+
+            elif self.tp_is_load.is_yes_button_down(event):
+                print("yes按钮被点击")
+                #载入存档
+                SaveManager.current_save = self.save_view_list[self.to_load_index].save_data
+
+                # 载入提示框关闭,重置检测改为未重置
+                self.tp_is_load.is_reset = False
+                self.tp_is_load.no_button_value = True
+
+                #将存档视图恢复正常
+                self.save_view_list[self.to_load_index].is_load_press = False
+                self.to_load_index = -1
+
+
 
 
     def init(self):
@@ -434,7 +583,14 @@ class LoadGamePage(Page):
         #初始化按钮
         self._button_init_()
 
-    def handle_event(self, event):
+    def is_other_show(self):
+        """
+        判断是否有其他提示框显示
+        :return:
+        """
+        return self.tp_is_load.is_show or self.tp_is_delete.is_show
+
+    def handle_event(self, event: pygame.event.Event):
         """
         处理事件
         :param event:
@@ -444,14 +600,19 @@ class LoadGamePage(Page):
         if self.is_end:
             self.is_show = False
             return
+        if not self.is_other_show():
+            #处理按钮事件
+            self._button_event_(event)
 
-        #处理按钮事件
-        self._button_event_(event)
-
-        #处理存档视图事件
-        self._save_view_event_(event)
+            #处理存档视图事件
+            self._save_view_event_(event)
 
 
+        #存档删除事件
+        self._delete_event_(event)
+
+        #存档载入事件
+        self._load_event_(event)
 
     def draw(self):
         if self.is_end:
@@ -496,7 +657,7 @@ def test():
     save_manager.init_save_data()
     save_manager.wait_load_finish()
 
-    page = LoadGamePage()
+    page = LoadGameScene()
     page.save_load(save_manager)
     page.init()
 

@@ -1,10 +1,10 @@
 from .Page import Page
 from .QuitPage import QuitPage
 from .StartPage import StartPage
-from .SettingsPage import SettingsPage
+from .SettingsScene import SettingsScene
 from .PagesGroup import PagesGroup
 from .framesetting import FrameSetting
-from .LoadGamePage import LoadGamePage
+from .LoadGamePage import LoadGameScene
 from .PausePage import PausePage
 from .TextPage import TextPage
 from .StartChapter import StartChapter
@@ -14,11 +14,11 @@ from .OpenAnimation import OpenAnimation
 __all__= [
     "QuitPage",
     "StartPage",
-    "SettingsPage",
+    "SettingsScene",
     "Page",
     "PagesGroup",
     "FrameSetting",
-    "LoadGamePage",
+    "LoadGameScene",
     "PausePage",
     "TextPage",
     "StartChapter",

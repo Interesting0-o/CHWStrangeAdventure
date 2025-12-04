@@ -5,6 +5,7 @@ import threading
 
 class SaveManager:
 
+    current_save = None
     init_save = {
         "player": {
             "name": None,
@@ -18,6 +19,14 @@ class SaveManager:
         "bg": "library"
     }
     path = __file__[:-14]
+
+    @staticmethod
+    def get_current_save():
+        """
+        获取当前保存游戏数据
+        :return:
+        """
+        return SaveManager.current__save
 
     def __init__(self):
         self.save_datas = {} #保存在字典中的存档名称会带有.chw后缀
@@ -54,6 +63,7 @@ class SaveManager:
         """
         os.remove(self.path+rf"save\{save_name}.chw")
         self.save_datas.pop(save_name+".chw")
+        print(f"删除成功，保存名为{save_name}.chw")
 
     #保存游戏数据
     def save_save_data(self,data:dict):
@@ -102,7 +112,4 @@ class SaveManager:
 if __name__ == '__main__':
     save_manager = SaveManager()
     save_manager.init_save_data()
-    print(save_manager.save_datas)
-    save_manager.wait_load_finish()
-    print(save_manager.save_datas)
-    print(save_manager.check_load_finish())
+    save_manager.delete_save_data("error_test - 副本")

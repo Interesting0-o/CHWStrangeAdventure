@@ -12,6 +12,9 @@ class TextPage(Page):
                  string:str
                  ):
         super().__init__()
+
+        self.is_reset = False
+
         #黑场资源
         self.black_bg_alpha = None
         self.black_bg = pygame.Surface((3840, 2160))
@@ -68,6 +71,23 @@ class TextPage(Page):
         self.no_button.img = ResourceLoader.button_dict["no_button"][0]
         self.no_button.animation_index = 0
 
+
+    def is_no_button_down(self,event:pygame.event.Event)->bool:
+        """
+        判断是否为取消按钮按下
+        :param event:
+        :return:
+        """
+        return self.no_button.is_press_down(event,self.text_window_rect.topleft)
+
+    def is_yes_button_down(self,event:pygame.event.Event)->bool:
+        """
+        判断是否为确定按钮按下
+        :param event:
+        :return:
+        """
+        return self.yes_button.is_press_down(event,self.text_window_rect.topleft)
+
     def handle_event(self, event):
         if self.is_end:
             self.is_show = False
@@ -77,7 +97,7 @@ class TextPage(Page):
         if self.yes_button.is_press_down(event,self.text_window_rect.topleft):
             self.yes_button_value = True
 
-        if self.no_button.is_press_down(event,self.text_window_rect.topleft):
+        if self.is_no_button_down(event):
             self.no_button_value = True
 
     def draw(self):
@@ -86,6 +106,7 @@ class TextPage(Page):
         :return:
         """
         if self.is_end:
+            self.is_show = False
             return
 
         self.is_show = True

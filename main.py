@@ -42,7 +42,29 @@ class Game:
     def get_size_by_set(self):
         return Settings.screen_size[self.config["frame_settings"]["resolution_size_index"]]
 
+    def _save_config_(self):
+        """
+        保存配置文件
+        :return:
+        """
+        self.config["frame_settings"]["fullscreen_setting_index"] = self.settings_scene.get_fullscreen_set()
+        self.config["frame_settings"]["resolution_size_index"] = self.settings_scene.get_resolution_set()
+        with open(Game.path + r"\config.json", 'w') as f:
+            json.dump(self.config, f,indent=4)
 
+    def _set_screen_(self):
+        """
+        根据设置页面来设置屏幕
+        :return:
+        """
+        #设置屏幕大小
+        self.window_width = Settings.screen_size[self.settings_scene.get_resolution_set()][0]
+        self.window_height = Settings.screen_size[self.settings_scene.get_resolution_set()][1]
+        Page.window_width = self.window_width
+        Page.window_height = self.window_height
+        #设置屏幕模式
+        self.screen = pygame.display.set_mode(size=Settings.screen_size[self.settings_scene.get_resolution_set()],
+                                              flags=Settings.screen_set[self.settings_scene.get_fullscreen_set()])
 
     def _read_config_(self):
         """
@@ -60,10 +82,10 @@ class Game:
         #页面组初始化
 
         self.start_page:StartPage = StartPage()
-        self.load_game_page:LoadGamePage = LoadGamePage()
+        self.load_game_scene:LoadGameScene = LoadGameScene()
         self.pause_page:PausePage = PausePage()
         try:
-            self.settings_page:SettingsPage = SettingsPage(self.config["frame_settings"]["fullscreen_setting_index"],
+            self.settings_scene:SettingsScene = SettingsScene(self.config["frame_settings"]["fullscreen_setting_index"],
                                               self.config["frame_settings"]["resolution_size_index"]
                                                )
         except KeyError:
@@ -78,11 +100,12 @@ class Game:
 
 
         self.pages_group.add_page(self.start_page,
-                                   self.load_game_page,
+                                   self.load_game_scene,
                                    self.pause_page,
-                                   self.settings_page,
+                                   self.settings_scene,
                                    self.quit_page,
-                                   self.start_chapter
+                                   self.start_chapter,
+                                  self.tp_is_start
                                   )
 
     def _page_init_(self):
@@ -103,7 +126,7 @@ class Game:
         self.is_thread_start = True
         #页面组初始化
         self._page_define_()
-        self.load_game_page.save_load(self.save_manager)
+        self.load_game_scene.save_load(self.save_manager)
         self._page_init_()
         self.pages_group.change_page_end()
 
@@ -131,10 +154,31 @@ class Game:
         判断开始菜单界面是否有其他页面显示
         :return:
         """
-        return self.load_game_page.is_show or self.settings_page.is_show or self.quit_page.is_show
+        return self.load_game_scene.is_show or self.settings_scene.is_show or self.quit_page.is_show or self.tp_is_start.is_show
 
+    def _back_to_start_menu_(self):
+        """
+        返回开始菜单界面
+        :return:
+        """
+        self.pages_group.reset()
+        self.pages_group.change_page_end()
 
+    def _settings_event_(self):
+        """
+        处理设置页面的按钮事件
+        :return:
+        """
+        # 设置保存
+        # #保存设置到config文件
+        self._save_config_()
+        # #设置屏幕
+        self._set_screen_()
+        #设置页面全部初始化
+        self._page_init_()
+        self.settings_scene.reset_set()
 
+        self.settings_scene.set_settings_change(False)
 
     def _start_menu_event_(self,event:pygame.event.Event):
         """
@@ -144,17 +188,19 @@ class Game:
         """
         # 处理开始按钮事件
         if self.start_page.is_start_down(event) and not self._is_other_show_():
-            pass
+            if not self.tp_is_start.is_reset:
+                self.tp_is_start.reset()
+                self.tp_is_start.is_show = True
 
         # 处理载入游戏按钮事件
         elif self.start_page.is_load_down(event) and not self._is_other_show_():
             print("载入游戏")
-            self.load_game_page.reset()
+            self.load_game_scene.reset()
 
         # 处理设置按钮事件
         elif self.start_page.is_settings_down(event) and not self._is_other_show_():
             print("设置")
-            self.settings_page.reset()
+            self.settings_scene.reset()
 
         # 处理退出按钮事件
         elif self.start_page.is_quit_down(event) and not self._is_other_show_():
@@ -163,15 +209,33 @@ class Game:
 
         # 处理退出，设置，载入游戏页面事件
         self.quit_page.handle_event(event)
-        self.settings_page.handle_event(event)
-        self.load_game_page.handle_event(event)
+        self.settings_scene.handle_event(event)
+        self.load_game_scene.handle_event(event)
+
+        self._start_new_event_tp_(event)
+
+        if self.settings_scene.is_settings_change():
+            self._settings_event_()
+
+
+    def _start_new_event_tp_(self,event:pygame.event.Event):
+        """
+        处理是否开始新游戏的按钮事件
+        :param event:
+        :return:
+        """
+        if self.tp_is_start.is_no_button_down(event):
+            self.tp_is_start.no_button_value = True
+        elif self.tp_is_start.is_yes_button_down(event):
+            print("通过创建新存档来新游戏")
 
     def _draw_start_menu_(self):
         self.start_page.draw()
 
-        self.load_game_page.draw()
-        self.settings_page.draw()
+        self.load_game_scene.draw()
+        self.settings_scene.draw()
         self.quit_page.draw()
+        self.tp_is_start.draw()
 
     def _game_init_(self):
         """
@@ -181,7 +245,7 @@ class Game:
         pygame.init()
         pygame.display.set_caption("陈海文の奇妙冒险", "陈海文陈海文の奇妙冒险")
         pygame.display.set_icon(pygame.image.load(r"resource/img/icon/caption.png"))
-        self.screen = pygame.display.set_mode((self.window_width, self.window_height))
+        self.screen = pygame.display.set_mode(size = (self.window_width, self.window_height),flags = Settings.screen_set[self.config["frame_settings"]["fullscreen_setting_index"]])
         self.clock = pygame.time.Clock()
 
         #开屏动画
