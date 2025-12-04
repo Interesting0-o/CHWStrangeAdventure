@@ -3,7 +3,8 @@ from Elements.Button import Button
 from Pages.framesetting import FrameSetting
 from ResourceLoader import ResourceLoader
 import pygame
-class SettingsPage(Page):
+
+class SettingsScene(Page):
     """
     游戏设置页面
     """
@@ -40,6 +41,14 @@ class SettingsPage(Page):
         #画面设置按钮初始化
         self.frame_button = Button(ResourceLoader.button_dict["frame_setting_button"])
         self.isFrameSetting = False
+
+
+    def is_settings_change(self)->bool:
+        """
+        判断是否有设置变更
+        :return:
+        """
+        return self.frame_setting.is_settings_change()
 
     def init(self):
         """
@@ -200,7 +209,7 @@ def test():
     loader.wait_load_finish()
 
     pygame.init()
-    settings_page = SettingsPage(0,0)
+    settings_page = SettingsScene(0,0)
     screen = pygame.display.set_mode((settings_page.window_width, settings_page.window_height))
     screen.fill("white")
     clock = pygame.time.Clock()
