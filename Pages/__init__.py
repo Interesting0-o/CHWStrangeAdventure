@@ -4,7 +4,7 @@ from .StartPage import StartPage
 from .SettingsScene import SettingsScene
 from .PagesGroup import PagesGroup
 from .framesetting import FrameSetting
-from .LoadGamePage import LoadGameScene
+from .LoadGameScene import LoadGameScene
 from .PausePage import PausePage
 from .TextPage import TextPage
 from .StartChapter import StartChapter
