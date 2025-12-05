@@ -68,6 +68,16 @@ class ResourceLoader:
     current_progress = 0
 
 
+    #黑场资源初始化
+    black_surfaces_list:list[pygame.Surface] = []
+
+    def black_surface_init(self):
+        ResourceLoader.black_surfaces_list =[pygame.Surface((3840,2160)) for _ in range(13)]
+        for index,surface in enumerate(ResourceLoader.black_surfaces_list):
+            surface.fill((0,0,0))
+            surface.set_alpha(10*index)
+        self.current_progress += 13
+
     def __init__(self):
         self.thread_list = []
 
@@ -108,8 +118,11 @@ class ResourceLoader:
         #加载剧情资源
         plot_thread = threading.Thread(target=self.load_plot)
 
+        #黑场资源初始化
+        black_surface_init_thread = threading.Thread(target=self.black_surface_init)
+
         #将所有线程加入列表
-        self.thread_list = img_thread + button_thread + font_24_thread + font_36_thread + font_48_thread + characters_thread + [plot_thread]
+        self.thread_list = img_thread + button_thread + font_24_thread + font_36_thread + font_48_thread + characters_thread + [plot_thread,black_surface_init_thread]
 
         #启动所有线程
         for thread in self.thread_list:
@@ -120,9 +133,9 @@ class ResourceLoader:
         加载剧情资源
         :return:
         """
-        all_files = os.listdir(self.plot_resource_path)
+        all_files = os.listdir(ResourceLoader.plot_resource_path)
         for file in all_files:
-            with open(self.plot_resource_path + rf"\{file}",'r',encoding='utf-8') as f:
+            with open(ResourceLoader.plot_resource_path + rf"\{file}",'r',encoding='utf-8') as f:
                  ResourceLoader.plot_dict[file[:-5]] = json.load(f)
             self.current_progress += 1
 
@@ -166,20 +179,23 @@ class ResourceLoader:
             t.join()
 
     def get_progress(self)->float:
-        return self.current_progress / 35
+        return self.current_progress / 50
 
     def check_load_finish(self)->bool:
         """
         检查资源是否加载完毕
         :return:
         """
-        return self.current_progress ==37
+        return self.current_progress == 50
 
 
 
 
 
 def test():
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+
     loader = ResourceLoader()
     loader.load_all_resource()
     # while loader.get_progress() !=1:
@@ -187,9 +203,17 @@ def test():
     print(loader.check_load_finish())
     loader.wait_load_finish()
     print(loader.current_progress)
+    print(loader.get_progress())
     print(loader.bg_dict["DialogBG"])
     print(loader.check_load_finish())
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        pygame.display.update()
 
 if __name__ == '__main__':
     test()

@@ -10,9 +10,11 @@ class QuitPage(Page):
 
     def __init__(self):
         super().__init__()
-        #黑场资源
-        self.black_bg_alpha = None
-        self.black_bg = None
+
+        self.black_surface_index = 0
+        self.black_surface_list = ResourceLoader.black_surfaces_list
+
+
         #背景资源
         self.quit_window_alpha = 0
         self.quit_window =ResourceLoader.title_dict["quit"]
@@ -36,9 +38,7 @@ class QuitPage(Page):
 
         self.display_surface =pygame.display.get_surface()
         #黑场资源
-        self.black_bg = pygame.Surface((3840,2160))
-        self.black_bg.fill((0,0,0))
-        self.black_bg_alpha = 0
+        self.black_surface_index = 0
         #背景资源
         self.quit_window_rect = self.quit_window.get_rect(center = (
             int(Page.window_width/2),
@@ -56,8 +56,8 @@ class QuitPage(Page):
         self.is_end = False
         self.is_show = False
         # 黑场重置
-        self.black_bg_alpha = 0
-        self.black_bg.set_alpha(self.black_bg_alpha)
+        self.black_surface_index = 0
+
         #背景重置
         self.quit_window_alpha = 0
         self.quit_window.set_alpha(self.quit_window_alpha)
@@ -101,31 +101,29 @@ class QuitPage(Page):
         """
         #黑场动画
         if not self.no_button_value: #取消按钮未按下时
-            if self.black_bg_alpha < 120:
-                self.black_bg_alpha += 10
+            if self.black_surface_index < 12:
+                self.black_surface_index += 1
                 self.quit_window_alpha += 21
-                self.black_bg.set_alpha(self.black_bg_alpha)
                 self.quit_window.set_alpha(self.quit_window_alpha)
                 self.quit_window_rect.centery += 5
                 if __name__ == '__main__':
                     print("y的值", self.quit_window_rect.centery,end = "")
                     print("退出窗口的透明度", self.quit_window_alpha,end = "")
-                    print("黑场的透明度", self.black_bg_alpha,end = "")
+                    print("黑场的透明度", self.black_surface_index * 10,end = "")
                     print()
         else :
-            if self.black_bg_alpha > 0 :
-                self.black_bg_alpha -= 10
+            if self.black_surface_index > 0 :
+                self.black_surface_index -= 1
                 self.quit_window_alpha -= 21
-                self.black_bg.set_alpha(self.black_bg_alpha)
                 self.quit_window.set_alpha(self.quit_window_alpha)
                 self.quit_window_rect.centery -= 5
                 if __name__ == '__main__':
                     print("y的值", self.quit_window_rect.centery,end = "")
                     print("退出窗口的透明度", self.quit_window_alpha,end = "")
-                    print("黑场的透明度", self.black_bg_alpha,end = "")
+                    print("黑场的透明度", self.black_surface_index * 10,end = "")
                     print()
 
-                if self.black_bg_alpha <= 0:
+                if self.black_surface_index <= 0:
                     self.is_end = True
 
 
@@ -139,7 +137,7 @@ class QuitPage(Page):
         self._black_enter_()
 
         #渲染黑场背景和退出窗口
-        self.display_surface.blit(self.black_bg, (0,0))
+        self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0,0))
         self.display_surface.blit(self.quit_window, self.quit_window_rect)
 
         #按钮渲染
@@ -151,16 +149,18 @@ def test():
     测试函数
     :return:
     """
+
+
+    pygame.init()
+
+    screen = pygame.display.set_mode((1280, 720))
+    clock = pygame.time.Clock()
+
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
 
-    pygame.init()
     quit_page = QuitPage()
-    screen = pygame.display.set_mode((quit_page.window_width, quit_page.window_height))
-    clock = pygame.time.Clock()
-
-
     quit_page.init()
 
     while True:

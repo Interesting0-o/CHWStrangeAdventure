@@ -18,8 +18,8 @@ class LoadGameScene(Page):
         self.close_button_value = False
 
         #黑场资源载入
-        self.black_surface = pygame.Surface((3840, 2160))
-        self.black_surface_alpha = 0
+        self.black_surface_list = ResourceLoader.black_surfaces_list
+        self.black_surface_index = 0
 
         #背景资源载入
         self.bg = ResourceLoader.bg_dict["SettingsPageBG"]
@@ -411,7 +411,8 @@ class LoadGameScene(Page):
         self.is_show = False
 
         #黑场资源重置
-        self.black_surface_alpha = 0
+        self.black_surface_index = 0
+
         self.bg_h = -55
         self.bg_alpha = 0
         self.close_button_value = False
@@ -452,25 +453,24 @@ class LoadGameScene(Page):
         """
         # 黑场进入
         if not self.close_button_value:
-            if self.black_surface_alpha < 120:
-                self.black_surface_alpha += 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index < 12:
+                self.black_surface_index += 1
                 self.bg_h += 5
                 self.bg_alpha += 21
                 self.bg_scale.set_alpha(self.bg_alpha)
 
         else:
             # 设置页面消失动画
-            if self.black_surface_alpha > 0:
-                self.black_surface_alpha -= 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index > 0:
+                self.black_surface_index -= 1
                 self.bg_h -= 5
                 self.bg_alpha -= 21
                 self.bg_scale.set_alpha(self.bg_alpha)
                 if self.bg_alpha <= 0:
                     self.is_end = True
                     print("退出设置页面")
-        self.display_surface.blit(self.black_surface, (0, 0))
+        self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0, 0))
+        print(self.black_surface_index)
         self.display_surface.blit(self.bg_scale, (0, self.bg_h))
 
     def _delete_event_(self,event:pygame.event.Event):
@@ -644,14 +644,13 @@ def test():
     测试函数
     :return:
     """
-    loader = ResourceLoader()
-    loader.load_all_resource()
-    loader.wait_load_finish()
-
-
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
 
     save_manager = SaveManager()
     save_manager.init_save_data()

@@ -13,11 +13,12 @@ class TextPage(Page):
                  ):
         super().__init__()
 
+        #黑场资源
+        self.black_surface_list = ResourceLoader.black_surfaces_list
+        self.black_surface_index = 0
+
         self.is_reset = False
 
-        #黑场资源
-        self.black_bg_alpha = None
-        self.black_bg = pygame.Surface((3840, 2160))
         #背景资源
         text = ResourceLoader.font_dict["MiSansDemibold36"].render(string, True, "black")
         text_rect = text.get_rect(center = (300,120))
@@ -38,9 +39,6 @@ class TextPage(Page):
     def init(self):
 
         self.display_surface =pygame.display.get_surface()
-        #黑场资源
-        self.black_bg.fill((0,0,0))
-        self.black_bg_alpha = 0
         #背景资源
         self.text_window_rect = self.text_window.get_rect(center = (
             int(Page.window_width/2),
@@ -54,14 +52,15 @@ class TextPage(Page):
         self.is_end = False
         self.is_show = False
         # 黑场重置
-        self.black_bg_alpha = 0
-        self.black_bg.set_alpha(self.black_bg_alpha)
+        self.black_surface_index  = 0
+
         #背景重置
         self.text_window_alpha = 0
         self.text_window.set_alpha(self.text_window_alpha)
         self.text_window_rect = self.text_window.get_rect(center = (
             int(Page.window_width/2),int(Page.window_height/2)-55)
         )
+
         #按钮值重置
         self.yes_button_value = False
         self.no_button_value = False
@@ -113,35 +112,33 @@ class TextPage(Page):
 
         #黑场动画
         if not self.no_button_value: #取消按钮未按下时
-            if self.black_bg_alpha < 120:
-                self.black_bg_alpha += 10
+            if self.black_surface_index < 12:
+                self.black_surface_index += 1
                 self.text_window_alpha += 21
-                self.black_bg.set_alpha(self.black_bg_alpha)
                 self.text_window.set_alpha(self.text_window_alpha)
                 self.text_window_rect.centery += 5
                 if __name__ == '__main__':
                     print("y的值", self.text_window_rect.centery,end = "")
                     print("退出窗口的透明度", self.text_window_alpha,end = "")
-                    print("黑场的透明度", self.black_bg_alpha,end = "")
+                    print("黑场的透明度", self.black_surface_index * 10,end = "")
                     print()
         else :
-            if self.black_bg_alpha > 0 :
-                self.black_bg_alpha -= 10
+            if self.black_surface_index > 0 :
+                self.black_surface_index-= 1
                 self.text_window_alpha -= 21
-                self.black_bg.set_alpha(self.black_bg_alpha)
                 self.text_window.set_alpha(self.text_window_alpha)
                 self.text_window_rect.centery -= 5
                 if __name__ == '__main__':
                     print("y的值", self.text_window_rect.centery,end = "")
                     print("退出窗口的透明度", self.text_window_alpha,end = "")
-                    print("黑场的透明度", self.black_bg_alpha,end = "")
+                    print("黑场的透明度", self.black_surface_index * 10,end = "")
                     print()
 
-                if self.black_bg_alpha <= 0:
+                if self.black_surface_index <= 0:
                     self.is_end = True
 
         #渲染黑场背景和退出窗口
-        self.display_surface.blit(self.black_bg, (0,0))
+        self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0,0))
         self.display_surface.blit(self.text_window, self.text_window_rect)
 
         #按钮渲染
@@ -155,13 +152,16 @@ def test():
     测试函数
     :return:
     """
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    clock = pygame.time.Clock()
+
+
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
 
-    pygame.init()
-    screen = pygame.display.set_mode((1280, 720))
-    clock = pygame.time.Clock()
+
 
     game = TextPage("nihao")
     game.init()

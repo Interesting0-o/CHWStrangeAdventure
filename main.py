@@ -312,5 +312,7 @@ class Game:
 
 
 if __name__ == '__main__':
+    import os
+    print("PID:",os.getpid())
     game = Game()
     game.run()

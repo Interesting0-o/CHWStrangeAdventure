@@ -17,9 +17,8 @@ class PausePage(Page):
         #黑场专场内容
 
         self.is_black_end = False
-        self.black_surface = pygame.Surface((3840,2160))
-        self.black_surface.fill((0, 0, 0))
-        self.black_surface_alpha = 0
+        self.black_surface_list = ResourceLoader.black_surfaces_list
+        self.black_surface_index = 0
 
         # 背景读取
         self.bg = pygame.surface.Surface((360,470))
@@ -97,9 +96,9 @@ class PausePage(Page):
     def reset(self):
         self.is_end = False
         #黑场重置
-        self.black_surface_alpha = 0
         self.is_black_end = False
-        self.black_surface.set_alpha(self.black_surface_alpha)
+
+        self.black_surface_index = 0
 
         #背景重置
         self.bg_h = -60
@@ -119,8 +118,6 @@ class PausePage(Page):
         #背景初始化
         self.display_surface = pygame.display.get_surface()
 
-        #黑场初始化
-        self.black_surface.set_alpha(self.black_surface_alpha)
 
         #使用bg_copy作为背景
         self.bg_copy.set_alpha(self.bg_alpha)
@@ -181,25 +178,23 @@ class PausePage(Page):
         :return:
         """
         if not self.continue_button_value:
-            if self.black_surface_alpha < 120:
-                self.black_surface_alpha += 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index < 12:
+                self.black_surface_index += 1
                 self.bg_h += 5
                 self.bg_alpha += 21
                 self.bg_copy.set_alpha(self.bg_alpha)
                 print(self.bg_alpha)
         else:
             # 设置页面消失动画
-            if self.black_surface_alpha > 0:
-                self.black_surface_alpha -= 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index> 0:
+                self.black_surface_index -= 1
                 self.bg_h -= 5
                 self.bg_alpha -= 21
                 print(self.bg_alpha)
                 self.bg_copy.set_alpha(self.bg_alpha)
                 if self.bg_alpha <= 0:
                     self.is_end = True
-        self.display_surface.blit(self.black_surface, (0, 0))
+        self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0, 0))
 
 
     def draw(self):

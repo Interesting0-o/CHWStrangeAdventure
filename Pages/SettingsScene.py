@@ -15,9 +15,12 @@ class SettingsScene(Page):
         self.close_button_value = False  # 关闭按钮状态
 
         #黑场专场内容
-        self.black_surface = pygame.Surface((3840, 2160))
-        self.black_surface.fill((0, 0, 0))
-        self.black_surface_alpha = 0
+        self.black_surface_list = [pygame.surface.Surface((3840, 2160)) for _ in range(13)]
+        for i in range(13):
+            self.black_surface_list[i].fill((0, 0, 0))
+            self.black_surface_list[i].set_alpha(10 * i)
+
+        self.black_surface_index = 0
 
         # 背景读取
         self.bg_copy = None  # 实际上使用的背景
@@ -79,9 +82,6 @@ class SettingsScene(Page):
         重载内容
         :return:
         """
-        #黑场初始化
-        self.black_surface = pygame.Surface((3840, 2160))
-        self.black_surface.set_alpha(self.black_surface_alpha)
         #背景初始化
         self.display_surface = pygame.display.get_surface()
 
@@ -112,7 +112,7 @@ class SettingsScene(Page):
         self.is_end = False
         self.is_show = False
         #黑场重置
-        self.black_surface_alpha = 0
+        self.black_surface_index = 0
 
         #背景重置
         self.bg_h = -60
@@ -176,27 +176,26 @@ class SettingsScene(Page):
         """
         #黑场进入
         if not self.close_button_value:
-            if self.black_surface_alpha <120:
-                self.black_surface_alpha += 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index <12:
+                self.black_surface_index += 1
                 self.bg_h += 5
                 self.bg_alpha += 21
                 self.bg_copy.set_alpha(self.bg_alpha)
-                print(self.bg_alpha)
+                print(self.black_surface_index)
         else :
             #设置页面消失动画
-            if self.black_surface_alpha > 0:
-                self.black_surface_alpha -= 10
-                self.black_surface.set_alpha(self.black_surface_alpha)
+            if self.black_surface_index > 0:
+                self.black_surface_index -= 1
                 self.bg_h -= 5
                 self.bg_alpha -= 21
-                print(self.bg_alpha)
+                print(self.black_surface_index)
                 self.bg_copy.set_alpha(self.bg_alpha)
+
                 if self.bg_alpha <= 0:
                     self.is_end = True
 
         #画面元素渲染
-        self.display_surface.blit(self.black_surface, (0, 0))
+        self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0, 0))
         self.display_surface.blit(self.bg_copy, (0, self.bg_h))
 
     def _draw_button_(self):
@@ -228,19 +227,23 @@ class SettingsScene(Page):
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
 
 def test():
+    """
+    测试函数
+    :return:
+    """
+    pygame.init()
+    screen = pygame.display.set_mode((1280,720))
+    clock = pygame.time.Clock()
+
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
 
-    pygame.init()
     settings_page = SettingsScene(0,0)
-    screen = pygame.display.set_mode((settings_page.window_width, settings_page.window_height))
-    screen.fill("white")
-    clock = pygame.time.Clock()
-
     settings_page.init()
 
     while True:
+        screen.fill("white")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

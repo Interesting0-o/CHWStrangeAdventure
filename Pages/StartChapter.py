@@ -1,8 +1,6 @@
-import pygame
 from Pages.Page import Page
 from Elements.InputBox import InputBox
 from Elements.MenuButton import MenuButton
-from ResourceLoader import ResourceLoader
 from Characters.Player import *
 
 class StartChapter(Page):
@@ -146,13 +144,17 @@ class StartChapter(Page):
 
 
 def test():
+    """
+    测试函数
+    :return:
+    """
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
 
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
 
-    pygame.init()
-    screen = pygame.display.set_mode((1280, 720))
     player = Player()
     # 初始化
     start_chapter = StartChapter()
