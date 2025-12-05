@@ -157,7 +157,7 @@ class ResourceLoader:
         """
         all_files = os.listdir(path)
         for file in all_files:
-            tar_dic[file[:-4]] = pygame.image.load(path+rf"\{file}")
+            tar_dic[file[:-4]] = pygame.image.load(path+rf"\{file}").convert_alpha()
             self.current_progress += 1
 
 

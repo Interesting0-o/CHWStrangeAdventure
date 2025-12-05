@@ -7,5 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.3.5",
     "opencv-python>=4.11.0.86",
+    "py-spy>=0.4.1",
     "pygame>=2.6.1",
 ]

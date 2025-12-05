@@ -261,6 +261,15 @@ class Game:
         self.loader.load_all_resource()
         self.save_manager.init_save_data()
 
+    def draw_current_fps(self):
+        """
+        绘制当前帧率
+        :return:
+        """
+        fps_text = "FPS: " + str(int(self.clock.get_fps()))
+        fps_text_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(fps_text, True, (255, 255, 255))
+        self.screen.blit(fps_text_surface, (0, 0))
+
     def _draw_(self):
         #开屏动画
 
@@ -298,6 +307,7 @@ class Game:
                 self._handle_event_(event)
 
             self._draw_()
+            self.draw_current_fps()
             pygame.display.update()
 
 
