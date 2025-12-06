@@ -9,7 +9,7 @@ class PausePage(Page):
 
 
         #按钮初始化
-        self.continue_button_value = True
+        self.continue_button_value = False
         self.setting_button_value = False
         self.back_button_value = False
         self.load_button_value = False
@@ -94,6 +94,7 @@ class PausePage(Page):
 
         #按钮框
     def reset(self):
+        print("reset")
         self.is_end = False
         #黑场重置
         self.is_black_end = False
@@ -107,7 +108,7 @@ class PausePage(Page):
         self.bg_copy.set_alpha(self.bg_alpha)
 
         #按钮值重置
-        self.continue_button_value = True
+        self.continue_button_value = False
         self.setting_button_value = False
         self.back_button_value = False
         self.load_button_value = False
@@ -129,6 +130,34 @@ class PausePage(Page):
         self.load_button.rect.center = (180, 350+35)
 
 
+    def is_continue_press(self,event:pygame.event.Event):
+        """
+        判断是否按下继续按钮
+        :return:
+        """
+        return self.continue_game_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+
+    def is_setting_press(self,event:pygame.event.Event):
+        """
+        判断是否按下设置按钮
+        :return:
+        """
+        return self.setting_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+
+    def is_back_press(self,event:pygame.event.Event):
+        """
+        判断是否按下返回按钮
+        :return:
+        """
+        return self.back_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+
+    def is_load_press(self,event:pygame.event.Event):
+        """
+        判断是否按下载入存档按钮
+        :return:
+        """
+        return self.load_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+
     def handle_event(self, event):
         """
         事件处理
@@ -138,38 +167,24 @@ class PausePage(Page):
         if self.is_end:
             return
 
-        #按钮动画
-        self.continue_game_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
-        self.setting_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
-        self.back_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
-        self.load_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
-
-
         #判断继续按钮是否被按下
-        if self.continue_game_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h)):
+        if self.is_continue_press(event):
             self.continue_button_value = True
 
 
         #判断设置按钮是否被按下
-        if self.setting_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h)):
+        if self.is_setting_press(event):
             self.setting_button_value = True
 
 
         #判断返回按钮是否被按下
-        if self.back_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h)):
+        if self.is_back_press(event):
             self.back_button_value = True
 
         #判断载入存档按钮是否被按下
-        if self.load_button.is_press_down(event,(Page.window_width//2-180, Page.window_height//2-260+self.bg_h)):
+        if self.is_load_press(event):
             self.load_button_value = True
 
-        if event.type == pygame.KEYDOWN:
-            #按下ESC键返回游戏
-            if event.key == pygame.K_ESCAPE:
-                if self.continue_button_value:
-                    self.continue_button_value = False
-                else:
-                    self.continue_button_value = True
 
 
     def _black_enter_(self):
@@ -206,11 +221,19 @@ class PausePage(Page):
         if self.is_end:
             return
 
+
         #黑场动画
         self._black_enter_()
 
         #背景渲染
         self.display_surface.blit(self.bg_copy, (Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+
+
+        #按钮动画
+        self.continue_game_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+        self.setting_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+        self.back_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
+        self.load_button.hover_animation((Page.window_width//2-180, Page.window_height//2-260+self.bg_h))
 
         #按钮渲染
         self.continue_game_button.draw(self.bg_copy)

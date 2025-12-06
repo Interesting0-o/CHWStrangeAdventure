@@ -5,6 +5,7 @@ from settings import Settings
 from Elements.MenuButton import MenuButton
 from Elements.ButtonGroup import ButtonGroup
 from Characters import *
+from Voice import Voice
 
 
 class GameScene(Page):
@@ -59,6 +60,8 @@ class GameScene(Page):
         self.dialog_scale = None
         self.dialog_bg_copy = None
 
+        #音轨
+        self.char_channel = Voice.char_channel
 
         #黑场
         self.black_bg = pygame.surface.Surface((3840, 2160))
@@ -67,7 +70,6 @@ class GameScene(Page):
 
         #角色组
         self.character_group = None
-
 
     def reset(self):
         super().reset()
@@ -82,7 +84,6 @@ class GameScene(Page):
         self.is_voice_load = False
         #检验当前的选项是否载入
         self.is_choice_load = False
-
 
     def to_dict(self):
         return {
@@ -424,7 +425,7 @@ class GameScene(Page):
             #播放角色语音
             voice_path = self.get_current_dialog()["character"]["voice"]
             self.voice = pygame.mixer.Sound(self.path[:-6] + rf"\resource\sound\voice\{voice_path}.wav")
-            self.current_cannel = self.voice.play()
+            self.char_channel = self.voice.play()
             self.is_voice_load = True
 
     def _button_event(self,event:pygame.event.Event):
@@ -435,10 +436,10 @@ class GameScene(Page):
         """
         if self.voice_button.is_press_down(event) and self.voice is not None and self.is_voice_load:
             #切换当前音频的播放状态
-            if self.current_cannel.get_busy():
+            if self.char_channel.get_busy():
                 self.voice.stop()
             else:
-                self.current_cannel.play(self.voice)
+                self.char_channel.play(self.voice)
 
         if self.back_button.is_press_down(event) and self.dialog_index > 0:
 
@@ -535,13 +536,16 @@ def test():
     测试函数
     :return:
     """
-    loader = ResourceLoader()
-    loader.load_all_resource()
-    loader.wait_load_finish()
+    pygame.mixer.init()
 
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     clock =pygame.time.Clock()
+
+    loader = ResourceLoader()
+    loader.load_all_resource()
+    loader.wait_load_finish()
+
 
     save_datas = {"player":
                       {

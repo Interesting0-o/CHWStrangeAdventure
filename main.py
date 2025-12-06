@@ -6,7 +6,10 @@ from Pages import *
 from ResourceLoader import ResourceLoader
 from SaveManager import SaveManager
 from settings import Settings
+from Characters import *
 
+pygame.font.init()
+pygame.mixer.init()
 
 class Game:
     path = __file__[:-8]
@@ -29,15 +32,40 @@ class Game:
         self.window_width = self.get_size_by_set()[0]
         self.window_height = self.get_size_by_set()[1]
 
-
         Page.window_width = self.window_width
         Page.window_height = self.window_height
 
         #页面组
         self.pages_group:PagesGroup = PagesGroup()
+
+        #开平动画时后台初始化的资源
         self.is_thread_start = False
         self.is_thread_finish = False
         self.thread_init = threading.Thread(target=self._threading_start_)
+
+        #两种开始游戏的方式
+        self._game_begin_new_ = False
+        self._game_begin_load_ = False
+
+        self._on_game_begin_ = True
+
+        #存档是否被创建
+        self.is_save_create = False
+
+    def _character_define_(self):
+        """
+        定义角色
+        :return:
+        """
+        #初始化主角
+        self.player = Player()
+        #初始化角色组
+        self.character_group = CharacterGroup()
+
+        #初始化其他角色
+        self.demo_character = DemoCharacter()
+
+        self.character_group.add_character(self.demo_character)
 
     def get_size_by_set(self):
         return Settings.screen_size[self.config["frame_settings"]["resolution_size_index"]]
@@ -111,6 +139,8 @@ class Game:
     def _page_init_(self):
         self.pages_group.pages_init()
 
+        self.start_chapter.set_player(self.player)
+
     def is_load_finish(self):
         """
         判断资源是否加载完成
@@ -124,11 +154,15 @@ class Game:
         :return:
         """
         self.is_thread_start = True
+
+        #角色初始化
+        self._character_define_()
         #页面组初始化
         self._page_define_()
         self.load_game_scene.save_load(self.save_manager)
         self._page_init_()
         self.pages_group.change_page_end()
+        self.game_scene.is_end = True
 
         self.is_thread_finish = True
         print("_threading_start_ 线程启动完成")
@@ -145,11 +179,15 @@ class Game:
         if self.is_load_finish() and self.is_thread_finish:
             self.open_animation.handle_event(event)
 
-            if self.open_animation.is_black:
+            #处理开始菜单页面事件
+            if self.open_animation.is_black and self._on_game_begin_:
                 self.start_page.is_end = False
                 self._start_menu_event_(event)
 
-    def _is_other_show_(self):
+            if self._game_begin_new_:
+                self._game_new_event_(event)
+
+    def _is_other_show_start_(self):
         """
         判断开始菜单界面是否有其他页面显示
         :return:
@@ -161,8 +199,22 @@ class Game:
         返回开始菜单界面
         :return:
         """
+        #将所有设置改为在开始菜单界面时的值
+        self._game_begin_new_ = False
+        self._game_begin_load_ = False
+        self._on_game_begin_ = True
+
+        self.is_save_create = False
+        #重置所有页面
         self.pages_group.reset()
         self.pages_group.change_page_end()
+
+        #设置开始菜单界面为未结束
+        self.start_page.is_end = False
+
+        self.game_scene.is_end = True
+
+
 
     def _settings_event_(self):
         """
@@ -187,23 +239,23 @@ class Game:
         :return:
         """
         # 处理开始按钮事件
-        if self.start_page.is_start_down(event) and not self._is_other_show_():
+        if self.start_page.is_start_down(event) and not self._is_other_show_start_():
             if not self.tp_is_start.is_reset:
                 self.tp_is_start.reset()
                 self.tp_is_start.is_show = True
 
         # 处理载入游戏按钮事件
-        elif self.start_page.is_load_down(event) and not self._is_other_show_():
+        elif self.start_page.is_load_down(event) and not self._is_other_show_start_():
             print("载入游戏")
             self.load_game_scene.reset()
 
         # 处理设置按钮事件
-        elif self.start_page.is_settings_down(event) and not self._is_other_show_():
+        elif self.start_page.is_settings_down(event) and not self._is_other_show_start_():
             print("设置")
             self.settings_scene.reset()
 
         # 处理退出按钮事件
-        elif self.start_page.is_quit_down(event) and not self._is_other_show_():
+        elif self.start_page.is_quit_down(event) and not self._is_other_show_start_():
             print("退出游戏")
             self.quit_page.reset()
 
@@ -214,9 +266,9 @@ class Game:
 
         self._start_new_event_tp_(event)
 
+        #设置界面内的保存按钮是否按下
         if self.settings_scene.is_settings_change():
             self._settings_event_()
-
 
     def _start_new_event_tp_(self,event:pygame.event.Event):
         """
@@ -227,7 +279,13 @@ class Game:
         if self.tp_is_start.is_no_button_down(event):
             self.tp_is_start.no_button_value = True
         elif self.tp_is_start.is_yes_button_down(event):
-            print("通过创建新存档来新游戏")
+            print("通过创建新存档来新游戏,开始游戏，开始界面结束")
+            self.start_page.is_end = True
+
+            self._on_game_begin_ = False
+            self._game_begin_new_ = True
+            #开启输入框开始游戏界面
+            self.start_chapter.is_end = False
 
     def _draw_start_menu_(self):
         self.start_page.draw()
@@ -252,6 +310,18 @@ class Game:
         self.open_animation = OpenAnimation()
         self.open_animation.init()
 
+    def _new_save_(self):
+        """
+        创建新存档
+        :return:
+        """
+        #创建一个初始的存档
+        SaveManager.current_save = SaveManager.init_save.copy()
+        #设置存档名称
+        SaveManager.set_current_save_name(self.player.name)
+        #保存存档数据
+        self.save_manager.save_save_data(SaveManager.current_save)
+
     def _load_(self):
         """
         加载资源
@@ -270,21 +340,126 @@ class Game:
         fps_text_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(fps_text, True, (255, 255, 255))
         self.screen.blit(fps_text_surface, (0, 0))
 
+    def _draw_black_scr_(self):
+        """
+        绘制黑场
+        :return:
+        """
+        if self.black_scr_alpha != 0:
+            self.black_scr_alpha -= 5
+            self.screen.blit(self.black_scr, (0, 0))
+            self.black_scr.set_alpha(self.black_scr_alpha)
+
+    def _draw_game_(self):
+        self.game_scene.draw()
+
+    def _draw_game_new_(self):
+        """
+        绘制游戏界面
+        :return:
+        """
+        if self.start_chapter.is_end:
+            self.game_scene.draw()
+
+        self.start_chapter.draw()
+        #绘制暂停界面
+        self.pause_page.draw()
+
+        #绘制载入游戏界面
+        self.load_game_scene.draw()
+
+        #绘制设置界面
+        self.settings_scene.draw()
+
+    def _is_other_end_pause_(self):
+        """
+        判断是否有其他页面显示
+        :return:
+        """
+        return self.load_game_scene.is_end and  self.settings_scene.is_end
+
+    def _pause_event_(self,event:pygame.event.Event):
+        """
+        处理暂停页面的事件
+        :return:
+        """
+        #当按下ESC时，显示暂停界面
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and self._is_other_end_pause_():
+            #判断是否已经显示过暂停界面
+            if self.pause_page.is_end:
+                self.pause_page.reset()
+            else:
+                self.pause_page.continue_button_value = True
+
+        #当按下继续游戏按钮时，显示游戏界面
+        if self.pause_page.is_continue_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
+            self.pause_page.continue_button_value = True
+
+        #当按下返回按钮时，返回开始菜单界面
+        if self.pause_page.is_back_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
+            self._back_to_start_menu_()
+
+        #当按下载入游戏按钮时，显示载入游戏界面
+        if self.pause_page.is_load_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
+            self.load_game_scene.is_end = False
+
+        if self.pause_page.is_setting_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
+            self.settings_scene.is_end = False
+
+    def _game_new_event_(self,event:pygame.event.Event):
+        """
+        处理新建游戏的事件
+        :param event:
+        :return:
+        """
+        #在暂停页面未显示时，处理开始章节的事件
+        if  self.pause_page.is_end:
+            #只有将玩家名重置之后,即StartChapter.is_end为True,才能开始游戏
+            if self.start_chapter.is_end:
+                self.game_scene.handle_event(event)
+
+            self.start_chapter.handle_event(event)
+
+        self._pause_event_(event)
+        #处理由暂停页面引起的页面切换事件
+        self.load_game_scene.handle_event(event)
+        self.settings_scene.handle_event(event)
+
+        #设置界面内的保存按钮是否按下
+        if self.settings_scene.is_settings_change():
+            self._settings_event_()
+
+
+        #当开始章节结束，且没有创建存档时，开始创建存档
+        if self.start_chapter.is_end and not self.is_save_create and self.player.name is not None:
+            self._new_save_()
+            #游戏场景读取存档数据并初始化
+            self.game_scene.read_save(SaveManager.current_save, self.character_group)
+            self.game_scene.init()
+            self.game_scene.is_end = False
+
+            self.is_save_create = True
+
+
     def _draw_(self):
+        """
+        绘制
+        :return:
+        """
         #开屏动画
-
-
         self.open_animation.draw()
 
         #当开屏动画结束后才绘制页面
-        if self.open_animation.is_black:
+        if self.open_animation.is_black and self._on_game_begin_:
+            #绘制开始菜单的界面
             self._draw_start_menu_()
 
             #开平动画结束之后的缓入效果
-            if self.black_scr_alpha != 0:
-                self.black_scr_alpha -= 5
-                self.screen.blit(self.black_scr, (0, 0))
-                self.black_scr.set_alpha(self.black_scr_alpha)
+            self._draw_black_scr_()
+
+        if self._game_begin_new_:
+            self._draw_game_new_()
+
 
 
     def run(self):

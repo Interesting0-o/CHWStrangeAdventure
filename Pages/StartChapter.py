@@ -119,7 +119,7 @@ class StartChapter(Page):
         :return:
         """
         self.is_end = False
-        self.input_box.text = ""
+        self.input_box.text = "请输入您的称呼"
 
 
     def draw(self):

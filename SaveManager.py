@@ -26,7 +26,16 @@ class SaveManager:
         获取当前保存游戏数据
         :return:
         """
-        return SaveManager.current__save
+        return SaveManager.current_save
+
+    @staticmethod
+    def set_current_save_name(save_name:str):
+        """
+        设置当前保存游戏名称
+        :param save_name:
+        :return:
+        """
+        SaveManager.current_save["player"]["name"] = save_name
 
     def __init__(self):
         self.save_datas = {} #保存在字典中的存档名称会带有.chw后缀
@@ -72,7 +81,7 @@ class SaveManager:
         :param data:
         :return:
         """
-        current_time = str(datetime.datetime.now().strftime("%Y-%m-%d"))
+        current_time = str(datetime.datetime.now().strftime("%m-%d"))
         save_name = data["player"]["name"] + current_time
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
@@ -86,7 +95,7 @@ class SaveManager:
         :param data:
         :return:
         """
-        save_name = data["player"]["name"] + str(datetime.datetime.now().strftime("%Y-%m-%d"))
+        save_name = data["player"]["name"] + str(datetime.datetime.now().strftime("%m-%d"))
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         self.save_datas[save_name] = save_name
@@ -112,4 +121,3 @@ class SaveManager:
 if __name__ == '__main__':
     save_manager = SaveManager()
     save_manager.init_save_data()
-    save_manager.delete_save_data("error_test - 副本")

@@ -470,7 +470,6 @@ class LoadGameScene(Page):
                     self.is_end = True
                     print("退出设置页面")
         self.display_surface.blit(self.black_surface_list[self.black_surface_index], (0, 0))
-        print(self.black_surface_index)
         self.display_surface.blit(self.bg_scale, (0, self.bg_h))
 
     def _delete_event_(self,event:pygame.event.Event):

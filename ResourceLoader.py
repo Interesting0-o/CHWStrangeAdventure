@@ -71,6 +71,7 @@ class ResourceLoader:
     #黑场资源初始化
     black_surfaces_list:list[pygame.Surface] = []
 
+
     def black_surface_init(self):
         ResourceLoader.black_surfaces_list =[pygame.Surface((3840,2160)) for _ in range(13)]
         for index,surface in enumerate(ResourceLoader.black_surfaces_list):
