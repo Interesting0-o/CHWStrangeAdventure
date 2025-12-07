@@ -425,6 +425,7 @@ class LoadGameScene(Page):
 
         #重置存档页数
         self.to_empty_index = -1
+        self.to_load_index = -1
 
 
     def _page_num_init_(self):

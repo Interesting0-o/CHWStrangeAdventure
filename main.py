@@ -7,6 +7,7 @@ from ResourceLoader import ResourceLoader
 from SaveManager import SaveManager
 from settings import Settings
 from Characters import *
+from Voice import Voice
 
 pygame.font.init()
 pygame.mixer.init()
@@ -186,6 +187,9 @@ class Game:
 
             if self._game_begin_new_:
                 self._game_new_event_(event)
+            
+            if self._game_begin_load_:
+                self._game_load_event_(event)
 
     def _is_other_show_start_(self):
         """
@@ -213,6 +217,10 @@ class Game:
         self.start_page.is_end = False
 
         self.game_scene.is_end = True
+
+        #停止所有声音
+        Voice.char_channel.stop()
+        Voice.effect_channel.stop()
 
 
 
@@ -262,7 +270,8 @@ class Game:
         # 处理退出，设置，载入游戏页面事件
         self.quit_page.handle_event(event)
         self.settings_scene.handle_event(event)
-        self.load_game_scene.handle_event(event)
+        self._load_game_event_(event)
+
 
         self._start_new_event_tp_(event)
 
@@ -270,6 +279,36 @@ class Game:
         if self.settings_scene.is_settings_change():
             self._settings_event_()
 
+    def _load_game_event_(self,event:pygame.event.Event):
+        """
+        _load_game_event_ 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: pygame.event.Event
+        """
+        self.load_game_scene.handle_event(event)        
+
+        if self.load_game_scene.tp_is_load.is_yes_button_down(event):
+
+            #更改游戏状态为以载入存档的方式开始游戏
+            self._game_begin_load_ = True
+            self._on_game_begin_ = False
+            self._game_begin_new_ = False
+
+            #读取存档数据
+            self.game_scene.read_save(self.save_manager.current_save,self.character_group)
+            self.game_scene.init()
+            self.game_scene.is_end = False
+
+
+            #重置在游戏过程中的所有页面
+            self.settings_scene.reset()
+            self.settings_scene.is_end = True
+            self.load_game_scene.reset()
+            self.load_game_scene.is_end = True
+            self.pause_page.reset()
+            self.pause_page.is_end = True
     def _start_new_event_tp_(self,event:pygame.event.Event):
         """
         处理是否开始新游戏的按钮事件
@@ -284,8 +323,18 @@ class Game:
 
             self._on_game_begin_ = False
             self._game_begin_new_ = True
+            self._game_begin_load_ = False
+
             #开启输入框开始游戏界面
             self.start_chapter.is_end = False
+
+            #重置在游戏过程中的所有页面
+            self.settings_scene.reset()
+            self.settings_scene.is_end = True
+            self.load_game_scene.reset()
+            self.load_game_scene.is_end = True
+            self.pause_page.reset()
+            self.pause_page.is_end = True
 
     def _draw_start_menu_(self):
         self.start_page.draw()
@@ -349,9 +398,6 @@ class Game:
             self.black_scr_alpha -= 5
             self.screen.blit(self.black_scr, (0, 0))
             self.black_scr.set_alpha(self.black_scr_alpha)
-
-    def _draw_game_(self):
-        self.game_scene.draw()
 
     def _draw_game_new_(self):
         """
@@ -422,7 +468,7 @@ class Game:
 
         self._pause_event_(event)
         #处理由暂停页面引起的页面切换事件
-        self.load_game_scene.handle_event(event)
+        self._load_game_event_(event)
         self.settings_scene.handle_event(event)
 
         #设置界面内的保存按钮是否按下
@@ -440,6 +486,40 @@ class Game:
 
             self.is_save_create = True
 
+    def _draw_game_load_(self):
+        self.game_scene.draw()
+
+        #绘制暂停界面
+        self.pause_page.draw()
+
+
+        #绘制载入游戏界面
+        self.load_game_scene.draw()
+
+        #绘制设置界面
+        self.settings_scene.draw()
+
+    def _game_load_event_(self,event:pygame.event.Event):
+        """
+        _game_load_event_ 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: pygame.event.Event
+        """
+
+        self._pause_event_(event)
+
+        #处理由暂停页面引起的页面切换事件
+        self._load_game_event_(event)
+        self.settings_scene.handle_event(event)
+
+        #设置界面内的保存按钮是否按下
+        if self.settings_scene.is_settings_change():
+            self._settings_event_()
+
+        if self.load_game_scene.is_end and self.pause_page.is_end and self.settings_scene.is_end:
+            self.game_scene.handle_event(event)
 
     def _draw_(self):
         """
@@ -459,6 +539,9 @@ class Game:
 
         if self._game_begin_new_:
             self._draw_game_new_()
+
+        if self._game_begin_load_:
+            self._draw_game_load_()
 
 
 
