@@ -15,21 +15,21 @@ class GameScene(Page):
         self.voice = None
 
         #音频加载状态
-        self.is_voice_load = False
+        self.is_voice_load:bool = False
         #检验当前的选项是否载入
-        self.is_choice_load = False
+        self.is_choice_load:bool = False
 
         #资源初始化
 
-        self.plot = None
-        self.bg_dict = None
+        self.plot:dict|None = None
+        self.bg_dict:dict|None = None
 
 
         #按钮类
         self.button_group = ButtonGroup()
-        self.voice_button = None
-        self.back_button = None
-        self.save_button = None
+        self.voice_button:MenuButton = None
+        self.back_button:MenuButton = None
+        self.save_button:MenuButton = None
 
         #场景记录
         self.current_player_honor = 0
@@ -72,7 +72,6 @@ class GameScene(Page):
         self.character_group = None
 
     def reset(self):
-        super().reset()
 
         #角色组
         self.character_group = None
@@ -347,13 +346,21 @@ class GameScene(Page):
                 self.is_choice_reloads = True
                 self.dialog_index = 0
 
-
+    def is_save_press(self,event:pygame.event.Event):
+        """
+        判断是否保存按钮被点击
+        :param event:
+        :return:
+        """
+        return self.save_button.is_press_down(event)
 
     def _draw_button(self):
         """
         按钮渲染
         :return:
         """
+        # 按钮动画启动
+        self.button_group.hover_animation()
         # 按钮渲染
         self.display_surface.blit(self.back_button.img, self.back_button.rect)
         self.display_surface.blit(self.voice_button.img, self.voice_button.rect)
@@ -452,13 +459,9 @@ class GameScene(Page):
             if self.voice is not None:
                 self.voice.stop()
 
-        if self.save_button.is_press_down(event):
-            #保存存档
-            print("以后再实现")
 
 
-
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event.Event)-> None:
         """
         事件处理
         :param event:
@@ -468,9 +471,6 @@ class GameScene(Page):
         #判断是否到达结尾
         if self.is_end:
             return
-
-        # 按钮动画启动
-        self.button_group.hover_animation()
 
         if self.plot[self.current_chapter][self.current_scene]["end_with"] == "choice" and not self.is_choice_load:
             self._prepare_choice()

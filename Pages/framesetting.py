@@ -11,9 +11,9 @@ class FrameSetting(Page):
         self.isSettingsChange = False #是否修改设置
         super().__init__()
         #背景声明
-        self.tar_location = None
-        self.bg_surface_rect = None
-        self.bg_surface = None
+        self.tar_location:tuple[int,int]|None = None
+        self.bg_surface_rect:pygame.rect.Rect|None = None
+        self.bg_surface:pygame.surface.Surface|None = None
         #字体导入
         self.font = ResourceLoader.font_dict["MiSansDemibold24"]
         self.font2 = ResourceLoader.font_dict["MiSansDemibold36"]

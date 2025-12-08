@@ -168,6 +168,21 @@ class Game:
         self.is_thread_finish = True
         print("_threading_start_ 线程启动完成")
 
+    def _game_scene_event_(self,event:pygame.event.Event) -> None:
+        """
+        _game_scene_event_ 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: pygame.event.Event
+        """
+        #照常处理事件
+        self.game_scene.handle_event(event)
+
+        #当保存按钮被按下时
+        if self.game_scene.is_save_press(event):
+            #保存存档数据
+            self.save_manager.cover_save_data(self.player.name,self.game_scene.to_dict())
 
 
     def _handle_event_(self,event:pygame.event.Event):
@@ -177,18 +192,23 @@ class Game:
         :return:
         """
         #在资源加载完成后才处理事件
+        print(self.is_load_finish(),self.is_thread_finish)
         if self.is_load_finish() and self.is_thread_finish:
+            print("资源加载完成，开始处理事件")
             self.open_animation.handle_event(event)
 
             #处理开始菜单页面事件
             if self.open_animation.is_black and self._on_game_begin_:
+                print("开始菜单界面  事件")
                 self.start_page.is_end = False
                 self._start_menu_event_(event)
 
-            if self._game_begin_new_:
+            elif self._game_begin_new_:
+                print("开始新游戏  事件")
                 self._game_new_event_(event)
             
-            if self._game_begin_load_:
+            elif self._game_begin_load_:
+                print("开始载入游戏  事件")
                 self._game_load_event_(event)
 
     def _is_other_show_start_(self):
@@ -350,7 +370,7 @@ class Game:
         :return:
         """
         pygame.init()
-        pygame.display.set_caption("陈海文の奇妙冒险", "陈海文陈海文の奇妙冒险")
+        pygame.display.set_caption("李好香の奇妙冒险", "陈海文陈海文の奇妙冒险")
         pygame.display.set_icon(pygame.image.load(r"resource/img/icon/caption.png"))
         self.screen = pygame.display.set_mode(size = (self.window_width, self.window_height),flags = Settings.screen_set[self.config["frame_settings"]["fullscreen_setting_index"]])
         self.clock = pygame.time.Clock()
@@ -366,10 +386,13 @@ class Game:
         """
         #创建一个初始的存档
         SaveManager.current_save = SaveManager.init_save.copy()
+        SaveManager.current_save_name = self.player.name
         #设置存档名称
         SaveManager.set_current_save_name(self.player.name)
         #保存存档数据
         self.save_manager.save_save_data(SaveManager.current_save)
+        #添加存档数据到载入游戏界面
+        self.load_game_scene.add_save_view(self.save_manager.current_save,self.player.name)
 
     def _load_(self):
         """
@@ -462,7 +485,7 @@ class Game:
         if  self.pause_page.is_end:
             #只有将玩家名重置之后,即StartChapter.is_end为True,才能开始游戏
             if self.start_chapter.is_end:
-                self.game_scene.handle_event(event)
+                self._game_scene_event_(event)
 
             self.start_chapter.handle_event(event)
 
@@ -512,7 +535,7 @@ class Game:
 
         #处理由暂停页面引起的页面切换事件
         self._load_game_event_(event)
-        self.settings_scene.handle_event(event)
+        self._game_scene_event_(event)
 
         #设置界面内的保存按钮是否按下
         if self.settings_scene.is_settings_change():
@@ -537,13 +560,11 @@ class Game:
             #开平动画结束之后的缓入效果
             self._draw_black_scr_()
 
-        if self._game_begin_new_:
+        elif self._game_begin_new_:
             self._draw_game_new_()
 
-        if self._game_begin_load_:
+        elif self._game_begin_load_:
             self._draw_game_load_()
-
-
 
     def run(self):
         self._game_init_()
@@ -563,10 +584,13 @@ class Game:
                     pygame.quit()
                     exit()
                 self._handle_event_(event)
+                print("事件处理完成")
 
             self._draw_()
             self.draw_current_fps()
             pygame.display.update()
+
+
 
 
 if __name__ == '__main__':

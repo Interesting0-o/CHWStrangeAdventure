@@ -3,7 +3,7 @@ import pygame
 
 class Player:
     def __init__(self):
-        self.name = None
+        self.name:str = ""
         # 使用与存档和 ResourceLoader 一致的字段名
         self.honor_value = 0
         self.name_surface = None

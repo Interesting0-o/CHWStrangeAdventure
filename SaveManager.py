@@ -1,11 +1,13 @@
-import datetime
 import json
 import os
 import threading
 
 class SaveManager:
 
-    current_save = None
+    current_save:dict = {}
+    current_save_name:str = ""
+
+
     init_save = {
         "player": {
             "name": None,
@@ -81,24 +83,23 @@ class SaveManager:
         :param data:
         :return:
         """
-        current_time = str(datetime.datetime.now().strftime("%m-%d"))
-        save_name = data["player"]["name"] + current_time
+        save_name = data["player"]["name"]
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         self.save_datas[save_name+".chw"] = data
         return save_name
 
     #覆盖保存游戏数据
-    def cover_save_data(self,data:dict):
+    def cover_save_data(self,save_name:str,new_save:dict):
         """
         覆盖保存游戏数据
-        :param data:
+        :param save_name:
+        :param new_save:
         :return:
         """
-        save_name = data["player"]["name"] + str(datetime.datetime.now().strftime("%m-%d"))
         with open(self.path+f"save/{save_name}.chw", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-        self.save_datas[save_name] = save_name
+            json.dump(new_save, f, indent=4)
+        self.save_datas[save_name+".chw"] = new_save
         return save_name
         
     #等待所有保存游戏数据读取完成

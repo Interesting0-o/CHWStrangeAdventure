@@ -162,6 +162,41 @@ class LoadGameScene(Page):
             self.save_view_list[i].set_location(int(Page.window_width*0.20+(i%6)%3*Page.window_width*0.21),
                                                  int(Page.window_height*0.20 +(i%6)//3*Page.window_height*0.32))
 
+    def add_save_view(self,save_data:dict,name:str):
+        """
+        添加新的存档时图到self.save_view_list中
+        
+        :param self: 说明
+        :param save_data: 说明
+        :type save_data: dict
+        :param name: 说明
+        :type name: str
+        """
+        for view in self.save_view_list:
+
+            #检查当前视图是否为空
+            if not view.is_empty:
+                continue
+            else:
+                #非空存档 直接修改数据
+                view.trans_to_normal(save_data,name,self.delete_button)
+                break
+        else:
+            #如果整个没有空存档，则添加新的存档
+            view = self.SaveView(save_data,self.delete_button,name)
+            view.init(int(Page.window_width*0.2),int(Page.window_height*0.3))
+            self.save_view_list.append(view)
+            #再添加5个空存档
+            for i in range(5):
+                tmp = self.SaveView(None,None,None,True)
+                tmp.init(int(Page.window_width*0.2),int(Page.window_height*0.3))
+                self.save_view_list.append(tmp)
+
+        #重新排序存档视图列表
+        self._sort_save_view_()
+
+
+
 
 
 
@@ -251,6 +286,21 @@ class LoadGameScene(Page):
             else:
                 self._bg_init_(window_width,window_height)
                 self.ID = 3
+        
+        def trans_to_normal(self,
+                            save_data:dict|None,
+                            name:str|None,
+                            dekete_button:MenuButton
+                            ):
+            self.save_data = save_data
+            self.name = name
+            self.is_empty = False
+            self.delete_button = dekete_button
+
+            self.init(self.bg.get_width(),self.bg.get_height())
+
+
+
 
         def set_location(self,x:int,y:int):
             """
@@ -549,6 +599,7 @@ class LoadGameScene(Page):
                 print("yes按钮被点击")
                 #载入存档
                 SaveManager.current_save = self.save_view_list[self.to_load_index].save_data
+                SaveManager.current_save_name = self.save_view_list[self.to_load_index].name
 
                 # 载入提示框关闭,重置检测改为未重置
                 self.tp_is_load.is_reset = False
@@ -597,7 +648,7 @@ class LoadGameScene(Page):
         :return:
         """
         # 判断是否关闭按钮被点击
-        if self.is_end:
+        if self.is_end and:
             self.is_show = False
             return
         if not self.is_other_show():
