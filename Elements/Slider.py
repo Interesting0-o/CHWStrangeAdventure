@@ -1,207 +1,218 @@
 import pygame
 
-class Slider(pygame.sprite.Sprite):
+
+class Slider:
+
     def __init__(self,
-                  x, y,
-                    track_length, track_height, 
-                    min_val=0, max_val=100, 
-                    initial_val=50, 
-                    continuous=True, 
-                    knob_color=(200, 200, 200), 
-                    track_color=(100, 100, 100), 
-                    track_border_color=(50, 50, 50), 
-                    track_border_width=2
-                    ):
+                 x, y,
+                 length, height,
+                 min_val=0, max_val=100,
+                 initial_val=50,
+                 continuous=True,
+                 feet=None,
+                 ball_color:int|tuple[int, int, int]|str=0x0000ff,
+                 track_color:int|tuple[int, int, int]|str=0xff0000,
+                 border_color:int|tuple[int, int, int]|str=(50, 50, 50),
+                 border=2,
+                 location=(0, 0)
+                 ):
         """
-        初始化圆形滑块
-        
+        初始化滑块
+
         参数:
             x, y: 滑块中心位置
-            track_length: 滑条长度
-            track_height: 滑条高度
+            length: 滑条长度（不包含圆角部分）
+            height: 滑条高度（不包含描边）
             min_val: 最小值
             max_val: 最大值
             initial_val: 初始值
             continuous: 是否为连续滑块 (True) 还是分立滑块 (False)
-            knob_color: 滑块按钮颜色
+            feet: 步长（仅用于分立滑块）
+            ball_color: 滑块按钮颜色
             track_color: 滑条轨道颜色
-            track_border_color: 滑条描边颜色
-            track_border_width: 滑条描边宽度
+            border_color: 滑条描边颜色
+            border: 滑条描边宽度
+            location: bg_surface的左上角坐标
         """
-        super().__init__()
-        
-        # 公共成员变量，可供外部访问
-        self.value = initial_val       # 当前值
-        self.min_val = min_val         # 最小值
-        self.max_val = max_val         # 最大值
-        self.continuous = continuous   # 是否连续
-        
-        # 滑块位置和尺寸
+        if not continuous and feet is not None and length % feet != 0:
+            raise ValueError("滑块长度必须为步长的整数倍")
+
         self.x = x
         self.y = y
-        self.track_length = track_length
-        self.track_height = track_height
-        
-        # 滑块颜色
-        self.knob_color = knob_color
+        self.length = length
+        self.height = height
+        self.min_val = min_val
+        self.max_val = max_val
+        self.continuous = continuous
+        self.feet = feet
+        self.ball_color = ball_color
         self.track_color = track_color
-        self.track_border_color = track_border_color
-        self.track_border_width = track_border_width
-        
-        # 计算滑条圆角半径（等于高度的一半）
-        self.corner_radius = track_height // 2
-        
-        # 计算总宽度（滑条长度 + 滑块直径）
-        self.total_width = track_length + track_height
-        self.total_height = track_height
-        
-        # 创建滑块的表面和矩形区域
-        self.image = pygame.Surface((self.total_width, self.total_height), pygame.SRCALPHA)
-        self.rect = self.image.get_rect(center=(x, y))
+        self.border_color = border_color
+        self.border = border
+        self.location = location
+
+        # 用于分立滑块的步数
+        if not continuous and feet is not None:
+            self.num_steps = (max_val - min_val) // feet
+
+        # 拖拽状态
         self.dragging = False
-        
-        # 初始化滑块位置
-        self.update_knob_position()
-        
-    def update_knob_position(self):
-        """根据当前值更新滑块按钮位置"""
-        # 计算滑块按钮在滑条上的位置 (0.0 到 1.0)
-        position_ratio = (self.value - self.min_val) / (self.max_val - self.min_val)
-        
-        # 计算滑块按钮的实际坐标（相对于滑块表面）
-        self.knob_x = int(position_ratio * self.track_length) + self.track_height // 2
-        self.knob_y = self.total_height // 2
-        
-        # 滑块按钮半径 (使用高度的一半)
-        self.knob_radius = self.track_height // 2
-        
-    def draw(self, surface):
-        """绘制滑块到指定表面"""
-        # 清空图像
-        self.image.fill((0, 0, 0, 0))
-        
-        # 绘制滑条轨道 (圆角矩形)
-        track_rect = pygame.Rect(
-            self.track_height // 2, 
-            (self.total_height - self.track_height) // 2,
-            self.track_length,
-            self.track_height
-        )
-        
-        # 绘制滑条背景
-        pygame.draw.rect(self.image, self.track_color, track_rect, border_radius=self.corner_radius)
-        
-        # 绘制滑条描边
-        if self.track_border_width > 0:
-            pygame.draw.rect(
-                self.image, 
-                self.track_border_color, 
-                track_rect, 
-                width=self.track_border_width,
-                border_radius=self.corner_radius
-            )
-        
-        # 绘制滑块按钮 (圆形)
-        pygame.draw.circle(self.image, self.knob_color, (self.knob_x, self.knob_y), self.knob_radius)
-        
-        # 绘制滑块按钮描边
-        pygame.draw.circle(
-            self.image, 
-            self.track_border_color, 
-            (self.knob_x, self.knob_y), 
-            self.knob_radius,
-            width=1
-        )
-        
-        # 将滑块绘制到指定表面
-        surface.blit(self.image, self.rect)
-        
-    def handle_event(self, event):
-        """处理事件并更新滑块状态"""
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            # 检查鼠标是否点击在滑块按钮上
-            mouse_x, mouse_y = event.pos
-            knob_screen_x = self.rect.x + self.knob_x
-            knob_screen_y = self.rect.y + self.knob_y
-            
-            distance = ((mouse_x - knob_screen_x) ** 2 + (mouse_y - knob_screen_y) ** 2) ** 0.5
-            
-            if distance <= self.knob_radius:
-                self.dragging = True
-                
-        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            self.dragging = False
-            
-        elif event.type == pygame.MOUSEMOTION and self.dragging:
-            # 更新滑块值基于鼠标位置
-            mouse_x, _ = event.pos
-            
-            # 限制鼠标位置在滑条范围内
-            track_start_x = self.rect.x + self.track_height // 2
-            track_end_x = track_start_x + self.track_length
-            mouse_x = max(track_start_x, min(mouse_x, track_end_x))
-            
-            # 计算新值
-            position_ratio = (mouse_x - track_start_x) / self.track_length
-            new_value = self.min_val + position_ratio * (self.max_val - self.min_val)
-            
-            # 如果是分立滑块，四舍五入到最接近的整数
-            if not self.continuous:
-                new_value = round(new_value)
-                
-            # 更新值并确保在范围内
-            self.value = max(self.min_val, min(new_value, self.max_val))
-            
-            # 更新滑块位置
-            self.update_knob_position()
-            
-            return True  # 表示值已更改
-            
-        return False  # 表示值未更改
-    
+
+        # 创建滑条轨道
+        self.img = pygame.Surface((self.length + 2 * self.border, self.height + 2 * self.border), pygame.SRCALPHA)
+        self.img_rect = self.img.get_rect(center=(self.x, self.y))
+
+        # 绘制滑条轨道背景
+        pygame.draw.rect(self.img,
+                         color=self.track_color,
+                         rect=(0, 0, self.length + 2 * self.border, self.height + 2 * self.border),
+                         border_radius=(self.height // 2 + self.border)
+                         )
+        # 绘制滑条的描边
+        pygame.draw.rect(self.img,
+                         color=self.border_color,
+                         rect=(0, 0, self.length + 2 * self.border, self.height + 2 * self.border),
+                         border_radius=(self.height // 2 + self.border),
+                         width=self.border
+                         )
+
+        # 创建小球
+        ball_radius = self.height // 2
+        self.ball_img = pygame.Surface((ball_radius * 2, ball_radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.ball_img, self.ball_color, (ball_radius, ball_radius), ball_radius)
+
+        # 计算滑块可移动的范围（相对于滑条轨道）
+        self.start_pos = self.border + ball_radius
+        self.end_pos = self.length + 2 * self.border - ball_radius
+
+        # 设置初始值
+        self.value = initial_val
+        self.update_ball_position_from_value()
+
     def get_value(self):
-        """获取当前滑块值"""
+        """
+        获取当前值
+        :return: 当前滑块的值
+        """
         return self.value
-    
-    def set_value(self, value):
-        """设置滑块值"""
-        self.value = max(self.min_val, min(value, self.max_val))
-        self.update_knob_position()
+
+    def update_ball_position_from_value(self):
+        """
+        根据当前值更新滑块按钮位置
+        """
+        # 计算值在[min_val, max_val]范围内的比例
+        value_ratio = (self.value - self.min_val) / (self.max_val - self.min_val)
+
+        # 计算小球在滑条上的位置
+        ball_x = self.start_pos + value_ratio * (self.end_pos - self.start_pos)
+
+        # 更新小球位置
+        ball_center_x = self.img_rect.x + ball_x
+        self.ball_img_rect = self.ball_img.get_rect(center=(ball_center_x, self.y))
+
+    def set_value_from_position(self, mouse_x):
+        """
+        根据鼠标位置设置值
+        :param mouse_x: 鼠标的x坐标
+        """
+        # 将鼠标位置转换为相对于滑条轨道的x坐标
+        rel_x = mouse_x - self.img_rect.x
+
+        # 限制在滑条范围内
+        rel_x = max(min(rel_x, self.end_pos), self.start_pos)
+
+        # 计算位置比例
+        pos_ratio = (rel_x - self.start_pos) / (self.end_pos - self.start_pos)
+
+        if self.continuous:
+            # 连续滑块：直接根据比例计算值
+            self.value = self.min_val + pos_ratio * (self.max_val - self.min_val)
+        else:
+            # 分立滑块：根据步长计算值
+            step = round(pos_ratio * self.num_steps)
+            self.value = self.min_val + step * self.feet
+
+        # 更新小球位置
+        self.update_ball_position_from_value()
+
+    def handle_event(self, event):
+        """
+        处理事件
+        :param event: pygame事件
+        :return: 如果值发生变化返回True，否则返回False
+        """
+        value_changed = False
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x -= self.location[0]
+        mouse_y -= self.location[1]
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            # 检查是否点击了小球
+            if self.ball_img_rect.collidepoint((mouse_x, mouse_y)):
+                self.dragging = True
+                value_changed = True
+            # 检查是否点击了滑条轨道
+            elif self.img_rect.collidepoint((mouse_x, mouse_y)):
+                self.dragging = True
+                self.set_value_from_position(mouse_x)
+                value_changed = True
+
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            if self.dragging:
+                self.dragging = False
+                value_changed = True
+
+        elif event.type == pygame.MOUSEMOTION:
+            if self.dragging:
+                self.set_value_from_position(mouse_x)
+                value_changed = True
+
+        return value_changed
+
+    def draw(self, bg_surface):
+        """
+        绘制滑块到指定表面
+        :param bg_surface: 目标表面
+        """
+        # 绘制滑条轨道
+        bg_surface.blit(self.img, self.img_rect)
+
+        # 绘制小球
+        bg_surface.blit(self.ball_img, self.ball_img_rect)
+
 
 def test():
-    """
-    测试函数
-    :return:
-    """
-    import pygame
-    import sys
-
-    # 初始化pygame
+    """测试函数"""
     pygame.init()
-
-    # 设置窗口
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("增强版圆形滑块示例")
+    clock = pygame.time.Clock()
+    pygame.display.set_caption("滑块测试")
 
-    # 创建滑块实例
-    slider = Slider(
-        x=400,
-        y=300,
-        track_length=300,
-        track_height=20,
-        min_val=0,
-        max_val=100,
+    # 创建连续滑块
+    continuous_slider = Slider(
+        400, 200,
+        300, 20,
+        min_val=0, max_val=100,
         initial_val=50,
         continuous=True,
-        knob_color=(255, 100, 100),
-        track_color=(200, 200, 200),
-        track_border_color=(80, 80, 80),
-        track_border_width=2
+        ball_color=(0, 100, 255),
+        track_color=(200, 200, 200)
     )
 
-    # 主循环
-    clock = pygame.time.Clock()
-    font = pygame.font.SysFont(None, 36)
+    # 创建分立滑块
+    discrete_slider = Slider(
+        400, 300,
+        300, 20,
+        min_val=0, max_val=100,
+        initial_val=0,
+        continuous=False,
+        feet=20,
+        ball_color=(255, 100, 0),
+        track_color=(200, 200, 200)
+    )
+
+    # 创建字体用于显示值
+    font = pygame.font.Font(None, 36)
 
     running = True
     while running:
@@ -210,28 +221,34 @@ def test():
                 running = False
 
             # 处理滑块事件
-            slider.handle_event(event)
+            continuous_changed = continuous_slider.handle_event(event)
+            discrete_changed = discrete_slider.handle_event(event)
 
-        # 清空屏幕
+            if continuous_changed or discrete_changed:
+                # 值发生变化时可以在这里添加处理逻辑
+                pass
+
         screen.fill((240, 240, 240))
 
         # 绘制滑块
-        slider.draw(screen)
+        continuous_slider.draw(screen)
+        discrete_slider.draw(screen)
 
-        # 显示当前值
-        value_text = font.render(f"值: {slider.get_value():.1f}", True, (0, 0, 0))
-        screen.blit(value_text, (350, 250))
+        # 显示滑块值
+        cont_text = font.render(f"连续滑块值: {continuous_slider.get_value():.1f}", True, (0, 0, 0))
+        disc_text = font.render(f"分立滑块值: {discrete_slider.get_value()}", True, (0, 0, 0))
+        screen.blit(cont_text, (400 - cont_text.get_width() // 2, 150))
+        screen.blit(disc_text, (400 - disc_text.get_width() // 2, 250))
 
-        # 显示滑条尺寸
-        size_text = font.render(f"滑条尺寸: {slider.track_length}x{slider.track_height}", True, (0, 0, 0))
-        screen.blit(size_text, (320, 200))
+        # 显示说明文字
+        info_font = pygame.font.Font(None, 24)
+        info_text = info_font.render("点击并拖动小球或滑条来调整值", True, (100, 100, 100))
+        screen.blit(info_text, (400 - info_text.get_width() // 2, 350))
 
-        # 更新显示
-        pygame.display.flip()
+        pygame.display.update()
         clock.tick(60)
 
     pygame.quit()
-    sys.exit()
 
 
 if __name__ == '__main__':

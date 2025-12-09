@@ -10,6 +10,7 @@ from .TextPage import TextPage
 from .StartChapter import StartChapter
 from .GameScene import GameScene
 from .OpenAnimation import OpenAnimation
+from .voicesetting import VoiceSetting
 
 __all__= [
     "QuitPage",
@@ -23,6 +24,7 @@ __all__= [
     "TextPage",
     "StartChapter",
     "GameScene",
-    "OpenAnimation"
+    "OpenAnimation",
+    "VoiceSetting"
       ]
 

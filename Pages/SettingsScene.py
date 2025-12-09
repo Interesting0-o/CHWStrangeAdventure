@@ -45,6 +45,10 @@ class SettingsScene(Page):
         self.frame_button = Button(ResourceLoader.button_dict["frame_setting_button"])
         self.isFrameSetting = False
 
+        #音量设置按钮初始化
+        self.voice_button = Button(ResourceLoader.button_dict["voice_setting_button"])
+        self.isVocieSetting = False
+
 
     def reset_set(self):
         """
@@ -58,6 +62,10 @@ class SettingsScene(Page):
         self.frame_button.image = self.frame_button.animation_list[0]
         self.frame_button.setting_mode = 0
         self.frame_button.index = 0
+
+        self.voice_button.image = self.voice_button.animation_list[0]
+        self.voice_button.setting_mode = 0
+        self.voice_button.index = 0
 
         #下拉菜单重置
         self.frame_setting.reset()
@@ -101,6 +109,10 @@ class SettingsScene(Page):
         self.frame_button.rect.left = int(self.window_width * 0.15)
         self.frame_button.rect.top = int(self.window_height * 0.2)
         self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
+
+        self.voice_button.rect.left = int(self.window_width * 0.15)
+        self.voice_button.rect.top = int(self.window_height * 0.2+80)
+        self.bg_copy.blit(self.voice_button.image, self.voice_button.rect)
 
 
         #画面设置页面初始化
@@ -162,9 +174,14 @@ class SettingsScene(Page):
 
         #处理页面设置按钮
         if self.frame_button.is_press_down(event,(0,self.bg_h)):
-                print("click")
-                self.frame_button.set_mode()
-                self.frame_setting.is_end = not self.frame_setting.is_end
+            print("click")
+            self.frame_button.set_mode()
+            self.frame_setting.is_end = not self.frame_setting.is_end
+
+        if self.voice_button.is_press_down(event,(0,self.bg_h)):
+            print("click")
+            self.frame_setting.is_end = True
+            self.voice_button.set_mode()
 
         #处理界面设置页面事件
         self.frame_setting.handle_event(event)
@@ -201,6 +218,19 @@ class SettingsScene(Page):
     def _draw_button_(self):
         self.bg_copy.blit(self.close_button.image, self.close_button.rect)
 
+    def _draw_setting_button_(self):
+        """
+        画面设置按钮渲染
+        :return:
+        """
+        #按钮渲染
+        self.frame_button.setting_button_animation()
+        self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
+
+        self.voice_button.setting_button_animation()
+        self.bg_copy.blit(self.voice_button.image, self.voice_button.rect)
+
+    
     def draw(self):
         """
         绘制
@@ -222,9 +252,8 @@ class SettingsScene(Page):
         self.bg_copy.blit(self.frame_setting.bg_surface, self.frame_setting.bg_surface_rect)
         self.frame_setting.draw((int(0.3125*self.window_width),int(0.2*self.window_height)))
 
-        #按钮渲染
-        self.frame_button.setting_button_animation(False)
-        self.bg_copy.blit(self.frame_button.image, self.frame_button.rect)
+        #设置按钮渲染
+        self._draw_setting_button_()
 
 def test():
     """

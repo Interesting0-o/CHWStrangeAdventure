@@ -52,13 +52,11 @@ class Button:
             self.image = self.animation_list[self.index]
 
     def setting_button_animation(self,
-                                 mouse_down:bool,
                                  length:int =28,
                                  left_top:tuple = (0,0),
                                  fps:int = 60):
         """
         设置按钮动画,在设置界面使用，当被点击时变为最后一帧效果其余和hover_animation一样
-        :param mouse_down: event中的鼠标按下事件
         :param length:
         :param left_top:
         :param fps:

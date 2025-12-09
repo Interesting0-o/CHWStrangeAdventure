@@ -36,7 +36,8 @@ class ResourceLoader:
         'quit_button':path + r'\img\button\quit_button',
         'settings_button':path + r'\img\button\settings_button',
         'start_button':path + r'\img\button\start_button',
-        'yes_button':path + r'\img\button\yes_button'
+        'yes_button':path + r'\img\button\yes_button',
+        'voice_setting_button':path + r'\img\button\voice_setting_button'
     }
     button_dict = {}
 
@@ -180,14 +181,14 @@ class ResourceLoader:
             t.join()
 
     def get_progress(self)->float:
-        return self.current_progress / 50
+        return self.current_progress / 51
 
     def check_load_finish(self)->bool:
         """
         检查资源是否加载完毕
         :return:
         """
-        return self.current_progress == 50
+        return self.current_progress == 51
 
 
 

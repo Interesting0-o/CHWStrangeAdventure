@@ -648,7 +648,7 @@ class LoadGameScene(Page):
         :return:
         """
         # 判断是否关闭按钮被点击
-        if self.is_end and:
+        if self.is_end:
             self.is_show = False
             return
         if not self.is_other_show():

@@ -54,6 +54,10 @@ class FrameSetting(Page):
             menu_font=self.font,
             auto_index = self.resolution_menu_current_option,
         )
+        self._save_button_define_()
+
+
+    def _save_button_define_(self):
         #设置保存按钮
         self.save_button_bg = pygame.Surface((210,35)) #未选中状态
         self.save_button_bg.fill("white")
@@ -88,12 +92,11 @@ class FrameSetting(Page):
     def init(self,
              location:tuple[int,int] = (0,0),       #bg_surface位置
              ):
-        self.display_surface = pygame.display.get_surface()
 
         #背景设置
         self.bg_surface = pygame.surface.Surface((
           self.window_width * 0.6,
-            self.window_height * 0.6
+            self.window_height * 0.64
         ))
         self.bg_surface_rect = self.bg_surface.get_rect(topleft = location)
         self.tar_location = (int(self.bg_surface_rect.width *0.8),int(self.bg_surface_rect.height *0.1))
@@ -106,7 +109,7 @@ class FrameSetting(Page):
         self.fullscreen_menu.init(tar_location=(self.tar_location[0],int(self.bg_surface_rect.height *0.18)))
 
         #保存设置按钮初始化
-        self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.8*0.6)
+        self.save_button.rect.center = (self.window_width*0.5*0.6,self.window_height*0.9*0.64)
 
 
 
