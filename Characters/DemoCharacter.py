@@ -13,7 +13,7 @@ class DemoCharacter(Character):
             "neutral":ResourceLoader.demo_character_dict["neutral"],
         }
         self.Id = "DC"
-        self.name_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(self.name+":", True, (255, 255, 255))
+        self.name_surface = ResourceLoader.font_dict["MiSansDemibold36"].render(self.name+":", True, (255, 255, 255))
 
     def __str__(self):
         return self.name

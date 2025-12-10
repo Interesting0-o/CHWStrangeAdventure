@@ -5,7 +5,7 @@ from settings import Settings
 from Elements.MenuButton import MenuButton
 from Elements.ButtonGroup import ButtonGroup
 from Characters import *
-from Voice import Voice
+from VoiceManager import VoiceManager
 
 
 class GameScene(Page):
@@ -61,7 +61,8 @@ class GameScene(Page):
         self.dialog_bg_copy = None
 
         #音轨
-        self.char_channel = Voice.char_channel
+        self.char_channel = VoiceManager.char_channel
+        self.char_channel = VoiceManager.char_channel
 
         #黑场
         self.black_bg = pygame.surface.Surface((3840, 2160))

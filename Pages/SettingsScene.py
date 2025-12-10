@@ -2,6 +2,7 @@ from Pages.Page import Page
 from Elements.Button import Button
 from Pages.framesetting import FrameSetting
 from ResourceLoader import ResourceLoader
+from Pages.voicesetting import VoiceSetting
 import pygame
 
 class SettingsScene(Page):
@@ -9,9 +10,16 @@ class SettingsScene(Page):
     游戏设置页面
     """
 
-    def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
+    def __init__(self,
+                 fullscreen_auto_index:int,
+                 resolution_auto_index:int,
+                 auto_bgm_volume: float,
+                 auto_character_volume: float,
+                 auto_effect_volume: float,
+                 ):
         super().__init__()
 
+        self.bg_white = None
         self.close_button_value = False  # 关闭按钮状态
 
         #黑场专场内容
@@ -33,6 +41,11 @@ class SettingsScene(Page):
 
         #画面设置页面
         self.frame_setting = FrameSetting(fullscreen_auto_index,resolution_auto_index)
+        self.voice_setting = VoiceSetting(
+            auto_bgm_volume,
+            auto_character_volume,
+            auto_effect_volume,
+        )
 
     def _button_define_(self):
 
@@ -69,14 +82,25 @@ class SettingsScene(Page):
 
         #下拉菜单重置
         self.frame_setting.reset()
+        self.voice_setting.reset()
+
+        self.frame_setting.is_end = True
+        self.voice_setting.is_end = True
 
 
-    def is_settings_change(self)->bool:
+    def is_frame_settings_change(self)->bool:
         """
         判断是否有设置变更
         :return:
         """
         return self.frame_setting.is_settings_change()
+
+    def is_voice_settings_change(self)->bool:
+        """
+        判断是否有音量设置变更
+        :return:
+        """
+        return self.voice_setting.is_setting_change()
 
     def set_settings_change(self,setting:bool)->None:
         """
@@ -92,6 +116,8 @@ class SettingsScene(Page):
         """
         #背景初始化
         self.display_surface = pygame.display.get_surface()
+        self.bg_white = pygame.surface.Surface((self.window_width*0.6, self.window_height*0.64))
+        self.bg_white.fill((255, 255, 255))
 
         #使用bg_copy作为背景
         self.bg_copy = pygame.transform.scale(self.bg, (self.window_width, self.window_height))
@@ -120,6 +146,11 @@ class SettingsScene(Page):
         self.frame_setting.bg_surface_rect.topleft = (int(0.3125*self.window_width),int(0.2*self.window_height))
         self.frame_setting.is_end = True
 
+        #音量设置页面初始化
+        self.voice_setting.init((int(0.3125*self.window_width),int(0.2*self.window_height)))
+        self.voice_setting.bg_surface_rect.topleft = (int(0.3125*self.window_width),int(0.2*self.window_height))
+        self.voice_setting.is_end = True
+
     def reset(self):
         self.is_end = False
         self.is_show = False
@@ -134,13 +165,28 @@ class SettingsScene(Page):
         #按钮值重置
         self.close_button_value = False
 
-
+        #画面设置按钮初始化
         self.frame_button.image = self.frame_button.animation_list[0]
         self.frame_button.setting_mode = 0
         self.frame_button.index = 0
+        #音量设置按钮初始化
+        self.voice_button.image = self.voice_button.animation_list[0]
+        self.voice_button.setting_mode = 0
+        self.voice_button.index = 0
 
         #下拉菜单重置
         self.frame_setting.reset()
+        self.frame_setting.is_end = True
+        #音量设置页面重置
+        self.voice_setting.reset()
+        self.voice_setting.is_end = True
+
+    def get_volume(self)->tuple[float,float,float]:
+        """
+        获取当前音量
+        :return:
+        """
+        return self.voice_setting.get_volume()
 
     def get_fullscreen_set(self)->int:
         """
@@ -175,16 +221,36 @@ class SettingsScene(Page):
         #处理页面设置按钮
         if self.frame_button.is_press_down(event,(0,self.bg_h)):
             print("click")
+
+            #更改按钮状态，让frame按钮停住，voice按钮结束
             self.frame_button.set_mode()
-            self.frame_setting.is_end = not self.frame_setting.is_end
+            self.voice_button.setting_mode = 0
+
+            #让frame页面改变，voice页面结束
+
+            self.voice_setting.is_end = True
+            if self.frame_button.setting_mode == 0:
+                self.frame_setting.is_end = True
+            else:
+                self.frame_setting.is_end = False
 
         if self.voice_button.is_press_down(event,(0,self.bg_h)):
             print("click")
-            self.frame_setting.is_end = True
+
+            #更改按钮状态，让voice按钮停住，frame按钮结束
             self.voice_button.set_mode()
+            self.frame_button.setting_mode = 0
+
+            #让voice页面开始，frame页面结束
+            self.frame_setting.is_end = True
+            if self.voice_button.setting_mode == 0:
+                self.voice_setting.is_end = True
+            else:
+                self.voice_setting.is_end = False
 
         #处理界面设置页面事件
         self.frame_setting.handle_event(event)
+        self.voice_setting.handle_event(event)
 
     def _black_enter_(self):
         """
@@ -249,8 +315,18 @@ class SettingsScene(Page):
         self._draw_button_()
 
         #画面设置页面渲染
-        self.bg_copy.blit(self.frame_setting.bg_surface, self.frame_setting.bg_surface_rect)
-        self.frame_setting.draw((int(0.3125*self.window_width),int(0.2*self.window_height)))
+        if not self.frame_setting.is_end:
+            self.bg_copy.blit(self.frame_setting.bg_surface, self.frame_setting.bg_surface_rect)
+            self.frame_setting.draw()
+
+
+         #音量设置页面渲染
+        elif not self.voice_setting.is_end:
+            self.bg_copy.blit(self.voice_setting.bg_surface, self.voice_setting.bg_surface_rect)
+            self.voice_setting.draw()
+
+        else:
+            self.bg_copy.blit(self.bg_white, (int(0.3125*self.window_width),int(0.2*self.window_height)))
 
         #设置按钮渲染
         self._draw_setting_button_()
@@ -268,7 +344,7 @@ def test():
     loader.load_all_resource()
     loader.wait_load_finish()
 
-    settings_page = SettingsScene(0,0)
+    settings_page = SettingsScene(0,0,0.5,0.5,0.5)
     settings_page.init()
 
     while True:

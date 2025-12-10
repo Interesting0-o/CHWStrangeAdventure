@@ -6,8 +6,8 @@ class Slider:
     def __init__(self,
                  x, y,
                  length, height,
-                 min_val=0, max_val=100,
-                 initial_val=50,
+                 min_val=0.0, max_val=100.0,
+                 initial_val=50.0,
                  continuous=True,
                  feet=None,
                  ball_color:int|tuple[int, int, int]|str=0x0000ff,
@@ -89,12 +89,12 @@ class Slider:
         self.value = initial_val
         self.update_ball_position_from_value()
 
-    def get_value(self):
+    def get_value(self)->float:
         """
         获取当前值
         :return: 当前滑块的值
         """
-        return self.value
+        return round(self.value,2)
 
     def update_ball_position_from_value(self):
         """

@@ -49,6 +49,10 @@ class StartPage(Page):
             )
 
     def init(self):
+        """
+        初始化
+        :return:
+        """
         self.display_surface = pygame.display.get_surface()
         #版本资源
         self.version_rect.bottomleft=(10,Page.window_height-20)
@@ -81,6 +85,9 @@ class StartPage(Page):
                 self.display_surface.get_size()[0]//2,
                 self.display_surface.get_size()[1]*0.3
             ))
+
+        self.bg_image.blit(self.title, self.title_rect)
+        self.bg_image.blit(self.version,self.version_rect)
 
 
     def is_start_down(self,event:pygame.event.Event):
@@ -164,9 +171,6 @@ class StartPage(Page):
         self.display_surface.blit(self.bg_image, self.bg_rect)
         self.display_surface.blit(self.buttons_bg,self.buttons_bg_rect)
         self.button_group.draw(self.display_surface)
-
-        self.display_surface.blit(self.title, self.title_rect)
-        self.display_surface.blit(self.version,self.version_rect)
 
 
 

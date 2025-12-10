@@ -8,6 +8,8 @@ from ResourceLoader import ResourceLoader
 class FrameSetting(Page):
 
     def __init__(self,fullscreen_auto_index:int,resolution_auto_index:int):
+        self.location = None
+
         self.isSettingsChange = False #是否修改设置
         super().__init__()
         #背景声明
@@ -93,6 +95,7 @@ class FrameSetting(Page):
              location:tuple[int,int] = (0,0),       #bg_surface位置
              ):
 
+        self.location = location
         #背景设置
         self.bg_surface = pygame.surface.Surface((
           self.window_width * 0.6,
@@ -158,7 +161,6 @@ class FrameSetting(Page):
         return self.isSettingsChange
 
     def draw(self,
-             location:tuple[int,int] = (0,0)#bg_surface位置
              ):
         self.bg_surface.fill((255, 255, 255))
 
@@ -170,14 +172,14 @@ class FrameSetting(Page):
         self.bg_surface.blit(self.text_fullscreen, self.text_fullscreen_rect)
         self.fullscreen_menu.draw(
             self.bg_surface,
-            location
+            self.location
         )
 
         #分辨率设置
         self.bg_surface.blit(self.text_resolution, self.text_resolution_rect)
         self.resolution_menu.draw(
             self.bg_surface,
-            location,
+            self.location,
         )
 
         #保存设置按钮
@@ -216,7 +218,7 @@ def test():
 
         screen.fill("black")
         screen.blit(frame_setting.bg_surface, frame_setting.bg_surface_rect)
-        frame_setting.draw((100, 100))
+        frame_setting.draw()
         pygame.display.update()
 
 if __name__ == '__main__':

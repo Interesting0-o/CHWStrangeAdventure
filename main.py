@@ -7,7 +7,7 @@ from ResourceLoader import ResourceLoader
 from SaveManager import SaveManager
 from settings import Settings
 from Characters import *
-from Voice import Voice
+from VoiceManager import VoiceManager
 
 pygame.font.init()
 pygame.mixer.init()
@@ -24,10 +24,19 @@ class Game:
 
         #资源加载器初始化
         self.loader:ResourceLoader = ResourceLoader()
+        ""
         #存档管理器初始化
         self.save_manager:SaveManager = SaveManager()
+        #声音管理器初始化
+        self.voice_manager:VoiceManager = VoiceManager()
+
         #读取配置文件
         self._read_config_()
+        self.voice_manager.set_volume((
+            self.config["voice_settings"]["bgm_volume"],
+            self.config["voice_settings"]["character_volume"],
+            self.config["voice_settings"]["effect_volume"]
+        ))
 
         #设置窗口大小
         self.window_width = self.get_size_by_set()[0]
@@ -78,6 +87,9 @@ class Game:
         """
         self.config["frame_settings"]["fullscreen_setting_index"] = self.settings_scene.get_fullscreen_set()
         self.config["frame_settings"]["resolution_size_index"] = self.settings_scene.get_resolution_set()
+        self.config["voice_settings"]["bgm_volume"] = self.settings_scene.get_volume()[0]
+        self.config["voice_settings"]["character_volume"] = self.settings_scene.get_volume()[1]
+        self.config["voice_settings"]["effect_volume"] = self.settings_scene.get_volume()[2]
         with open(Game.path + r"\config.json", 'w') as f:
             json.dump(self.config, f,indent=4)
 
@@ -115,7 +127,11 @@ class Game:
         self.pause_page:PausePage = PausePage()
         try:
             self.settings_scene:SettingsScene = SettingsScene(self.config["frame_settings"]["fullscreen_setting_index"],
-                                              self.config["frame_settings"]["resolution_size_index"]
+                                                              self.config["frame_settings"]["resolution_size_index"],
+                                                              self.config["voice_settings"]["bgm_volume"],
+                                                              self.config["voice_settings"]["character_volume"],
+                                                              self.config["voice_settings"]["effect_volume"],
+
                                                )
         except KeyError:
             print("配置文件有误，请检查配置文件")
@@ -192,7 +208,6 @@ class Game:
         :return:
         """
         #在资源加载完成后才处理事件
-        print(self.is_load_finish(),self.is_thread_finish)
         if self.is_load_finish() and self.is_thread_finish:
             print("资源加载完成，开始处理事件")
             self.open_animation.handle_event(event)
@@ -216,7 +231,7 @@ class Game:
         判断开始菜单界面是否有其他页面显示
         :return:
         """
-        return self.load_game_scene.is_show or self.settings_scene.is_show or self.quit_page.is_show or self.tp_is_start.is_show
+        return (not self.load_game_scene.is_end )or (not self.settings_scene.is_end) or (not self.quit_page.is_end )or (not self.tp_is_start.is_end)
 
     def _back_to_start_menu_(self):
         """
@@ -239,12 +254,12 @@ class Game:
         self.game_scene.is_end = True
 
         #停止所有声音
-        Voice.char_channel.stop()
-        Voice.effect_channel.stop()
+        VoiceManager.char_channel.stop()
+        VoiceManager.effect_channel.stop()
 
 
 
-    def _settings_event_(self):
+    def _frame_event_(self):
         """
         处理设置页面的按钮事件
         :return:
@@ -259,6 +274,17 @@ class Game:
         self.settings_scene.reset_set()
 
         self.settings_scene.set_settings_change(False)
+
+    def _voice_event_(self):
+        """
+        处理声音设置页面的按钮事件
+        :return:
+        """
+        # #保存设置到config文件
+        self._save_config_()
+        # #设置声音
+        self.voice_manager.set_volume(self.settings_scene.get_volume())
+
 
     def _start_menu_event_(self,event:pygame.event.Event):
         """
@@ -296,8 +322,14 @@ class Game:
         self._start_new_event_tp_(event)
 
         #设置界面内的保存按钮是否按下
-        if self.settings_scene.is_settings_change():
-            self._settings_event_()
+        if self.settings_scene.is_frame_settings_change():
+            print("设置")
+            self._frame_event_()
+
+        #设置声音设置页面的保存按钮是否按下
+        if self.settings_scene.is_voice_settings_change():
+            print("声音设置")
+            self._voice_event_()
 
     def _load_game_event_(self,event:pygame.event.Event):
         """
@@ -329,6 +361,7 @@ class Game:
             self.load_game_scene.is_end = True
             self.pause_page.reset()
             self.pause_page.is_end = True
+
     def _start_new_event_tp_(self,event:pygame.event.Event):
         """
         处理是否开始新游戏的按钮事件
@@ -370,7 +403,7 @@ class Game:
         :return:
         """
         pygame.init()
-        pygame.display.set_caption("李好香の奇妙冒险", "陈海文陈海文の奇妙冒险")
+        pygame.display.set_caption("陈海文の奇妙冒险", "陈海文陈海文の奇妙冒险")
         pygame.display.set_icon(pygame.image.load(r"resource/img/icon/caption.png"))
         self.screen = pygame.display.set_mode(size = (self.window_width, self.window_height),flags = Settings.screen_set[self.config["frame_settings"]["fullscreen_setting_index"]])
         self.clock = pygame.time.Clock()
@@ -471,9 +504,11 @@ class Game:
         #当按下载入游戏按钮时，显示载入游戏界面
         if self.pause_page.is_load_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
             self.load_game_scene.is_end = False
+            self.load_game_scene.reset()
 
         if self.pause_page.is_setting_press(event) and not self.pause_page.is_end and self._is_other_end_pause_():
             self.settings_scene.is_end = False
+            self.settings_scene.reset()
 
     def _game_new_event_(self,event:pygame.event.Event):
         """
@@ -495,8 +530,14 @@ class Game:
         self.settings_scene.handle_event(event)
 
         #设置界面内的保存按钮是否按下
-        if self.settings_scene.is_settings_change():
-            self._settings_event_()
+        if self.settings_scene.is_frame_settings_change():
+            print("画面设置")
+            self._frame_event_()
+
+        #设置声音设置页面的保存按钮是否按下
+        if self.settings_scene.is_voice_settings_change():
+            print("声音设置")
+            self._voice_event_()
 
 
         #当开始章节结束，且没有创建存档时，开始创建存档
@@ -535,14 +576,21 @@ class Game:
 
         #处理由暂停页面引起的页面切换事件
         self._load_game_event_(event)
-        self._game_scene_event_(event)
+        self.settings_scene.handle_event(event)
 
-        #设置界面内的保存按钮是否按下
-        if self.settings_scene.is_settings_change():
-            self._settings_event_()
+
+        #设置界面内画面页面的保存按钮是否按下
+        if self.settings_scene.is_frame_settings_change():
+            print("画面设置")
+            self._frame_event_()
+
+        #设置声音设置页面的保存按钮是否按下
+        if self.settings_scene.is_voice_settings_change():
+            print("声音设置")
+            self._voice_event_()
 
         if self.load_game_scene.is_end and self.pause_page.is_end and self.settings_scene.is_end:
-            self.game_scene.handle_event(event)
+            self._game_scene_event_(event)
 
     def _draw_(self):
         """
@@ -554,6 +602,7 @@ class Game:
 
         #当开屏动画结束后才绘制页面
         if self.open_animation.is_black and self._on_game_begin_:
+            self.voice_manager.play_bgm("main")
             #绘制开始菜单的界面
             self._draw_start_menu_()
 
@@ -589,9 +638,6 @@ class Game:
             self._draw_()
             self.draw_current_fps()
             pygame.display.update()
-
-
-
 
 if __name__ == '__main__':
     import os

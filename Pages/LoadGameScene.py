@@ -13,7 +13,7 @@ class LoadGameScene(Page):
     def __init__(self):
         super().__init__()
 
-        self.save_manager:SaveManager = None #声明存档管理器
+        self.save_manager:SaveManager|None = None #声明存档管理器
 
         self.close_button_value = False
 
@@ -724,6 +724,7 @@ def test():
         screen.fill("white")
         page.draw()
         pygame.display.update()
+        print(page.is_end)
 
 
 if __name__ == '__main__':
