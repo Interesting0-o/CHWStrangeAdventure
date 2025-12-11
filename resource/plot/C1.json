@@ -43,6 +43,11 @@
       {
         "type": "choice",
         "photo": null,
+        "speaker": "DemoCharacter",
+        "character": {
+          "emotion": "neutral",
+          "position": "center"
+        },
         "choices": [
           {
             "choiceId": "choice_1",

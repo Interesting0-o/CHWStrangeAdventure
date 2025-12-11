@@ -131,14 +131,14 @@ class GameScene(Page):
         self.dialog_scale = pygame.transform.scale(self.dialog_bg, (self.window_width, self.window_height))
 
         #初始化选项框
-        self._choice_init()
+        self._choice_init_()
 
         #初始化按钮
-        self._button_init()
+        self._button_init_()
 
 
 
-    def _choice_init(self):
+    def _choice_init_(self):
         """
         绘制选项框，鼠标悬停时的选项框，和正常时的选项框
         :return:
@@ -179,7 +179,7 @@ class GameScene(Page):
         )
         self.choice_hover_bg.set_colorkey("green")
 
-    def _button_init(self):
+    def _button_init_(self):
         """
         按钮定义
         :return:
@@ -241,7 +241,7 @@ class GameScene(Page):
         """
         return self.plot[self.current_chapter][self.current_scene]["bgm"]
 
-    def _prepare_choice(self):
+    def _prepare_choice_(self):
         """
         选项框内容预渲染
         :return:
@@ -270,7 +270,7 @@ class GameScene(Page):
                 img.get_rect(),
             ))
 
-    def _draw_name(self):
+    def _draw_name_(self):
         """
         渲染角色名字
         :return:
@@ -286,7 +286,7 @@ class GameScene(Page):
                 self.window_height * 0.65
             ))
 
-    def _draw_character(self):
+    def _draw_character_(self):
         """
         在当前对话角色不为旁白和玩家时，渲染角色图片
         :return:
@@ -308,17 +308,18 @@ class GameScene(Page):
                                           midbottom=(self.window_width * Settings.position[position], self.window_height)),
                                       )
 
-    def _draw_text(self):
+    def _draw_text_(self):
         """
         渲染文字对话
         :return:
         """
-        text = self.get_current_dialog()["text"]
-        text_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(text, True, "white")
-        text_rect = text_surface.get_rect(topleft=(self.window_width * 0.1, self.window_height * 0.75))
-        self.dialog_bg_copy.blit(text_surface, text_rect)
+        text = self.get_current_dialog()["text"].split("\n")
+        for i ,line in enumerate(text):
+            text_surface = ResourceLoader.font_dict["MiSansDemibold24"].render(line, True, "white")
+            text_rect = text_surface.get_rect(topleft=(self.window_width * 0.1, self.window_height * 0.75 + 40 * i))
+            self.dialog_bg_copy.blit(text_surface, text_rect)
 
-    def _draw_choice_box(self):
+    def _draw_choice_box_(self):
         """
         渲染选项框
         :return:
@@ -330,7 +331,7 @@ class GameScene(Page):
                                               (0.15 + mid * (i + 1)) * self.window_height)
             self.display_surface.blit(self.choice_box[i].img, self.choice_box[i].rect)
 
-    def _choice_box_event(self,event:pygame.event.Event):
+    def _choice_box_event_(self,event:pygame.event.Event):
         """
         选项框事件处理
         :return:
@@ -355,7 +356,7 @@ class GameScene(Page):
         """
         return self.save_button.is_press_down(event)
 
-    def _draw_button(self):
+    def _draw_button_(self):
         """
         按钮渲染
         :return:
@@ -367,7 +368,7 @@ class GameScene(Page):
         self.display_surface.blit(self.voice_button.img, self.voice_button.rect)
         self.display_surface.blit(self.save_button.img, self.save_button.rect)
 
-    def _draw_photo(self):
+    def _draw_photo_(self):
         """
         渲染照片,暂时不用，未来实现
         :return:
@@ -375,7 +376,7 @@ class GameScene(Page):
         if self.get_current_dialog()["photo"] is not None:
             print("photo")
 
-    def _next_text_event(self,event:pygame.event.Event):
+    def _next_text_event_(self,event:pygame.event.Event):
         """
         处理下一句对话事件
         :param event:
@@ -418,13 +419,13 @@ class GameScene(Page):
                     raise KeyError
                 #正常切换到下一个章节
                 self.current_chapter = chapter
-                self.current_scene = self.plot[self.current_chapter].keys()[0]
+                self.current_scene = list(self.plot[self.current_chapter].keys())[0]
                 self.dialog_index = 0
             except KeyError:
                 self.is_end = True
                 print("章节不存在,完啦")
 
-    def _voice_event(self):
+    def _voice_event_(self):
         """
         处理音频事件
         :return:
@@ -436,7 +437,7 @@ class GameScene(Page):
             self.char_channel = self.voice.play()
             self.is_voice_load = True
 
-    def _button_event(self,event:pygame.event.Event):
+    def _button_event_(self,event:pygame.event.Event):
         """
         按钮事件处理
         :param event:
@@ -474,26 +475,26 @@ class GameScene(Page):
             return
 
         if self.plot[self.current_chapter][self.current_scene]["end_with"] == "choice" and not self.is_choice_load:
-            self._prepare_choice()
+            self._prepare_choice_()
             self.is_choice_load = True
 
 
         #当按钮被鼠标悬停时，按钮事件的处理
         if self.button_group.is_hover():
             # 处理按钮事件
-            self._button_event(event)
+            self._button_event_(event)
         else:
             # 处理选项框事件
             if self.get_current_dialog()["type"] == "choice":
                 #处理按钮点击事件
-                self._choice_box_event(event)
+                self._choice_box_event_(event)
 
             #处理文字对话事件
             elif self.get_current_dialog()["type"] == "dialogue":
                 #处理音频事件
-                self._voice_event()
+                self._voice_event_()
                 #处理下一句对话事件
-                self._next_text_event(event)
+                self._next_text_event_(event)
                 #判断是否到达结尾
                 self.next_chapter()
 
@@ -510,27 +511,29 @@ class GameScene(Page):
         #判断当前对话框类型是否为dialogue
         if self.get_current_dialog()["type"]=="dialogue" :
             #获取当前对话角色数据人物贴图
-            self._draw_character()
+            self._draw_character_()
             # 处理照片
-            self._draw_photo()
+            self._draw_photo_()
             #人物名字渲染
-            self._draw_name()
+            self._draw_name_()
             # 处理文字对话
-            self._draw_text()
+            self._draw_text_()
             # 对话框渲染
             self.display_surface.blit(self.dialog_bg_copy, (0, 0))
 
         # 当当前对话框类型为choice时，显示选项框
         elif self.get_current_dialog()["type"]=="choice":
             #图片渲染
-            self._draw_photo()
+            self._draw_photo_()
+            #渲染角色
+            self._draw_character_()
             #将黑场显示出来
             self.display_surface.blit(self.black_bg, (0, 0))
             #渲染选项
-            self._draw_choice_box()
+            self._draw_choice_box_()
 
         # 按钮渲染
-        self._draw_button()
+        self._draw_button_()
 
 def test():
     """

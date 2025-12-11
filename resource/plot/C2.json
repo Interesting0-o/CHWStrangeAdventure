@@ -1,0 +1,165 @@
+{
+  "C2_1": {
+    "bg": "library",
+    "bgm": "normal",
+    "end_with": "dialogue",
+    "dialogues": [
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "图书馆旧翼的橡木书架间，时光有自己的流速。午后阳光斜切过天窗,尘埃在光柱中缓缓沉浮，\n像极了那些未被借阅的故事里逸出的标点。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "你在这里工作了七年，熟悉每排书架的呼吸——狄更斯区总带着老式印刷油墨的苦香，东侧靠窗\n那排民国小说会在雨季第一天发出纸张受潮的微弱叹息。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "你此刻正推着移动梯子，整理高处的旧籍。指尖抚过烫金书脊时，突然停在一本没有标签的深蓝\n色布面书上。它卡在《欧洲植物图谱》和《船舶机械原理》之间，薄得像一道影子。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "第137页注：所有真正的相遇都是重遇。\n——致迟到的人"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "你正凝神，忽然嗅到一丝不属于这里的气味——不是旧书页的霉味，也不是橡木地板的蜡味，而是\n雨后刚折下的新鲜玉兰，混合着某种遥远的、海风般的湿润。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "请问",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_201"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "声音从梯子下方传来"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "你见过一本没有名字的蓝色笔记本吗？",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_202"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "新对话你低头。女子站在光影交界处，紧裹的风衣之下是一件白色的衬衫，手腕上系着一条极细\n的银链，链坠是一枚小小的罗盘。她的目光先落在他手中的书上，然后才移向你的眼睛。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "player",
+        "photo": null,
+        "text": "是这本吗？"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "陈墨从梯子上下来，将书递过去，她没有立即接过，而是看了看你的胸牌"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "李好香。",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_203"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "名字在她唇齿间停留了片刻，像在确认某个音节的重音"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "我是林迟。迟到的迟。",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_204"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "你注意到她说自己名字时，左手无意识地抚过书架上《如果在冬夜，一个旅人》的书脊——卡尔维诺\n那本关于阅读与寻找的小说。这个细节让你心里某处轻轻一动。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "这本书怎么会在这里？",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_205"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "林迟翻开蓝色笔记本，指尖停在第137页。那一页画着一幅简笔地图：图书馆平面图，用红笔标出一条\n曲折路线，终点正是他们此刻站立的位置——旧翼最深处，两个书架间的狭小空隙。"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "今天...",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_206"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "photo": null,
+        "text": "叶迟半句话含在嘴边，你听得些许出了神"
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "photo": null,
+        "text": "疯狂星期四 薇我50！！！",
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "v_207"
+        }
+      }
+    ],
+    "next_scene": null
+  }
+}
