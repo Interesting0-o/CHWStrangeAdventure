@@ -5,7 +5,13 @@ pygame.mixer.init()
 class VoiceManager:
 
     char_channel = pygame.mixer.Channel(0)
+    CHAR_VOICE_END = pygame.USEREVENT + 2
+
+
     effect_channel = pygame.mixer.Channel(1)
+    EFFECT_VOICE_END = pygame.USEREVENT + 3
+
+
     path = __file__[:-16]
     bgm_path = {
         "main": path + r"\resource\sound\bgm\main.mp3",
@@ -14,8 +20,13 @@ class VoiceManager:
     is_bgm_playing = False
 
     def __init__(self)->None:
+        """
+        初始化音频管理器
+        注册事件
+        """
         pygame.mixer.music.set_endevent(pygame.USEREVENT + 1)
-
+        VoiceManager.char_channel.set_endevent(pygame.USEREVENT + 2)
+        VoiceManager.effect_channel.set_endevent(pygame.USEREVENT + 3)
     def set_volume(self, volume:tuple[float,float,float])->None:
 
         #设置背景音乐音量

@@ -181,14 +181,14 @@ class ResourceLoader:
             t.join()
 
     def get_progress(self)->float:
-        return self.current_progress / 52
+        return self.current_progress / 54
 
     def check_load_finish(self)->bool:
         """
         检查资源是否加载完毕
         :return:
         """
-        return self.current_progress == 52
+        return self.current_progress == 54
 
 
 
