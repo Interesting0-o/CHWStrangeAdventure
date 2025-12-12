@@ -87,6 +87,7 @@ class OpenAnimation(Page):
             frame_bgr = cv2.resize(frame_bgr,(Page.window_width, Page.window_height))
         except cv2.error:
             self.is_end = True
+            self.is_black = True
             return
 
         # BGR → RGB → 转 Pygame Surface
@@ -102,6 +103,11 @@ class OpenAnimation(Page):
         # 显示提示文本
         self.display_surface.blit(self.test, self.test_rect)
 
+    def black_out(self):
+        """
+        黑场退出
+        :return:
+        """
         # 黑场退出
         if self.is_black:
             self.black_alpha += 10
@@ -133,6 +139,7 @@ def test():
             open_animation.handle_event(event)
 
         open_animation.draw()
+        open_animation.black_out()
         pygame.display.update()
 
         if open_animation.is_end:

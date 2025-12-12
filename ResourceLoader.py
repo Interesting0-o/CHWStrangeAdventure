@@ -74,7 +74,7 @@ class ResourceLoader:
 
 
     def black_surface_init(self):
-        ResourceLoader.black_surfaces_list =[pygame.Surface((3840,2160)) for _ in range(13)]
+        ResourceLoader.black_surfaces_list =[pygame.Surface((3840,2160),flags=pygame.SRCALPHA) for _ in range(13)]
         for index,surface in enumerate(ResourceLoader.black_surfaces_list):
             surface.fill((0,0,0))
             surface.set_alpha(10*index)
@@ -181,14 +181,14 @@ class ResourceLoader:
             t.join()
 
     def get_progress(self)->float:
-        return self.current_progress / 52
+        return self.current_progress / 54
 
     def check_load_finish(self)->bool:
         """
         检查资源是否加载完毕
         :return:
         """
-        return self.current_progress == 52
+        return self.current_progress == 54
 
 
 

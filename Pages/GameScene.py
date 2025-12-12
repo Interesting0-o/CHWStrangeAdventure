@@ -9,8 +9,16 @@ from VoiceManager import VoiceManager
 
 
 class GameScene(Page):
+    TICK_5000MS = pygame.USEREVENT + 8# 自定义事件号
+    INTERVAL = 5000# 毫秒
+
     def __init__(self):
         super().__init__()
+        pygame.time.set_timer(GameScene.TICK_5000MS, 0)  # 定时器初始化
+        #自动模式计时器
+        self.auto_timer_model = False
+        self.auto_mode = False
+
         #音频
         self.voice = None
 
@@ -27,9 +35,10 @@ class GameScene(Page):
 
         #按钮类
         self.button_group = ButtonGroup()
-        self.voice_button:MenuButton = None
-        self.back_button:MenuButton = None
-        self.save_button:MenuButton = None
+        self.voice_button:MenuButton|None = None
+        self.back_button:MenuButton|None = None
+        self.save_button:MenuButton|None = None
+        self.auto_button:MenuButton|None = None
 
         #场景记录
         self.current_player_honor = 0
@@ -185,40 +194,39 @@ class GameScene(Page):
         :return:
         """
         # 音频重播按钮
-        voice = ResourceLoader.icon_dict["voice"]
-        voice = pygame.transform.scale(voice, (50, 50))
-        voice_bg_hover = ResourceLoader.icon_dict["voice_hover"]
-        voice_bg_hover = pygame.transform.scale(voice_bg_hover, (50, 50))
-
+        voice = pygame.transform.scale(ResourceLoader.icon_dict["voice"], (50, 50))
         self.voice_button = MenuButton(
             voice,
-            voice_bg_hover,
+            pygame.transform.scale(ResourceLoader.icon_dict["voice_hover"], (50, 50)),
             voice.get_rect(center=(self.window_width * 0.9, self.window_height * 0.92))
         )
 
         # 回退按钮
-        back = ResourceLoader.icon_dict["back"]
-        back = pygame.transform.scale(back, (50, 50))
-        back_bg_hover = ResourceLoader.icon_dict["back_hover"]
-        back_bg_hover = pygame.transform.scale(back_bg_hover, (50, 50))
+        back = pygame.transform.scale(ResourceLoader.icon_dict["back"], (50, 50))
         self.back_button = MenuButton(
             back,
-            back_bg_hover,
+            pygame.transform.scale(ResourceLoader.icon_dict["back_hover"], (50, 50)),
             back.get_rect(center=(self.window_width * 0.9 - 50, self.window_height * 0.92))
         )
+
         # 保存按钮
-        save = ResourceLoader.icon_dict["save"]
-        save = pygame.transform.scale(save, (50, 50))
-        save_bg_hover = ResourceLoader.icon_dict["save_hover"]
-        save_bg_hover = pygame.transform.scale(save_bg_hover, (50, 50))
+        save = pygame.transform.scale(ResourceLoader.icon_dict["save"], (50, 50))
         self.save_button = MenuButton(
             save,
-            save_bg_hover,
+            pygame.transform.scale(ResourceLoader.icon_dict["save_hover"], (50, 50)),
             save.get_rect(center=(self.window_width * 0.9 + 50, self.window_height * 0.92))
         )
 
+        #自动模式按钮
+        auto = pygame.transform.scale(ResourceLoader.icon_dict["auto"], (50, 50))
+        self.auto_button = MenuButton(
+            auto,
+            pygame.transform.scale(ResourceLoader.icon_dict["auto_hover"], (50, 50)),
+            auto.get_rect(center=(self.window_width * 0.9 - 100, self.window_height * 0.92))
+        )
+
         #将所有的按钮添加到按钮组中
-        self.button_group.add_button(self.voice_button,self.back_button,self.save_button)
+        self.button_group.add_button(self.voice_button,self.back_button,self.save_button,self.auto_button)
 
     def get_current_dialog(self):
         """
@@ -345,7 +353,7 @@ class GameScene(Page):
                 self.current_scene = self.get_current_dialog()["choices"][i]["nextScene"]
 
                 self.scene_record.append(self.current_scene)
-                self.is_choice_reloads = True
+                self.is_choice_load = False
                 self.dialog_index = 0
 
     def is_save_press(self,event:pygame.event.Event):
@@ -367,6 +375,47 @@ class GameScene(Page):
         self.display_surface.blit(self.back_button.img, self.back_button.rect)
         self.display_surface.blit(self.voice_button.img, self.voice_button.rect)
         self.display_surface.blit(self.save_button.img, self.save_button.rect)
+        self.display_surface.blit(self.auto_button.img, self.auto_button.rect)
+
+    def is_speaker_charactor(self):
+        """
+        判断当前对话框的角色是否为玩家或者旁白
+        :return:
+        """
+        return self.get_current_dialog()["speaker"] != "player" and self.get_current_dialog()["speaker"] != "旁白"
+
+    def _auto_mode_event_(self,event:pygame.event.Event)->None:
+        """
+        自动模式事件处理
+        :return:
+        """
+        if self.get_current_dialog()["type"] == "choice":
+            return
+        #当前对话不是旁白和玩家，且当前语音重载了
+
+        if self.is_speaker_charactor() :
+            if self.auto_timer_model:
+                pygame.time.set_timer(GameScene.TICK_5000MS, 0)
+                self.auto_timer_model = not self.auto_timer_model
+
+            if event.type == VoiceManager.CHAR_VOICE_END:
+                #当前的语音播放完毕，自动下一句
+                print("播放完毕，自动模式下一句")
+                self._next_text_event_()
+                self.next_chapter()
+
+        elif not self.is_speaker_charactor() :
+            if not self.auto_timer_model:
+                pygame.time.set_timer(GameScene.TICK_5000MS, 5000)
+                self.auto_timer_model = not self.auto_timer_model
+
+            if event.type == GameScene.TICK_5000MS:
+                #当前的对话框播放完毕，自动下一句
+                self._next_text_event_()
+                self.next_chapter()
+                print("时长到达，自动模式下一句")
+
+
 
     def _draw_photo_(self):
         """
@@ -376,33 +425,35 @@ class GameScene(Page):
         if self.get_current_dialog()["photo"] is not None:
             print("photo")
 
-    def _next_text_event_(self,event:pygame.event.Event):
+    def _next_text_event_(self):
         """
         处理下一句对话事件
-        :param event:
         :return:
         """
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 
-            #判断当前是否鼠标左键点击且当前对话框类型不是choice
-            self.dialog_index += 1
+        #判断当前是否鼠标左键点击且当前对话框类型不是choice
+        self.dialog_index += 1
+        self.auto_timer = 0
 
-            #更改语音载入状态
+        #更改语音载入状态
+        self.is_voice_load = False
+
+        #判断是否到达对话框末尾
+        if self.voice is not None:
+            self.voice.stop()
+
+        if self.dialog_index >= len(self.plot[self.current_chapter][self.current_scene]["dialogues"]):
+            #重置对话框索引
+            self.dialog_index = 0
+
+            # 更改语音载入状态
             self.is_voice_load = False
+            #更新选项框重载状态
+            self.is_choice_load = False
+            #更新选项框
 
-            #判断是否到达对话框末尾
-            if self.voice is not None:
-                self.voice.stop()
-
-            if self.dialog_index >= len(self.plot[self.current_chapter][self.current_scene]["dialogues"]):
-                #重置对话框索引
-                self.dialog_index = 0
-
-                # 更改语音载入状态
-                self.is_voice_load = False
-
-                #更新到下一场景
-                self.current_scene = self.plot[self.current_chapter][self.current_scene]["next_scene"]
+            #更新到下一场景
+            self.current_scene = self.plot[self.current_chapter][self.current_scene]["next_scene"]
 
 
     def next_chapter(self):
@@ -425,7 +476,7 @@ class GameScene(Page):
                 self.is_end = True
                 print("章节不存在,完啦")
 
-    def _voice_event_(self):
+    def _voice_play_(self):
         """
         处理音频事件
         :return:
@@ -434,8 +485,9 @@ class GameScene(Page):
             #播放角色语音
             voice_path = self.get_current_dialog()["character"]["voice"]
             self.voice = pygame.mixer.Sound(self.path[:-6] + rf"\resource\sound\voice\{voice_path}.wav")
-            self.char_channel = self.voice.play()
+            self.char_channel.play(self.voice)
             self.is_voice_load = True
+            print("播放角色语音")
 
     def _button_event_(self,event:pygame.event.Event):
         """
@@ -461,6 +513,24 @@ class GameScene(Page):
             if self.voice is not None:
                 self.voice.stop()
 
+        if self.auto_button.is_press_down(event):
+            #修改自动模式
+
+            if self.auto_mode:
+                print("自动模式关闭")
+                self.auto_mode = False
+
+                #关闭计时器
+                pygame.time.set_timer(GameScene.TICK_5000MS, 0)
+                self.auto_timer_model = not self.auto_timer_model
+            else:
+                print("自动模式开启")
+                self.auto_mode = True
+                #开启计时器
+                pygame.time.set_timer(GameScene.TICK_5000MS, 5000)
+                self.auto_timer_model = not self.auto_timer_model
+
+
 
 
     def handle_event(self, event: pygame.event.Event)-> None:
@@ -474,6 +544,7 @@ class GameScene(Page):
         if self.is_end:
             return
 
+        #判断当前场景是否以choice结尾，如果是，则预渲染选项框
         if self.plot[self.current_chapter][self.current_scene]["end_with"] == "choice" and not self.is_choice_load:
             self._prepare_choice_()
             self.is_choice_load = True
@@ -491,18 +562,19 @@ class GameScene(Page):
 
             #处理文字对话事件
             elif self.get_current_dialog()["type"] == "dialogue":
-                #处理音频事件
-                self._voice_event_()
                 #处理下一句对话事件
-                self._next_text_event_(event)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    self._next_text_event_()
                 #判断是否到达结尾
                 self.next_chapter()
+
+        if self.auto_mode:
+            self._auto_mode_event_(event)
 
     def draw(self):
         #判断是否到达结尾
         if self.is_end:
             return
-
         #背景渲染
         self.display_surface.blit(self.current_bg, (0, 0))
 
@@ -510,6 +582,8 @@ class GameScene(Page):
 
         #判断当前对话框类型是否为dialogue
         if self.get_current_dialog()["type"]=="dialogue" :
+            # 处理音频
+            self._voice_play_()
             #获取当前对话角色数据人物贴图
             self._draw_character_()
             # 处理照片
@@ -541,6 +615,7 @@ def test():
     :return:
     """
     pygame.mixer.init()
+    voice = VoiceManager()
 
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
@@ -549,6 +624,8 @@ def test():
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
+
+
 
 
     save_datas = {"player":
@@ -582,6 +659,11 @@ def test():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            # if event.type == VoiceManager.CHAR_VOICE_END:
+            #     print("播放完毕")
+            if event.type == pygame.USEREVENT + 8:
+                print("事件4")
+
             content_chapter.handle_event(event)
         content_chapter.draw()
 

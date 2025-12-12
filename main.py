@@ -215,7 +215,6 @@ class Game:
             #处理开始菜单页面事件
             if self.open_animation.is_black and self._on_game_begin_:
                 print("开始菜单界面  事件")
-                self.start_page.is_end = False
                 self._start_menu_event_(event)
 
             elif self._game_begin_new_:
@@ -592,6 +591,14 @@ class Game:
         if self.load_game_scene.is_end and self.pause_page.is_end and self.settings_scene.is_end:
             self._game_scene_event_(event)
 
+    def _set_start_(self):
+        """
+        设置开始菜单界面
+        :return:
+        """
+        if self.open_animation.is_black :
+            self.start_page.is_end = False
+
     def _draw_(self):
         """
         绘制
@@ -599,6 +606,9 @@ class Game:
         """
         #开屏动画
         self.open_animation.draw()
+        # 绘制黑场退出
+        self.open_animation.black_out()
+        self._set_start_()
 
         #当开屏动画结束后才绘制页面
         if self.open_animation.is_black and self._on_game_begin_:
