@@ -15,6 +15,7 @@ pygame.mixer.init()
 class Game:
     path = __file__[:-8]
     def __init__(self):
+        self.is_set_start_setting = False
         self.FPS = 60
 
         #开屏黑场专场内容
@@ -24,7 +25,7 @@ class Game:
 
         #资源加载器初始化
         self.loader:ResourceLoader = ResourceLoader()
-        ""
+
         #存档管理器初始化
         self.save_manager:SaveManager = SaveManager()
         #声音管理器初始化
@@ -596,8 +597,19 @@ class Game:
         设置开始菜单界面
         :return:
         """
-        if self.open_animation.is_black :
+        if self.open_animation.is_black and not self.is_set_start_setting:
             self.start_page.is_end = False
+            self.is_set_start_setting = True
+
+    def _draw_open_animation_(self):
+        """
+
+        :return:
+        """
+        self.open_animation.draw()
+        # 绘制黑场退出
+        self.open_animation.black_out()
+        self._set_start_()
 
     def _draw_(self):
         """
@@ -605,10 +617,8 @@ class Game:
         :return:
         """
         #开屏动画
-        self.open_animation.draw()
-        # 绘制黑场退出
-        self.open_animation.black_out()
-        self._set_start_()
+        self._draw_open_animation_()
+
 
         #当开屏动画结束后才绘制页面
         if self.open_animation.is_black and self._on_game_begin_:

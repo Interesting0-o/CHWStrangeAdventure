@@ -1,0 +1,2 @@
+D:/GPT/GPT-SoVITS-v2-240821/GPT_weights_v2/星野-e15.ckpt
+D:/GPT/GPT-SoVITS-v2-240821/SoVITS_weights_v2/星野_e8_s184.pth

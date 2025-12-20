@@ -7,157 +7,168 @@
     "dialogues": [
       {
         "type": "dialogue",
-        "speaker": "旁白",
-        "text": "这是一个普通的图书馆",
-        "photo": null
-      },
-      {
-        "type": "dialogue",
-        "speaker" : "旁白",
-        "text": "一位少女走在路上",
-        "photo": null
-      },
-      {
-        "type": "dialogue",
-        "speaker" : "旁白",
-        "text": "她眼睛里闪着光，看到了你，径直走向你",
-        "photo": null
-      },
-      {
-        "type": "dialogue",
-        "speaker" : "player",
-        "text": "你好，请问有什么可以帮助您？",
-        "photo": null
-      },
-      {
-        "type": "dialogue",
         "speaker": "DemoCharacter",
-        "text": "我想借阅一下《陈海文的奇妙冒险》这本书。",
+        "text": "本章节为测试使用章节无任何意义",
         "photo": null,
         "character": {
           "emotion": "neutral",
           "position": "center",
-          "voice": "v_001"
+          "voice": "test1"
         }
       },
       {
-        "type": "choice",
-        "photo": null,
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "接下来是位置检测",
+        "photo": null
+      },
+      {
+        "type": "dialogue",
         "speaker": "DemoCharacter",
+        "text": "位置在左边",
+        "photo": null,
         "character": {
           "emotion": "neutral",
-          "position": "center"
-        },
+          "position": "left",
+          "voice": "test2"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "位置在中间",
+        "photo": null,
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "test3"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "位置在右边",
+        "photo": null,
+        "character": {
+          "emotion": "neutral",
+          "position": "right",
+          "voice": "test4"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "接下来是角色情绪图片播放检验",
+        "photo": null
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "这是正常情绪",
+        "photo": null,
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "test5"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "开心情绪",
+        "photo": null,
+        "character": {
+          "emotion": "happy",
+          "position": "center",
+          "voice": "test6"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "这是生气情绪",
+        "photo": null,
+        "character": {
+          "emotion": "mad",
+          "position": "center",
+          "voice": "test7"
+        }
+      },
+      {
+        "type": "dialogue",
+        "speaker": "旁白",
+        "text": "接下来是场景分支场景切换",
+        "photo": null
+      },
+      {
+        "type": "choice",
+        "speaker": "旁白",
+        "text": "",
+        "photo": null,
         "choices": [
           {
             "choiceId": "choice_1",
-            "text": "好的，我帮你去拿",
-            "nextScene":"C1_1:if_1"
+            "text": "进入C1_1:if1分支",
+            "nextScene": "C1_1:if1"
           },
           {
             "choiceId": "choice_2",
-            "text": "抱歉，这本书暂时借不到",
-            "nextScene":"C1_1:if_2"
-          },
-          {
-            "choiceId": "choice_3",
-            "text": "(表演一段空中劈叉)",
-            "nextScene":"C1_1:if_3"
+            "text": "进入C1_1:if2分支",
+            "nextScene": "C1_1:if2"
           }
         ]
       }
     ]
   },
-  "C1_1:if_1":{
+  "C1_1:if1": {
     "bg": "library",
     "bgm": "normal",
     "end_with": "dialogue",
-    "next_scene": "C1_2",
+    "next_scene": null,
     "last_scene": "C1_1",
     "dialogues": [
       {
         "type": "dialogue",
         "speaker": "旁白",
-        "text": "你将借阅的书籍放在了女孩的面前",
-        "photo": null
-      },
-      {
-        "type": "dialogue",
-        "speaker": "player",
-        "text": "好的，请问还有什么需要帮助吗？",
+        "text": "这是C1_1:if1分支",
         "photo": null
       },
       {
         "type": "dialogue",
         "speaker": "DemoCharacter",
-        "text": "谢谢你，我想我还需要一些时间来适应这里的环境。",
-        "photo": null,
-        "character": {
-          "emotion":"neutral",
-          "position":"center",
-          "voice":"v_002"
-        }
-      },
-      {
-        "type": "dialogue",
-        "speaker": "player",
-        "text": "不客气，祝你阅读愉快！",
-        "photo": null
-      }
-    ]
-  },
-  "C1_1:if_2":{
-    "bg": "library",
-    "bgm": "normal",
-    "end_with": "dialogue",
-    "next_scene": "C1_2",
-    "last_scene": "C1_1",
-    "dialogues": [
-      {
-        "type": "dialogue",
-        "speaker": "DemoCharacter",
-        "text": "那…好吧。",
+        "text": "这是C1_1:if1分支",
         "photo": null,
         "character": {
           "emotion": "neutral",
           "position": "center",
-          "voice": "v_003"
+          "voice": "test8"
         }
       }
     ]
   },
-  "C1_1:if_3":{
-    "bg": "library",
-    "bgm": "normal",
-    "end_with": "dialogue",
-    "next_scene": "C1_2",
-    "last_scene": "C1_1",
-    "dialogues": [
-      {
-        "type": "dialogue",
-        "speaker": "DemoCharacter",
-        "text": "请问，你是有什么大病吗！",
-        "photo": null,
-        "character": {
-          "emotion": "neutral",
-          "position": "center",
-          "voice": "v_004"
-        }
-      }
-    ]
-  },
-  "C1_2":{
+  "C1_1:if2": {
     "bg": "library",
     "bgm": "normal",
     "end_with": "dialogue",
     "next_scene": null,
-    "last_scene": [ "C1_1:if_1", "C1_1:if_2", "C1_1:if_3"],
+    "last_scene": "C1_1",
     "dialogues": [
       {
         "type": "dialogue",
-        "speaker": "player",
-        "text": "好的，请问还有什么需要帮助吗？",
+        "speaker": "旁白",
+        "text": "这是C1_1:if2分支",
         "photo": null
+      },
+      {
+        "type": "dialogue",
+        "speaker": "DemoCharacter",
+        "text": "这是C1_1:if2分支",
+        "photo": null,
+        "character": {
+          "emotion": "neutral",
+          "position": "center",
+          "voice": "test9"
+        }
       }
     ]
   }
