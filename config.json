@@ -5,7 +5,7 @@
     },
     "voice_settings": {
         "bgm_volume": 0.85,
-        "character_volume": 0.71,
-        "effect_volume": 0.33
+        "character_volume": 0.32,
+        "effect_volume": 0.83
     }
 }

@@ -481,13 +481,16 @@ class GameScene(Page):
         处理音频事件
         :return:
         """
-        if self.get_current_dialog()["speaker"] != "旁白" and self.get_current_dialog()["speaker"] != "player" and not self.is_voice_load:
-            #播放角色语音
-            voice_path = self.get_current_dialog()["character"]["voice"]
-            self.voice = pygame.mixer.Sound(self.path[:-6] + rf"\resource\sound\voice\{voice_path}.wav")
-            self.char_channel.play(self.voice)
-            self.is_voice_load = True
-            print("播放角色语音")
+        try:
+            if self.get_current_dialog()["speaker"] != "旁白" and self.get_current_dialog()["speaker"] != "player" and not self.is_voice_load:
+                #播放角色语音
+                voice_path = self.get_current_dialog()["character"]["voice"]
+                self.voice = pygame.mixer.Sound(self.path[:-6] + rf"\resource\sound\voice\{voice_path}.wav")
+                self.char_channel.play(self.voice)
+                self.is_voice_load = True
+                print("播放角色语音")
+        except FileNotFoundError:
+            print(self.get_current_dialog()["character"]["voice"]+"文件未找到")
 
     def _button_event_(self,event:pygame.event.Event):
         """
@@ -624,6 +627,8 @@ def test():
     loader = ResourceLoader()
     loader.load_all_resource()
     loader.wait_load_finish()
+
+    print(ResourceLoader.plot_dict)
 
 
 

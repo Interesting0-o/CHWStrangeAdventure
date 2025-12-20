@@ -6,6 +6,9 @@ pygame.font.init()
 
 class ResourceLoader:
 
+
+    final_progress = 55
+
     #路径
     path = __file__[:-18] + r"\resource"
     img_resource_path = {
@@ -181,14 +184,14 @@ class ResourceLoader:
             t.join()
 
     def get_progress(self)->float:
-        return self.current_progress / 54
+        return self.current_progress / ResourceLoader.final_progress
 
     def check_load_finish(self)->bool:
         """
         检查资源是否加载完毕
         :return:
         """
-        return self.current_progress == 54
+        return self.current_progress == ResourceLoader.final_progress
 
 
 
@@ -204,6 +207,7 @@ def test():
     #     print(loader.get_progress())
     print(loader.check_load_finish())
     loader.wait_load_finish()
+    print(loader.demo_character_dict)
     print(loader.current_progress)
     print(loader.get_progress())
     print(loader.bg_dict["DialogBG"])

@@ -11,6 +11,8 @@ class DemoCharacter(Character):
         self.name = "DemoCharacter"
         self.emotions = {
             "neutral":ResourceLoader.demo_character_dict["neutral"],
+            "happy":ResourceLoader.demo_character_dict["happy"],
+            "mad":ResourceLoader.demo_character_dict["mad"]
         }
         self.Id = "DC"
         self.name_surface = ResourceLoader.font_dict["MiSansDemibold36"].render(self.name+":", True, (255, 255, 255))
