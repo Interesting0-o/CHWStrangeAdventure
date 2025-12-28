@@ -69,6 +69,3 @@ python PlotWriter.py
 
 项目中使用的部分音频/图像为网络资源或生成资源，请在分发时确认相应授权。
 
----
-
-如果你希望我把本 `README_UPDATED.md` 的内容替换回仓库根的 `README.md`（覆盖原有文件），我可以再次尝试替换或直接把 `README_UPDATED.md` 重命名为 `README.md`（需覆盖权限）。
